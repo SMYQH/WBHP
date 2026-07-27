@@ -1,0 +1,59 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type Check
+        run: npx tsc --noEmit
+
+      - name: Build (${{ matrix.browser }})
+        env:
+          BROWSER: ${{ matrix.browser }}
+          CRX_KEY: ${{ matrix.browser == 'chrome' && secrets.CRX_KEY || secrets.CRX_KEY_FIREFOX }}
+        run: npx vite build
+
+      - name: Verify artifacts
+        run: |
+          echo "=== dist/ contents ==="
+          ls -la dist/
+          echo ""
+          if [ -f dist/wbhp.crx ]; then
+            echo "✅ CRX file created ($(stat -c%s dist/wbhp.crx) bytes)"
+          else
+            echo "❌ CRX file missing!"
+            exit 1
+          fi
+          if [ -f dist/manifest.json ]; then
+            echo "✅ manifest.json present"
+          else
+            echo "❌ manifest.json missing!"
+            exit 1
+          fi
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: wbhp-${{ matrix.browser }}
+          path: |
+            dist/wbhp.crx
+            dist/manifest.json
+          if-no-files-found: error

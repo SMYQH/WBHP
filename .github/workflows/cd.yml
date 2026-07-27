@@ -1,0 +1,97 @@
+name: CD
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version tag (e.g. v0.1.0)"
+        required: true
+        default: "v0.1.0"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        browser: [chrome, firefox]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      - name: Type Check
+        run: npx tsc --noEmit
+
+      - name: Build (${{ matrix.browser }})
+        env:
+          BROWSER: ${{ matrix.browser }}
+          CRX_KEY: ${{ matrix.browser == 'chrome' && secrets.CRX_KEY || secrets.CRX_KEY_FIREFOX }}
+        run: npx vite build
+
+      - name: Package ZIP
+        run: |
+          cd dist
+          zip -r ../wbhp-${{ matrix.browser }}.zip . -x "*.crx"
+          cd ..
+
+      - name: Upload CRX + ZIP
+        uses: actions/upload-artifact@v4
+        with:
+          name: wbhp-${{ matrix.browser }}
+          path: |
+            dist/wbhp.crx
+            wbhp-${{ matrix.browser }}.zip
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: wbhp-*
+          merge-multiple: true
+          path: artifacts
+
+      - name: List assets
+        run: ls -la artifacts/
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: "WBHP ${{ github.ref_name }}"
+          body: |
+            ## 🚀 WBHP ${{ github.ref_name }}
+
+            ### 📦 安装
+
+            **Chrome / Edge:**
+            1. 下载 `wbhp-chrome.zip` 并解压
+            2. 打开 `chrome://extensions`，启用「开发者模式」
+            3. 点击「加载已解压的扩展程序」，选择解压后的文件夹
+            4. 或直接拖拽 `wbhp.crx` 到扩展页面
+
+            **Firefox:**
+            1. 下载 `wbhp-firefox.zip` 并解压
+            2. 打开 `about:debugging` → 「临时载入附加组件」
+            3. 选择解压后文件夹中的 `manifest.json`
+
+            ### 🔑 验证
+            - CRX3 签名格式，兼容 Chrome 64+ / Firefox 109+
+            - 使用固定密钥签名，扩展 ID 保持一致
+          files: |
+            artifacts/wbhp.crx
+            artifacts/wbhp-*.zip
+          draft: false
+          prerelease: ${{ contains(github.ref_name, '-') }}
+          generate_release_notes: true

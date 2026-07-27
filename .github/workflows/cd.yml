@@ -1,14 +1,12 @@
 name: CD
 
+# Triggered only by real tag pushes (e.g. `git push origin v0.1.0`).
+# workflow_dispatch is intentionally omitted: it sets `github.ref_name` to
+# the default branch, which previously created a bogus "WBHP master" release.
 on:
   push:
-    tags: ["v*"]
-  workflow_dispatch:
-    inputs:
-      version:
-        description: "Version tag (e.g. v0.1.0)"
-        required: true
-        default: "v0.1.0"
+    tags:
+      - "v*"
 
 jobs:
   build:
@@ -35,6 +33,12 @@ jobs:
           CRX_KEY: ${{ matrix.browser == 'chrome' && secrets.CRX_KEY || secrets.CRX_KEY_FIREFOX }}
         run: npx vite build
 
+      - name: Verify artifacts
+        run: |
+          test -f dist/wbhp-${{ matrix.browser }}.crx || (echo "❌ CRX missing" && exit 1)
+          test -f dist/icons/icon-128.png || (echo "❌ PNG icons missing" && exit 1)
+          echo "✅ dist contents:" && ls -la dist/ dist/icons/
+
       - name: Package ZIP
         run: |
           cd dist
@@ -46,7 +50,7 @@ jobs:
         with:
           name: wbhp-${{ matrix.browser }}
           path: |
-            dist/wbhp.crx
+            dist/wbhp-${{ matrix.browser }}.crx
             wbhp-${{ matrix.browser }}.zip
           if-no-files-found: error
 
@@ -79,7 +83,7 @@ jobs:
             1. 下载 `wbhp-chrome.zip` 并解压
             2. 打开 `chrome://extensions`，启用「开发者模式」
             3. 点击「加载已解压的扩展程序」，选择解压后的文件夹
-            4. 或直接拖拽 `wbhp.crx` 到扩展页面
+            4. 或直接拖拽 `wbhp-chrome.crx` 到扩展页面
 
             **Firefox:**
             1. 下载 `wbhp-firefox.zip` 并解压
@@ -90,8 +94,10 @@ jobs:
             - CRX3 签名格式，兼容 Chrome 64+ / Firefox 109+
             - 使用固定密钥签名，扩展 ID 保持一致
           files: |
-            artifacts/wbhp.crx
-            artifacts/wbhp-*.zip
+            artifacts/wbhp-chrome.crx
+            artifacts/wbhp-chrome.zip
+            artifacts/wbhp-firefox.crx
+            artifacts/wbhp-firefox.zip
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
           generate_release_notes: true

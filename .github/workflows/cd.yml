@@ -69,6 +69,15 @@ jobs:
       - name: List assets
         run: ls -la artifacts/
 
+      - name: Flatten artifacts (CRX is under dist/ after upload)
+        run: |
+          mkdir -p flattened
+          cp artifacts/wbhp-chrome.zip flattened/
+          cp artifacts/wbhp-firefox.zip flattened/
+          cp artifacts/dist/wbhp-chrome.crx flattened/
+          cp artifacts/dist/wbhp-firefox.crx flattened/
+          ls -la flattened/
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -94,10 +103,10 @@ jobs:
             - CRX3 签名格式，兼容 Chrome 64+ / Firefox 109+
             - 使用固定密钥签名，扩展 ID 保持一致
           files: |
-            artifacts/wbhp-chrome.crx
-            artifacts/wbhp-chrome.zip
-            artifacts/wbhp-firefox.crx
-            artifacts/wbhp-firefox.zip
+            flattened/wbhp-chrome.crx
+            flattened/wbhp-chrome.zip
+            flattened/wbhp-firefox.crx
+            flattened/wbhp-firefox.zip
           draft: false
           prerelease: ${{ contains(github.ref_name, '-') }}
           generate_release_notes: true

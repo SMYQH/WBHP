@@ -1,0 +1,21 @@
+{
+  "manifest_version": 3,
+  "name": "WBHP",
+  "version": "0.1.0",
+  "description": "Web Browser Home Page — A modern, pluggable new tab page.",
+  "author": "WBHP Contributors",
+  "chrome_url_overrides": {
+    "newtab": "index.html"
+  },
+  "icons": {
+    "16": "icons/icon.svg",
+    "48": "icons/icon.svg",
+    "128": "icons/icon.svg"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://wttr.in/*",
+    "https://picsum.photos/*",
+    "https://icons.duckduckgo.com/*"
+  ]
+}

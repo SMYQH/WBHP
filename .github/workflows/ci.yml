@@ -35,10 +35,10 @@ jobs:
       - name: Verify artifacts
         run: |
           echo "=== dist/ contents ==="
-          ls -la dist/
+          ls -la dist/ dist/icons/
           echo ""
-          if [ -f dist/wbhp.crx ]; then
-            echo "✅ CRX file created ($(stat -c%s dist/wbhp.crx) bytes)"
+          if [ -f dist/wbhp-${{ matrix.browser }}.crx ]; then
+            echo "✅ CRX file created ($(stat -c%s dist/wbhp-${{ matrix.browser }}.crx) bytes)"
           else
             echo "❌ CRX file missing!"
             exit 1
@@ -49,3 +49,10 @@ jobs:
             echo "❌ manifest.json missing!"
             exit 1
           fi
+          for size in 16 32 48 128; do
+            if [ ! -f "dist/icons/icon-${size}.png" ]; then
+              echo "❌ icons/icon-${size}.png missing!"
+              exit 1
+            fi
+          done
+          echo "✅ All 4 PNG icon sizes present"

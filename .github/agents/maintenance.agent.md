@@ -1,7 +1,7 @@
 ---
 name: Project Maintenance
 description: "Use when performing daily project maintenance tasks for WBHP, including running TypeScript type checks, verifying cross-browser builds (Chrome & Firefox CRX packaging), cleaning up build artifacts, auditing dependencies, checking project code style, or troubleshooting build and OAuth errors."
-tools: [read, edit, search, execute]
+tools: [vscode/memory, vscode/askQuestions, execute, read, agent, edit, search, web/fetch]
 user-invocable: true
 argument-hint: "Describe the maintenance task (e.g., run typecheck, build extension, audit dependencies)..."
 ---

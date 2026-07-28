@@ -1,5 +1,6 @@
 import { useState, useSyncExternalStore, type FormEvent } from "react";
 import type { PluginConfig, PluginAPI } from "../types";
+import { getTranslations } from "../../i18n";
 
 interface Link {
   id: string;
@@ -9,6 +10,38 @@ interface Link {
 
 interface LinksData {
   links: Link[];
+}
+
+const GRADIENTS = [
+  "from-blue-500 to-indigo-600",
+  "from-emerald-500 to-teal-600",
+  "from-purple-500 to-pink-600",
+  "from-amber-500 to-orange-600",
+  "from-rose-500 to-red-600",
+  "from-cyan-500 to-blue-600",
+];
+
+function stringHash(str: string): number {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = (hash << 5) - hash + str.charCodeAt(i);
+    hash |= 0;
+  }
+  return Math.abs(hash);
+}
+
+function LinkAvatar({ title, url }: { title: string; url: string }) {
+  const label = (title.trim() || url.trim()).charAt(0).toUpperCase() || "★";
+  const hash = stringHash(title + url);
+  const gradient = GRADIENTS[hash % GRADIENTS.length];
+
+  return (
+    <div
+      className={`flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-sm font-semibold text-white shadow-sm transition-transform group-hover:scale-105`}
+    >
+      {label}
+    </div>
+  );
 }
 
 function normalizeUrl(raw: string): string {
@@ -28,18 +61,11 @@ function normalizeUrl(raw: string): string {
   }
 }
 
-function faviconUrl(linkUrl: string): string {
-  try {
-    const host = new URL(linkUrl).hostname;
-    return `https://icons.duckduckgo.com/ip3/${host}.ico`;
-  } catch {
-    return "";
-  }
-}
-
 function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
   const data = useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get);
   const { links } = data;
+  const t = getTranslations(api.settings.language).widgets.links;
+
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
@@ -53,11 +79,11 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
     e?.preventDefault();
     const normalized = normalizeUrl(url);
     if (!title.trim()) {
-      setFormError("Title is required.");
+      setFormError(t.titleRequired);
       return;
     }
     if (!normalized) {
-      setFormError("Enter a valid http(s) URL.");
+      setFormError(t.urlInvalid);
       return;
     }
     const newLink: Link = {
@@ -79,20 +105,10 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
           <a
             key={link.id}
             href={link.url}
-            className="group relative flex flex-col items-center gap-1 rounded-xl p-2 transition-colors hover:bg-white/20 dark:hover:bg-white/10"
+            className="group relative flex flex-col items-center gap-1.5 rounded-xl p-2 transition-colors hover:bg-white/20 dark:hover:bg-white/10"
           >
-            <img
-              src={faviconUrl(link.url)}
-              alt=""
-              width={32}
-              height={32}
-              className="h-8 w-8 rounded"
-              loading="lazy"
-              onError={(e) => {
-                (e.target as HTMLImageElement).style.visibility = "hidden";
-              }}
-            />
-            <span className="w-full truncate text-center text-xs">{link.title}</span>
+            <LinkAvatar title={link.title} url={link.url} />
+            <span className="w-full truncate text-center text-xs font-medium opacity-90">{link.title}</span>
             <button
               type="button"
               onClick={(ev) => {
@@ -101,8 +117,8 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
                 removeLink(link.id);
               }}
               className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 focus:opacity-100"
-              title="Remove"
-              aria-label={`Remove ${link.title}`}
+              title={t.remove}
+              aria-label={`${t.remove} ${link.title}`}
             >
               ×
             </button>
@@ -114,10 +130,10 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
             type="button"
             onClick={() => setAdding(true)}
             className="flex flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-white/30 p-2 text-xs opacity-70 transition-colors hover:bg-white/10 hover:opacity-100"
-            aria-label="Add link"
+            aria-label={t.addBtn}
           >
             <span className="text-lg">+</span>
-            Add
+            {t.addBtn}
           </button>
         )}
       </div>
@@ -125,31 +141,31 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
       {adding && (
         <form
           onSubmit={addLink}
-          className="mt-3 flex flex-col gap-2 rounded-xl bg-white/10 p-3 sm:flex-row sm:items-start"
+          className="mt-3 flex flex-col gap-2 rounded-xl bg-white/10 p-3 backdrop-blur sm:flex-row sm:items-start"
         >
           <div className="flex flex-1 flex-col gap-2 sm:flex-row">
             <input
               type="text"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              placeholder="Title"
-              className="flex-1 rounded-lg bg-white/20 px-3 py-2 text-sm dark:bg-white/10"
+              placeholder={t.titlePlaceholder}
+              className="flex-1 rounded-lg bg-white/20 px-3 py-2 text-sm backdrop-blur dark:bg-white/10"
               autoFocus
             />
             <input
               type="url"
               value={url}
               onChange={(e) => setUrl(e.target.value)}
-              placeholder="https://example.com"
-              className="flex-[2] rounded-lg bg-white/20 px-3 py-2 text-sm dark:bg-white/10"
+              placeholder={t.urlPlaceholder}
+              className="flex-[2] rounded-lg bg-white/20 px-3 py-2 text-sm backdrop-blur dark:bg-white/10"
             />
           </div>
           <div className="flex gap-2">
             <button
               type="submit"
-              className="rounded-lg bg-blue-500 px-3 py-2 text-sm text-white hover:bg-blue-600"
+              className="rounded-lg bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-600"
             >
-              Save
+              {t.saveBtn}
             </button>
             <button
               type="button"
@@ -159,7 +175,7 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
               }}
               className="rounded-lg bg-white/10 px-3 py-2 text-sm hover:bg-white/20"
             >
-              Cancel
+              {t.cancelBtn}
             </button>
           </div>
           {formError && (
@@ -182,7 +198,7 @@ const config: PluginConfig<LinksData> = {
     links: [
       { id: "1", title: "GitHub", url: "https://github.com" },
       { id: "2", title: "YouTube", url: "https://youtube.com" },
-      { id: "3", title: "Reddit", url: "https://reddit.com" },
+      { id: "3", title: "Bilibili", url: "https://bilibili.com" },
       { id: "4", title: "Gmail", url: "https://mail.google.com" },
     ],
   },

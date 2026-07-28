@@ -7,3 +7,4 @@ keys
 !types/**/*.d.ts
 !src/vite-env.d.ts
 !*.config.d.ts
+release_downloads

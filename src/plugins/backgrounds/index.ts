@@ -1,12 +1,13 @@
 import { registerPlugin } from "../registry";
-// PluginConfig type not needed here — plugins self-register via default export
 
 import ColorBg from "./color";
 import GradientBg from "./gradient";
-import UnsplashBg from "./unsplash";
+import CustomBg from "./custom";
+import PresetBg from "./preset";
 
-export { ColorBg, GradientBg, UnsplashBg };
+export { ColorBg, GradientBg, CustomBg, PresetBg };
 
 registerPlugin(ColorBg);
 registerPlugin(GradientBg);
-registerPlugin(UnsplashBg);
+registerPlugin(CustomBg);
+registerPlugin(PresetBg);

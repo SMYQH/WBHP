@@ -1,5 +1,6 @@
 import { useState, useCallback, useSyncExternalStore, type FormEvent } from "react";
 import type { PluginConfig, PluginAPI } from "../types";
+import { getTranslations } from "../../i18n";
 
 interface SearchEngine {
   id: string;
@@ -24,6 +25,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
   const data = useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get);
   const { defaultEngine } = data;
   const [query, setQuery] = useState("");
+  const t = getTranslations(api.settings.language).widgets.search;
 
   const engine = ENGINES.find((e) => e.id === defaultEngine) ?? ENGINES[0];
 
@@ -41,14 +43,14 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
     <div className="mx-auto w-full max-w-xl">
       <form onSubmit={search} className="flex gap-2" role="search">
         <label className="sr-only" htmlFor="wbhp-search-input">
-          Search the web
+          {t.placeholder}
         </label>
         <input
           id="wbhp-search-input"
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={`Search with ${engine.name}...`}
+          placeholder={`${t.placeholder} (${engine.name})`}
           className="flex-1 rounded-xl border border-white/30 bg-white/20 px-4 py-3 text-lg backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-white/10"
           autoFocus
           autoComplete="off"
@@ -56,9 +58,9 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
         />
         <button
           type="submit"
-          className="rounded-xl bg-blue-500 px-5 py-3 font-medium text-white transition-colors hover:bg-blue-600"
+          className="rounded-xl bg-blue-500/90 px-5 py-3 font-medium text-white backdrop-blur transition-all hover:bg-blue-600 active:scale-95"
         >
-          Search
+          {t.button}
         </button>
       </form>
       <div className="mt-3 flex flex-wrap justify-center gap-2" role="group" aria-label="Search engines">
@@ -67,9 +69,9 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             key={e.id}
             type="button"
             onClick={() => api.data.set({ defaultEngine: e.id })}
-            className={`rounded-lg px-3 py-1 text-sm transition-colors ${
+            className={`rounded-lg px-3 py-1 text-sm transition-all ${
               e.id === defaultEngine
-                ? "bg-white/30 font-medium dark:bg-white/20"
+                ? "bg-white/30 font-medium dark:bg-white/20 scale-105 shadow-sm"
                 : "bg-white/10 hover:bg-white/20 dark:bg-white/5"
             }`}
             title={e.name}

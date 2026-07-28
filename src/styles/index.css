@@ -1,11 +1,20 @@
 @import "tailwindcss";
 
-/* ── Base ─────────────────────────────────────────────────────────── */
+/* ── Base & Fonts ─────────────────────────────────────────────────── */
 :root {
-  font-family: "Inter", system-ui, -apple-system, sans-serif;
+  --font-misans: "MiSans", system-ui, -apple-system, sans-serif;
+  --font-serif: "Source Han Serif", "Source Han Serif CN", serif;
+  --font-opensans: "Open Sans", system-ui, sans-serif;
+  --font-system: system-ui, -apple-system, sans-serif;
+  font-family: var(--font-misans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+html[data-font="misans"], html[data-font="misans"] body { font-family: var(--font-misans); }
+html[data-font="serif"], html[data-font="serif"] body { font-family: var(--font-serif); }
+html[data-font="opensans"], html[data-font="opensans"] body { font-family: var(--font-opensans); }
+html[data-font="system"], html[data-font="system"] body { font-family: var(--font-system); }
 
 /* ── Animations ───────────────────────────────────────────────────── */
 @keyframes fade-in {

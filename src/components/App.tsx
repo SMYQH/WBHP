@@ -38,6 +38,11 @@ export default function App() {
     return () => mq.removeEventListener("change", apply);
   }, [settings.theme]);
 
+  // ── Font management ───────────────────────────────────────────────
+  useEffect(() => {
+    document.documentElement.setAttribute("data-font", settings.fontFamily || "misans");
+  }, [settings.fontFamily]);
+
   // ── WebDAV auto-backup ─────────────────────────────────────────────
   useEffect(() => {
     startAutoBackup(settings.webdav);

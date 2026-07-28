@@ -67,6 +67,8 @@ export interface DashboardWidget {
 
 // ── Settings ───────────────────────────────────────────────────────
 export type ThemeMode = "system" | "light" | "dark";
+export type LanguageMode = "auto" | "zh" | "en";
+export type FontFamily = "misans" | "serif" | "opensans" | "system";
 
 export interface WebDAVConfig {
   enabled: boolean;
@@ -79,6 +81,8 @@ export interface WebDAVConfig {
 
 export interface WBHPSettings {
   theme: ThemeMode;
+  language: LanguageMode;
+  fontFamily: FontFamily;
   /** Ids of plugins the user has chosen as active widgets (in order). */
   activeWidgets: string[];
   /** Id of the active background plugin. */

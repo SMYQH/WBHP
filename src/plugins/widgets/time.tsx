@@ -1,5 +1,6 @@
 import { useState, useEffect, useSyncExternalStore } from "react";
 import type { PluginConfig, PluginAPI } from "../types";
+import { resolveLanguage } from "../../i18n";
 
 interface TimeData {
   showSeconds: boolean;
@@ -17,6 +18,8 @@ function TimeWidget({ api }: { api: PluginAPI<TimeData> }) {
     return () => clearInterval(id);
   }, []);
 
+  const locale = resolveLanguage(api.settings.language);
+
   const fmt: Intl.DateTimeFormatOptions = {
     hour: "2-digit",
     minute: "2-digit",
@@ -25,7 +28,7 @@ function TimeWidget({ api }: { api: PluginAPI<TimeData> }) {
   };
 
   const dateStr = showDate
-    ? now.toLocaleDateString(undefined, {
+    ? now.toLocaleDateString(locale === "zh" ? "zh-CN" : "en-US", {
         weekday: "long",
         year: "numeric",
         month: "long",
@@ -35,10 +38,10 @@ function TimeWidget({ api }: { api: PluginAPI<TimeData> }) {
 
   return (
     <div className="select-none text-center">
-      <div className="text-6xl font-light tracking-tight tabular-nums">
-        {now.toLocaleTimeString(undefined, fmt)}
+      <div className="text-6xl font-light tracking-tight tabular-nums drop-shadow-sm">
+        {now.toLocaleTimeString(locale === "zh" ? "zh-CN" : "en-US", fmt)}
       </div>
-      {dateStr && <div className="mt-2 text-lg opacity-70">{dateStr}</div>}
+      {dateStr && <div className="mt-2 text-lg font-medium opacity-80">{dateStr}</div>}
     </div>
   );
 }

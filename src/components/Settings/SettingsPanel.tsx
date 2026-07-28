@@ -1,9 +1,12 @@
-import { useEffect, useId, useRef, useState } from "react";
-import type { WBHPSettings, ThemeMode, WebDAVConfig } from "../../plugins/types";
+import { useEffect, useId, useRef, useState, type ChangeEvent } from "react";
+import type { WBHPSettings, ThemeMode, LanguageMode, FontFamily, WebDAVConfig } from "../../plugins/types";
 import { getBackgroundPlugins, getWidgetPlugins } from "../../plugins/registry";
 import { checkWebDAVConnection, backupToWebDAV, restoreFromWebDAV } from "../../services/webdav";
-import { exportAll, importAll, clearAll } from "../../services/storage";
+import { exportAll, importAll, clearAll, getItem, setItem } from "../../services/storage";
 import type { StorageSnapshot } from "../../services/storage";
+import type { CustomBackgroundData } from "../../plugins/backgrounds/custom";
+import type { PresetBackgroundData, PresetStyle } from "../../plugins/backgrounds/preset";
+import { getTranslations } from "../../i18n";
 import PluginCard from "../ui/PluginCard";
 
 interface SettingsPanelProps {
@@ -22,17 +25,32 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
   const panelRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
 
+  const t = getTranslations(settings.language);
+
   const tabs: { id: Tab; label: string }[] = [
-    { id: "general", label: "General" },
-    { id: "background", label: "Background" },
-    { id: "backup", label: "Backup" },
-    { id: "data", label: "Data" },
+    { id: "general", label: t.settings.tabs.general },
+    { id: "background", label: t.settings.tabs.background },
+    { id: "backup", label: t.settings.tabs.backup },
+    { id: "data", label: t.settings.tabs.data },
   ];
 
   const themeOptions: { value: ThemeMode; label: string }[] = [
-    { value: "system", label: "System" },
-    { value: "light", label: "Light" },
-    { value: "dark", label: "Dark" },
+    { value: "system", label: t.settings.general.themeOptions.system },
+    { value: "light", label: t.settings.general.themeOptions.light },
+    { value: "dark", label: t.settings.general.themeOptions.dark },
+  ];
+
+  const languageOptions: { value: LanguageMode; label: string }[] = [
+    { value: "auto", label: t.settings.general.languageOptions.auto },
+    { value: "zh", label: t.settings.general.languageOptions.zh },
+    { value: "en", label: t.settings.general.languageOptions.en },
+  ];
+
+  const fontOptions: { value: FontFamily; label: string }[] = [
+    { value: "misans", label: t.settings.general.fontOptions.misans },
+    { value: "serif", label: t.settings.general.fontOptions.serif },
+    { value: "opensans", label: t.settings.general.fontOptions.opensans },
+    { value: "system", label: t.settings.general.fontOptions.system },
   ];
 
   useEffect(() => {
@@ -76,56 +94,56 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="m-4 flex max-h-[80vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl animate-scale-in dark:bg-gray-900"
+        className="m-4 flex max-h-[85vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl animate-scale-in dark:bg-gray-900"
       >
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-800">
           <h2 id={titleId} className="text-lg font-semibold">
-            Settings
+            {t.settings.title}
           </h2>
           <button
             ref={closeBtnRef}
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
-            aria-label="Close settings"
+            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800"
+            aria-label={t.settings.close}
           >
             ✕
           </button>
         </div>
 
-        <div className="flex border-b border-gray-200 px-6 dark:border-gray-700" role="tablist" aria-label="Settings sections">
-          {tabs.map((t) => (
+        <div className="flex border-b border-gray-200 px-6 dark:border-gray-800" role="tablist" aria-label="Settings sections">
+          {tabs.map((tabItem) => (
             <button
-              key={t.id}
+              key={tabItem.id}
               type="button"
               role="tab"
-              aria-selected={tab === t.id}
-              onClick={() => setTab(t.id)}
-              className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
-                tab === t.id
+              aria-selected={tab === tabItem.id}
+              onClick={() => setTab(tabItem.id)}
+              className={`border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
+                tab === tabItem.id
                   ? "border-blue-500 text-blue-500"
-                  : "border-transparent hover:text-gray-700 dark:hover:text-gray-300"
+                  : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
               }`}
             >
-              {t.label}
+              {tabItem.label}
             </button>
           ))}
         </div>
 
-        <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4" role="tabpanel">
+        <div className="flex-1 space-y-5 overflow-y-auto px-6 py-5" role="tabpanel">
           {tab === "general" && (
             <>
               <div>
-                <label className="mb-1 block text-sm font-medium">Theme</label>
-                <div className="flex gap-2" role="group" aria-label="Theme">
+                <label className="mb-2 block text-sm font-medium">{t.settings.general.theme}</label>
+                <div className="flex gap-2" role="group" aria-label={t.settings.general.theme}>
                   {themeOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => updateSettings({ theme: opt.value })}
-                      className={`rounded-lg px-4 py-2 text-sm transition-colors ${
+                      className={`flex-1 rounded-lg px-3 py-2 text-sm transition-colors ${
                         settings.theme === opt.value
-                          ? "bg-blue-500 text-white"
+                          ? "bg-blue-500 font-medium text-white shadow-sm"
                           : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
                       }`}
                       aria-pressed={settings.theme === opt.value}
@@ -137,24 +155,66 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
               </div>
 
               <div>
-                <label htmlFor="wbhp-user-name" className="mb-1 block text-sm font-medium">
-                  Your Name
+                <label className="mb-2 block text-sm font-medium">{t.settings.general.language}</label>
+                <div className="flex gap-2" role="group" aria-label={t.settings.general.language}>
+                  {languageOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => updateSettings({ language: opt.value })}
+                      className={`flex-1 rounded-lg px-3 py-2 text-sm transition-colors ${
+                        settings.language === opt.value
+                          ? "bg-blue-500 font-medium text-white shadow-sm"
+                          : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                      }`}
+                      aria-pressed={settings.language === opt.value}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label className="mb-2 block text-sm font-medium">{t.settings.general.font}</label>
+                <div className="grid grid-cols-2 gap-2" role="group" aria-label={t.settings.general.font}>
+                  {fontOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      type="button"
+                      onClick={() => updateSettings({ fontFamily: opt.value })}
+                      className={`rounded-lg px-3 py-2 text-sm text-left transition-colors ${
+                        settings.fontFamily === opt.value
+                          ? "bg-blue-500 font-medium text-white shadow-sm"
+                          : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                      }`}
+                      aria-pressed={settings.fontFamily === opt.value}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="wbhp-user-name" className="mb-1.5 block text-sm font-medium">
+                  {t.settings.general.userName}
                 </label>
                 <input
                   id="wbhp-user-name"
                   type="text"
                   value={settings.userName}
                   onChange={(e) => updateSettings({ userName: e.target.value })}
-                  placeholder="Enter your name..."
-                  className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 dark:border-gray-700 dark:bg-gray-800"
+                  placeholder={t.settings.general.userNamePlaceholder}
+                  className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
                   autoComplete="nickname"
                 />
               </div>
 
               <div>
-                <label className="mb-2 block text-sm font-medium">Active Widgets</label>
-                <p className="mb-2 text-xs opacity-60">
-                  Empty selection shows all widgets. Click to toggle.
+                <label className="mb-1 block text-sm font-medium">{t.settings.general.activeWidgets}</label>
+                <p className="mb-2.5 text-xs opacity-60">
+                  {t.settings.general.activeWidgetsHelp}
                 </p>
                 <div className="space-y-2">
                   {getWidgetPlugins().map((p) => {
@@ -167,6 +227,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                         key={p.id}
                         plugin={p}
                         isActive={isActive}
+                        language={settings.language}
                         onToggle={() => {
                           const base =
                             settings.activeWidgets.length === 0
@@ -186,24 +247,13 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
           )}
 
           {tab === "background" && (
-            <div>
-              <label className="mb-2 block text-sm font-medium">Background</label>
-              <div className="space-y-2">
-                {getBackgroundPlugins().map((p) => (
-                  <PluginCard
-                    key={p.id}
-                    plugin={p}
-                    isActive={settings.activeBackground === p.id}
-                    onToggle={() => updateSettings({ activeBackground: p.id })}
-                  />
-                ))}
-              </div>
-            </div>
+            <BackgroundSettingsSection settings={settings} updateSettings={updateSettings} />
           )}
 
           {tab === "backup" && (
             <WebDAVSection
               config={settings.webdav}
+              language={settings.language}
               updateConfig={(patch) =>
                 updateSettings({ webdav: { ...settings.webdav, ...patch } })
               }
@@ -214,15 +264,172 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
             />
           )}
 
-          {tab === "data" && <DataSection />}
+          {tab === "data" && <DataSection language={settings.language} />}
         </div>
       </div>
     </div>
   );
 }
 
+function BackgroundSettingsSection({
+  settings,
+  updateSettings,
+}: {
+  settings: WBHPSettings;
+  updateSettings: (patch: Partial<WBHPSettings>) => void;
+}) {
+  const t = getTranslations(settings.language);
+  const activeBg = settings.activeBackground;
+
+  // Custom background data local state
+  const customDataKey = "plugin:custom";
+  const defaultCustomData: CustomBackgroundData = {
+    imageUrl: "",
+    blur: 0,
+    overlayOpacity: 30,
+  };
+  const [customData, setCustomData] = useState<CustomBackgroundData>(() =>
+    getItem<CustomBackgroundData>(customDataKey, defaultCustomData),
+  );
+
+  const updateCustomData = (patch: Partial<CustomBackgroundData>) => {
+    const next = { ...customData, ...patch };
+    setCustomData(next);
+    setItem(customDataKey, next);
+  };
+
+  const handleFileUpload = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const result = evt.target?.result as string;
+      if (result) {
+        updateCustomData({ imageUrl: result });
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  // Preset background data local state
+  const presetDataKey = "plugin:preset";
+  const defaultPresetData: PresetBackgroundData = { style: "aurora" };
+  const [presetData, setPresetData] = useState<PresetBackgroundData>(() =>
+    getItem<PresetBackgroundData>(presetDataKey, defaultPresetData),
+  );
+
+  const updatePresetData = (style: PresetStyle) => {
+    const next = { style };
+    setPresetData(next);
+    setItem(presetDataKey, next);
+  };
+
+  return (
+    <div className="space-y-4">
+      <label className="mb-2 block text-sm font-medium">{t.settings.background.title}</label>
+      <div className="space-y-2">
+        {getBackgroundPlugins().map((p) => (
+          <PluginCard
+            key={p.id}
+            plugin={p}
+            isActive={activeBg === p.id}
+            language={settings.language}
+            onToggle={() => updateSettings({ activeBackground: p.id })}
+          />
+        ))}
+      </div>
+
+      {activeBg === "custom" && (
+        <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-4 dark:border-gray-800 dark:bg-gray-800/40">
+          <h4 className="text-sm font-semibold">{t.settings.background.custom}</h4>
+          
+          <div>
+            <label className="mb-1 block text-xs font-medium opacity-80">
+              {t.settings.background.customUpload}
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileUpload}
+              className="w-full text-xs text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-500 file:px-3 file:py-2 file:text-xs file:font-medium file:text-white hover:file:bg-blue-600 cursor-pointer"
+            />
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-medium opacity-80">
+              {t.settings.background.customUrl}
+            </label>
+            <input
+              type="url"
+              value={customData.imageUrl}
+              onChange={(e) => updateCustomData({ imageUrl: e.target.value })}
+              placeholder="https://example.com/wallpaper.jpg"
+              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
+            />
+          </div>
+
+          <div>
+            <div className="flex justify-between text-xs mb-1">
+              <span>{t.settings.background.blur}</span>
+              <span>{customData.blur}px</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={20}
+              value={customData.blur}
+              onChange={(e) => updateCustomData({ blur: parseInt(e.target.value, 10) || 0 })}
+              className="w-full accent-blue-500"
+            />
+          </div>
+
+          <div>
+            <div className="flex justify-between text-xs mb-1">
+              <span>{t.settings.background.overlay}</span>
+              <span>{customData.overlayOpacity}%</span>
+            </div>
+            <input
+              type="range"
+              min={0}
+              max={80}
+              value={customData.overlayOpacity}
+              onChange={(e) =>
+                updateCustomData({ overlayOpacity: parseInt(e.target.value, 10) || 0 })
+              }
+              className="w-full accent-blue-500"
+            />
+          </div>
+        </div>
+      )}
+
+      {activeBg === "preset" && (
+        <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-3 dark:border-gray-800 dark:bg-gray-800/40">
+          <h4 className="text-sm font-semibold">{t.settings.background.presetStyle}</h4>
+          <div className="grid grid-cols-2 gap-2">
+            {(["aurora", "cosmic", "mesh", "emerald", "sunset"] as PresetStyle[]).map((st) => (
+              <button
+                key={st}
+                type="button"
+                onClick={() => updatePresetData(st)}
+                className={`rounded-lg px-3 py-2 text-xs capitalize transition-colors ${
+                  presetData.style === st
+                    ? "bg-blue-500 font-medium text-white shadow-sm"
+                    : "bg-white hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800"
+                }`}
+              >
+                {st}
+              </button>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 function WebDAVSection({
   config,
+  language,
   updateConfig,
   status,
   setStatus,
@@ -230,6 +437,7 @@ function WebDAVSection({
   setBackupMsg,
 }: {
   config: WebDAVConfig;
+  language: LanguageMode;
   updateConfig: (patch: Partial<WebDAVConfig>) => void;
   status: string | null;
   setStatus: (s: string | null) => void;
@@ -237,13 +445,14 @@ function WebDAVSection({
   setBackupMsg: (s: string | null) => void;
 }) {
   const [busy, setBusy] = useState(false);
+  const t = getTranslations(language).settings.backup;
 
   const testConnection = async () => {
     setBusy(true);
-    setStatus("Testing...");
+    setStatus(t.testing);
     try {
       const ok = await checkWebDAVConnection(config);
-      setStatus(ok ? "✓ Connected successfully" : "✗ Connection failed");
+      setStatus(ok ? t.connected : t.failed);
     } finally {
       setBusy(false);
     }
@@ -251,22 +460,22 @@ function WebDAVSection({
 
   const doBackup = async () => {
     setBusy(true);
-    setBackupMsg("Backing up...");
+    setBackupMsg(t.backingUp);
     try {
       const result = await backupToWebDAV(config);
-      setBackupMsg(result.message);
+      setBackupMsg(result.success ? t.backupSuccess : t.backupFailed);
     } finally {
       setBusy(false);
     }
   };
 
   const doRestore = async () => {
-    if (!confirm("Restore will overwrite local WBHP data. Continue?")) return;
+    if (!confirm(t.restoreConfirm)) return;
     setBusy(true);
-    setBackupMsg("Restoring...");
+    setBackupMsg(t.restoring);
     try {
       const result = await restoreFromWebDAV(config);
-      setBackupMsg(result.message);
+      setBackupMsg(result.success ? t.restoreSuccess : t.restoreFailed);
     } finally {
       setBusy(false);
     }
@@ -276,7 +485,7 @@ function WebDAVSection({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <label className="text-sm font-medium" htmlFor="wbhp-webdav-toggle">
-          Enable WebDAV
+          {t.enableWebdav}
         </label>
         <button
           id="wbhp-webdav-toggle"
@@ -302,7 +511,7 @@ function WebDAVSection({
             type="url"
             value={config.url}
             onChange={(e) => updateConfig({ url: e.target.value })}
-            placeholder="WebDAV URL (e.g. https://dav.example.com/remote.php/dav/files/user/)"
+            placeholder={t.urlPlaceholder}
             className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
             autoComplete="url"
           />
@@ -310,7 +519,7 @@ function WebDAVSection({
             type="text"
             value={config.username}
             onChange={(e) => updateConfig({ username: e.target.value })}
-            placeholder="Username"
+            placeholder={t.usernamePlaceholder}
             className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
             autoComplete="username"
           />
@@ -318,13 +527,13 @@ function WebDAVSection({
             type="password"
             value={config.password}
             onChange={(e) => updateConfig({ password: e.target.value })}
-            placeholder="Password / app token"
+            placeholder={t.passwordPlaceholder}
             className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
             autoComplete="current-password"
           />
           <div>
-            <label className="mb-1 block text-sm font-medium" htmlFor="wbhp-autobackup">
-              Auto-backup interval (minutes, 0 = off)
+            <label className="mb-1 block text-xs font-medium" htmlFor="wbhp-autobackup">
+              {t.autoInterval}
             </label>
             <input
               id="wbhp-autobackup"
@@ -338,36 +547,36 @@ function WebDAVSection({
             />
           </div>
 
-          <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2 pt-1">
             <button
               type="button"
               disabled={busy}
               onClick={testConnection}
-              className="rounded-lg bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300 disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600"
+              className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-300 disabled:opacity-50 dark:bg-gray-800 dark:hover:bg-gray-700"
             >
-              Test Connection
+              {t.testBtn}
             </button>
             <button
               type="button"
               disabled={busy}
               onClick={doBackup}
-              className="rounded-lg bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600 disabled:opacity-50"
+              className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50"
             >
-              Backup Now
+              {t.backupBtn}
             </button>
             <button
               type="button"
               disabled={busy}
               onClick={doRestore}
-              className="rounded-lg bg-amber-500 px-4 py-2 text-sm text-white hover:bg-amber-600 disabled:opacity-50"
+              className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
             >
-              Restore
+              {t.restoreBtn}
             </button>
           </div>
-          {status && <p className="text-sm" role="status">{status}</p>}
-          {backupMsg && <p className="text-sm" role="status">{backupMsg}</p>}
+          {status && <p className="text-sm font-medium" role="status">{status}</p>}
+          {backupMsg && <p className="text-sm font-medium" role="status">{backupMsg}</p>}
           <p className="text-xs opacity-60">
-            Credentials are stored locally in this browser profile. Prefer app passwords / tokens.
+            {t.notice}
           </p>
         </>
       )}
@@ -375,8 +584,9 @@ function WebDAVSection({
   );
 }
 
-function DataSection() {
+function DataSection({ language }: { language: LanguageMode }) {
   const [msg, setMsg] = useState<string | null>(null);
+  const t = getTranslations(language).settings.data;
 
   const handleExport = () => {
     const snapshot = exportAll();
@@ -389,7 +599,7 @@ function DataSection() {
     a.download = `wbhp-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
-    setMsg("Data exported.");
+    setMsg(t.exported);
   };
 
   const handleImport = () => {
@@ -404,10 +614,10 @@ function DataSection() {
         try {
           const snapshot = JSON.parse(reader.result as string) as StorageSnapshot;
           importAll(snapshot);
-          setMsg("Data imported. Refreshing...");
+          setMsg(t.imported);
           setTimeout(() => window.location.reload(), 800);
         } catch {
-          setMsg("Invalid backup file.");
+          setMsg(t.invalid);
         }
       };
       reader.readAsText(file);
@@ -416,9 +626,9 @@ function DataSection() {
   };
 
   const handleClear = () => {
-    if (confirm("Are you sure? This will delete all WBHP data.")) {
+    if (confirm(t.clearConfirm)) {
       clearAll();
-      setMsg("All data cleared. Refreshing...");
+      setMsg(t.cleared);
       setTimeout(() => window.location.reload(), 800);
     }
   };
@@ -428,26 +638,26 @@ function DataSection() {
       <button
         type="button"
         onClick={handleExport}
-        className="w-full rounded-lg bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
+        className="w-full rounded-lg bg-blue-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-600 shadow-sm"
       >
-        Export Data (JSON)
+        {t.exportBtn}
       </button>
       <button
         type="button"
         onClick={handleImport}
-        className="w-full rounded-lg bg-green-500 px-4 py-2 text-sm text-white hover:bg-green-600"
+        className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 shadow-sm"
       >
-        Import Data (JSON)
+        {t.importBtn}
       </button>
       <button
         type="button"
         onClick={handleClear}
-        className="w-full rounded-lg bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600"
+        className="w-full rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-rose-700 shadow-sm"
       >
-        Clear All Data
+        {t.clearBtn}
       </button>
       {msg && (
-        <p className="text-center text-sm" role="status">
+        <p className="text-center text-sm font-medium" role="status">
           {msg}
         </p>
       )}

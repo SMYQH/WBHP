@@ -13,10 +13,5 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["storage"],
-  "host_permissions": [
-    "https://wttr.in/*",
-    "https://picsum.photos/*",
-    "https://icons.duckduckgo.com/*"
-  ]
+  "permissions": ["storage"]
 }

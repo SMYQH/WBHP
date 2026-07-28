@@ -8,6 +8,8 @@ import {
 
 export const DEFAULT_SETTINGS: WBHPSettings = {
   theme: "system",
+  language: "auto",
+  fontFamily: "misans",
   activeWidgets: [],
   activeBackground: "gradient",
   userName: "",
@@ -25,6 +27,8 @@ function isWellFormed(raw: unknown): raw is WBHPSettings {
   const s = raw as Partial<WBHPSettings>;
   return (
     typeof s.theme === "string" &&
+    typeof s.language === "string" &&
+    typeof s.fontFamily === "string" &&
     Array.isArray(s.activeWidgets) &&
     typeof s.activeBackground === "string" &&
     !!s.webdav &&
@@ -39,6 +43,8 @@ function normalize(raw: unknown): WBHPSettings {
   return {
     ...DEFAULT_SETTINGS,
     ...r,
+    language: r.language ?? DEFAULT_SETTINGS.language,
+    fontFamily: r.fontFamily ?? DEFAULT_SETTINGS.fontFamily,
     webdav: {
       ...DEFAULT_SETTINGS.webdav,
       ...(r.webdav ?? {}),

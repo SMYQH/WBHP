@@ -145,7 +145,6 @@ export interface Translations {
       name: string;
       desc: string;
       locationPlaceholder: string;
-      offlineNotice: string;
       unitCelsius: string;
       unitFahrenheit: string;
       city: string;
@@ -345,9 +344,8 @@ export const zhTranslations: Translations = {
     },
     weather: {
       name: "天气面板",
-      desc: "离线优化的简洁天气预报",
+      desc: "基于 IP 定位的实时天气预报",
       locationPlaceholder: "城市名称",
-      offlineNotice: "100% 离线隐私保护",
       unitCelsius: "摄氏度 (°C)",
       unitFahrenheit: "华氏度 (°F)",
       city: "城市",
@@ -547,9 +545,8 @@ export const enTranslations: Translations = {
     },
     weather: {
       name: "Weather",
-      desc: "Privacy-focused offline weather widget",
+      desc: "Real-time weather forecast based on IP location",
       locationPlaceholder: "City Name",
-      offlineNotice: "100% Offline & Private",
       unitCelsius: "Celsius (°C)",
       unitFahrenheit: "Fahrenheit (°F)",
       city: "City",

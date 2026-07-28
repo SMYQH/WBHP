@@ -1,6 +1,5 @@
-import { useSyncExternalStore } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 import type { PluginConfig, PluginAPI } from "../types";
-import { getTranslations } from "../../i18n";
 
 interface WeatherData {
   city: string;
@@ -12,7 +11,31 @@ interface WeatherData {
 function WeatherWidget({ api }: { api: PluginAPI<WeatherData> }) {
   const data = useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get);
   const { city, temp, condition, unit } = data;
-  const t = getTranslations(api.settings.language).widgets.weather;
+
+  useEffect(() => {
+    // Fetch live weather based on IP location via wttr.in API
+    fetch("https://wttr.in/?format=j1")
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData && resData.current_condition && resData.current_condition[0]) {
+          const current = resData.current_condition[0];
+          const area = resData.nearest_area && resData.nearest_area[0];
+          const cityName = area?.areaName?.[0]?.value || area?.region?.[0]?.value || city || "Local";
+          const condText = current.weatherDesc?.[0]?.value || condition || "Sunny";
+          const tempVal = unit === "fahrenheit" ? current.temp_F : current.temp_C;
+
+          api.data.set((prev) => ({
+            ...prev,
+            city: cityName,
+            temp: tempVal || prev.temp,
+            condition: condText,
+          }));
+        }
+      })
+      .catch((err) => {
+        console.warn("Failed to fetch live IP weather:", err);
+      });
+  }, [unit]);
 
   const unitLabel = unit === "fahrenheit" ? "°F" : "°C";
 
@@ -22,14 +45,11 @@ function WeatherWidget({ api }: { api: PluginAPI<WeatherData> }) {
         {getWeatherIcon(condition)}
       </div>
       <div className="text-2xl font-light tracking-tight mt-1">
-        {temp ? `${temp}${unitLabel}` : `24${unitLabel}`}
+        {temp ? `${temp}${unitLabel}` : `--${unitLabel}`}
       </div>
       <div className="text-sm opacity-70">{condition || "Sunny"}</div>
-      <div className="mt-0.5 text-xs opacity-50 flex items-center justify-center gap-1">
-        <span>📍 {city || "Tokyo"}</span>
-        <span className="text-[10px] bg-white/20 px-1.5 py-0.5 rounded-full dark:bg-white/10">
-          {t.offlineNotice}
-        </span>
+      <div className="mt-1 text-xs opacity-60 flex items-center justify-center gap-1 font-medium">
+        <span>📍 {city || "Local"}</span>
       </div>
     </div>
   );
@@ -48,11 +68,11 @@ function getWeatherIcon(cond: string): string {
 const config: PluginConfig<WeatherData> = {
   id: "weather",
   name: "Weather",
-  description: "Privacy-first 100% offline weather widget.",
+  description: "Real-time weather forecast based on IP location.",
   type: "widget",
   defaultData: {
-    city: "Shanghai",
-    temp: "24",
+    city: "Local",
+    temp: "--",
     condition: "Sunny",
     unit: "celsius",
   },

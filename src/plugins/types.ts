@@ -79,6 +79,13 @@ export interface WebDAVConfig {
   autoBackupInterval: number;
 }
 
+export interface UpdateSettings {
+  /** Periodically check GitHub Releases for a newer version. */
+  autoCheck: boolean;
+  /** When a newer version is found, automatically download the install package. */
+  autoDownload: boolean;
+}
+
 export interface WBHPSettings {
   theme: ThemeMode;
   language: LanguageMode;
@@ -90,5 +97,7 @@ export interface WBHPSettings {
   webdav: WebDAVConfig;
   /** User's display name for the greeting widget. */
   userName: string;
+  /** In-app update preferences (GitHub Releases + browser update_url). */
+  update: UpdateSettings;
 }
 

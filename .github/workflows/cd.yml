@@ -64,6 +64,8 @@ jobs:
     permissions:
       contents: write
     steps:
+      - uses: actions/checkout@v5
+
       - uses: actions/download-artifact@v7
         with:
           pattern: wbhp-*
@@ -82,6 +84,49 @@ jobs:
           cp artifacts/dist/wbhp-firefox.crx flattened/
           ls -la flattened/
 
+      - name: Sync browser update manifests to release version
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          VERSION="${TAG#v}"
+          cat > updates-chrome.xml <<EOF
+          <?xml version='1.0' encoding='UTF-8'?>
+          <gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
+            <app appid="apjmikgceehobplahpekiibgkjnfpbdb">
+              <updatecheck codebase="https://github.com/SMYQH/wbhp/releases/download/${TAG}/wbhp-chrome.crx" version="${VERSION}" />
+            </app>
+          </gupdate>
+          EOF
+          # Strip leading indentation introduced by the heredoc above
+          sed -i 's/^[[:space:]]*//' updates-chrome.xml
+
+          cat > updates-firefox.json <<EOF
+          {
+            "addons": {
+              "wbhp@example.com": {
+                "updates": [
+                  {
+                    "version": "${VERSION}",
+                    "update_link": "https://github.com/SMYQH/wbhp/releases/download/${TAG}/wbhp-firefox.zip"
+                  }
+                ]
+              }
+            }
+          }
+          EOF
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add updates-chrome.xml updates-firefox.json
+          if git diff --cached --quiet; then
+            echo "Update manifests already current"
+          else
+            git commit -m "chore: bump update manifests to ${TAG}"
+            # Push to the default branch so update_url keeps serving the latest version.
+            DEFAULT_BRANCH="$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')"
+            git push origin "HEAD:refs/heads/${DEFAULT_BRANCH}"
+          fi
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
@@ -92,20 +137,20 @@ jobs:
 
             ### 📦 安装
 
-            **Chrome / Edge:**
-            1. 下载 `wbhp-chrome.zip` 并解压
-            2. 打开 `chrome://extensions`，启用「开发者模式」
-            3. 点击「加载已解压的扩展程序」，选择解压后的文件夹
-            4. 或直接拖拽 `wbhp-chrome.crx` 到扩展页面
+            **Chrome / Edge（推荐 CRX，支持自动更新）:**
+            1. 下载 `wbhp-chrome.crx`，拖到 `chrome://extensions`（需开启开发者模式）
+            2. 或下载 `wbhp-chrome.zip` 解压后「加载已解压的扩展程序」
+            3. 通过 CRX 安装后，浏览器会按 `update_url` 自动检查并安装后续版本
 
             **Firefox:**
             1. 下载 `wbhp-firefox.zip` 并解压
             2. 打开 `about:debugging` → 「临时载入附加组件」
             3. 选择解压后文件夹中的 `manifest.json`
+            4. 正式分发可用 `about:addons` 从文件安装 zip（依赖 `update_url` 自动更新）
 
             ### 🔑 验证
             - CRX3 签名格式，兼容 Chrome 64+ / Firefox 109+
-            - 使用固定密钥签名，扩展 ID 保持一致
+            - 使用固定密钥签名，扩展 ID 保持一致，支持浏览器原生自动更新
           files: |
             flattened/wbhp-chrome.crx
             flattened/wbhp-chrome.zip

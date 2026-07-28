@@ -20,6 +20,10 @@ export const DEFAULT_SETTINGS: WBHPSettings = {
     password: "",
     autoBackupInterval: 0,
   },
+  update: {
+    autoCheck: true,
+    autoDownload: false,
+  },
 };
 
 function isWellFormed(raw: unknown): raw is WBHPSettings {
@@ -34,7 +38,11 @@ function isWellFormed(raw: unknown): raw is WBHPSettings {
     !!s.webdav &&
     typeof s.webdav === "object" &&
     typeof s.webdav.url === "string" &&
-    typeof s.userName === "string"
+    typeof s.userName === "string" &&
+    !!s.update &&
+    typeof s.update === "object" &&
+    typeof s.update.autoCheck === "boolean" &&
+    typeof s.update.autoDownload === "boolean"
   );
 }
 
@@ -48,6 +56,10 @@ function normalize(raw: unknown): WBHPSettings {
     webdav: {
       ...DEFAULT_SETTINGS.webdav,
       ...(r.webdav ?? {}),
+    },
+    update: {
+      ...DEFAULT_SETTINGS.update,
+      ...(r.update ?? {}),
     },
     activeWidgets: Array.isArray(r.activeWidgets) ? r.activeWidgets : [],
   };
@@ -80,6 +92,7 @@ function applyPatch(patch: Partial<WBHPSettings>): void {
     ...prev,
     ...patch,
     webdav: patch.webdav ? { ...prev.webdav, ...patch.webdav } : prev.webdav,
+    update: patch.update ? { ...prev.update, ...patch.update } : prev.update,
   };
   setSettings(next);
 }

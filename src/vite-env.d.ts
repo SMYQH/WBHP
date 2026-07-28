@@ -35,18 +35,43 @@ interface ChromeStorage {
   };
 }
 
-interface ChromeRuntimeApi {
-  storage?: ChromeStorage;
+interface ChromeAlarmsApi {
+  create?(
+    name: string,
+    alarmInfo: { when?: number; delayInMinutes?: number; periodInMinutes?: number },
+  ): void;
+  onAlarm?: {
+    addListener(callback: (alarm: { name: string }) => void): void;
+  };
 }
 
-declare var chrome: ChromeRuntimeApi | undefined;
+interface ChromeRuntimeApi {
+  storage?: ChromeStorage;
+  requestUpdateCheck?: (
+    callback: (status: string, details?: { version?: string }) => void,
+  ) => void;
+  reload?: () => void;
+  onInstalled?: { addListener(callback: () => void): void };
+  onStartup?: { addListener(callback: () => void): void };
+  onUpdateAvailable?: {
+    addListener(callback: (details: { version?: string }) => void): void;
+  };
+}
+
+interface ChromeApi {
+  storage?: ChromeStorage;
+  runtime?: ChromeRuntimeApi;
+  alarms?: ChromeAlarmsApi;
+}
+
+declare var chrome: ChromeApi | undefined;
 
 interface Window {
-  chrome?: ChromeRuntimeApi;
+  chrome?: ChromeApi;
 }
 
 declare var globalThis: typeof globalThis & {
-  chrome?: ChromeRuntimeApi;
+  chrome?: ChromeApi;
 };
 
 declare const __APP_VERSION__: string;

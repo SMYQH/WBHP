@@ -27,7 +27,16 @@ export interface Translations {
     upToDate: string;
     updateAvailable: string;
     downloadUpdate: string;
+    autoDownloadBtn: string;
     failed: string;
+    autoCheck: string;
+    autoCheckHelp: string;
+    autoDownload: string;
+    autoDownloadHelp: string;
+    bannerTitle: string;
+    bannerLater: string;
+    bannerDownload: string;
+    bannerInstallHint: string;
   };
   settings: {
     title: string;
@@ -232,12 +241,21 @@ export const zhTranslations: Translations = {
   },
   updater: {
     currentVersion: "当前版本",
-    checkUpdateBtn: "检查 GitHub 官方新版本",
-    checking: "正在检查 GitHub Release 更新...",
+    checkUpdateBtn: "检查更新",
+    checking: "正在检查更新...",
     upToDate: "已是最新版本",
-    updateAvailable: "发现 GitHub 官方新版本",
-    downloadUpdate: "前往 GitHub 下载最新版",
+    updateAvailable: "发现新版本",
+    downloadUpdate: "前往 GitHub 下载",
+    autoDownloadBtn: "立即下载安装包",
     failed: "检查更新失败，请稍后再试",
+    autoCheck: "自动检查更新",
+    autoCheckHelp: "打开新标签页时自动检查 GitHub Release，并尝试触发浏览器原生更新。",
+    autoDownload: "发现新版本时自动下载",
+    autoDownloadHelp: "检测到新版本后自动下载安装包（仍需手动安装；商店版由浏览器自动更新）。",
+    bannerTitle: "WBHP 有新版本可用",
+    bannerLater: "稍后",
+    bannerDownload: "下载更新",
+    bannerInstallHint: "下载后在扩展管理页拖入 .crx / 加载解压包即可完成更新。",
   },
   settings: {
     title: "设置",
@@ -442,12 +460,21 @@ export const enTranslations: Translations = {
   },
   updater: {
     currentVersion: "Current Version",
-    checkUpdateBtn: "Check for Updates on GitHub",
-    checking: "Checking GitHub Releases...",
+    checkUpdateBtn: "Check for Updates",
+    checking: "Checking for updates...",
     upToDate: "Up to date",
     updateAvailable: "New Version Available",
     downloadUpdate: "Download on GitHub",
+    autoDownloadBtn: "Download Installer Now",
     failed: "Failed to check updates",
+    autoCheck: "Auto-check for updates",
+    autoCheckHelp: "Check GitHub Releases when opening a new tab, and request the browser's native update.",
+    autoDownload: "Auto-download when available",
+    autoDownloadHelp: "Download the package automatically when a newer version is found (manual install still required for sideloaded builds).",
+    bannerTitle: "A new WBHP version is available",
+    bannerLater: "Later",
+    bannerDownload: "Download",
+    bannerInstallHint: "After download, drag the .crx onto the extensions page or load the unpacked zip.",
   },
   settings: {
     title: "Settings",

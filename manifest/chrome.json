@@ -4,6 +4,11 @@
   "version": "0.4.1",
   "description": "Web Browser Home Page — A modern, pluggable new tab page.",
   "author": "WBHP Contributors",
+  "update_url": "https://raw.githubusercontent.com/SMYQH/wbhp/master/updates-chrome.xml",
+  "key": "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAzP2m2lBrrmFT1wUzy9UDTUf/G8e3SdXZM/rGRc0AdJH3MLHyr0CdrxlIQIiXJLFn0eulcLL0SeS/1pv88qOf33N95uamhsEN73wfQepadHAnJ7ltLahBBAWn0k8AS5uQ/I9iqcHPbnQM1RICanUGCcWd8LxiqMG9Tu7UoUjBxOtWT2M6hbYaAi068XZuzOfP4Kf78cF5U3o4DfdgM2BjadhZUK2vw4LmnAz/mIshqlddbhD3HVz3JbMZPX8sZnKyhCMdn+Cg8GUUK5523oNll0pOu08kvxdv+fYz1Ow5PNWGqGLCyPFz5pL9i4YIINeDYRLYyUt96MVS0V+2fpmh1KwL51y3EGrqKZcw1U8p/j5YJrCsYl5Aj20UYFrt2yMusk14xq9/Wj8TcyvPuqdOWIkog99/Emm4iECliaF0scpJGzqFr3ZAeoHiNOD2KVxH/rWN4cXzrA+JJ5z3CwLF4TCZl3pWszegSoSMVkABd9hg6Zd2uojS1EQoeMC7qbGRFymWGtooa8yfjWRtIf5CXnjo0BdPhPtB+gIkrxcGIgnS+NMNmPZ3dOHkQ36885sbJZ1WxIu+3yyUjqKGbpZt4bzwio6AQ9upkwtCdb+rJ8dojMQ92b9Xph+euD2qbyslUySNkq0DEVx1BK1cwzabNtIwUPrXkHKqEE3nbEhYyhMCAwEAAQ==",
+  "background": {
+    "service_worker": "background.js"
+  },
   "chrome_url_overrides": {
     "newtab": "index.html"
   },
@@ -13,5 +18,5 @@
     "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
-  "permissions": ["storage"]
+  "permissions": ["storage", "alarms"]
 }

@@ -8,7 +8,7 @@ import type { CustomBackgroundData } from "../../plugins/backgrounds/custom";
 import type { PresetBackgroundData, PresetStyle } from "../../plugins/backgrounds/preset";
 import { getTranslations } from "../../i18n";
 import PluginCard from "../ui/PluginCard";
-import { checkForUpdates, type UpdateCheckResult } from "../../services/updater";
+import { checkForUpdates, triggerAutoDownload, type UpdateCheckResult } from "../../services/updater";
 
 interface SettingsPanelProps {
   settings: WBHPSettings;
@@ -245,7 +245,20 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                 </div>
               </div>
 
-              <UpdateSection language={settings.language} />
+              <UpdateSection
+                language={settings.language}
+                autoCheck={settings.update?.autoCheck !== false}
+                autoDownload={settings.update?.autoDownload === true}
+                onChange={(patch) =>
+                  updateSettings({
+                    update: {
+                      autoCheck: settings.update?.autoCheck !== false,
+                      autoDownload: settings.update?.autoDownload === true,
+                      ...patch,
+                    },
+                  })
+                }
+              />
             </>
           )}
 
@@ -672,12 +685,22 @@ function DataSection({ language }: { language: LanguageMode }) {
   );
 }
 
-function UpdateSection({ language }: { language: LanguageMode }) {
+function UpdateSection({
+  language,
+  autoCheck,
+  autoDownload,
+  onChange,
+}: {
+  language: LanguageMode;
+  autoCheck: boolean;
+  autoDownload: boolean;
+  onChange: (patch: { autoCheck?: boolean; autoDownload?: boolean }) => void;
+}) {
   const t = getTranslations(language).updater;
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState<UpdateCheckResult | null>(null);
 
-  const currentVer = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "0.2.0";
+  const currentVer = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "0.4.1";
 
   const handleCheck = async () => {
     setChecking(true);
@@ -688,6 +711,11 @@ function UpdateSection({ language }: { language: LanguageMode }) {
     } finally {
       setChecking(false);
     }
+  };
+
+  const handleDownload = (url?: string) => {
+    if (!url) return;
+    triggerAutoDownload(url);
   };
 
   return (
@@ -709,19 +737,58 @@ function UpdateSection({ language }: { language: LanguageMode }) {
         </button>
       </div>
 
+      <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-white/70 p-3 dark:bg-gray-900/40">
+        <input
+          type="checkbox"
+          className="mt-0.5"
+          checked={autoCheck}
+          onChange={(e) => onChange({ autoCheck: e.target.checked })}
+        />
+        <span>
+          <span className="block text-sm font-medium">{t.autoCheck}</span>
+          <span className="block text-xs opacity-60">{t.autoCheckHelp}</span>
+        </span>
+      </label>
+
+      <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-white/70 p-3 dark:bg-gray-900/40">
+        <input
+          type="checkbox"
+          className="mt-0.5"
+          checked={autoDownload}
+          disabled={!autoCheck}
+          onChange={(e) => onChange({ autoDownload: e.target.checked })}
+        />
+        <span>
+          <span className="block text-sm font-medium">{t.autoDownload}</span>
+          <span className="block text-xs opacity-60">{t.autoDownloadHelp}</span>
+        </span>
+      </label>
+
       {result && (
         <div className="pt-2 border-t border-gray-200/50 text-xs dark:border-gray-700/50">
           {result.hasUpdate ? (
-            <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
-              <span>🎉 {t.updateAvailable}: v{result.latestVersion}</span>
-              <a
-                href={result.releaseUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="underline font-semibold hover:text-emerald-700"
-              >
-                {t.downloadUpdate} ↗
-              </a>
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+                <span>🎉 {t.updateAvailable}: v{result.latestVersion}</span>
+                <a
+                  href={result.releaseUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-emerald-700 opacity-80 hover:opacity-100"
+                >
+                  {t.downloadUpdate} ↗
+                </a>
+              </div>
+              {(result.downloadZipUrl || result.downloadUrl) && (
+                <button
+                  type="button"
+                  onClick={() => handleDownload(result.downloadZipUrl || result.downloadUrl)}
+                  className="w-full rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 shadow-sm transition-all flex items-center justify-center gap-1.5"
+                >
+                  <span>⚡</span>
+                  <span>{t.autoDownloadBtn} (v{result.latestVersion})</span>
+                </button>
+              )}
             </div>
           ) : result.error ? (
             <span className="text-rose-500">{t.failed}: {result.error}</span>

@@ -677,11 +677,13 @@ function UpdateSection({ language }: { language: LanguageMode }) {
   const [checking, setChecking] = useState(false);
   const [result, setResult] = useState<UpdateCheckResult | null>(null);
 
+  const currentVer = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "0.2.0";
+
   const handleCheck = async () => {
     setChecking(true);
     setResult(null);
     try {
-      const res = await checkForUpdates("0.2.0");
+      const res = await checkForUpdates(currentVer);
       setResult(res);
     } finally {
       setChecking(false);
@@ -693,7 +695,7 @@ function UpdateSection({ language }: { language: LanguageMode }) {
       <div className="flex items-center justify-between">
         <div>
           <h4 className="text-sm font-semibold flex items-center gap-2">
-            <span>🚀</span> WBHP v0.2.0
+            <span>🚀</span> WBHP v{currentVer}
           </h4>
           <p className="text-xs opacity-60">Web Browser Home Page</p>
         </div>
@@ -724,7 +726,7 @@ function UpdateSection({ language }: { language: LanguageMode }) {
           ) : result.error ? (
             <span className="text-rose-500">{t.failed}: {result.error}</span>
           ) : (
-            <span className="text-gray-500 dark:text-gray-400">✓ {t.upToDate}</span>
+            <span className="text-gray-500 dark:text-gray-400">✓ {t.upToDate} (v{currentVer})</span>
           )}
         </div>
       )}

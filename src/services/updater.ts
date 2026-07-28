@@ -23,8 +23,9 @@ function compareSemver(v1: string, v2: string): number {
   return 0;
 }
 
-/** Check GitHub Releases API for new version */
-export async function checkForUpdates(currentVersion: string = "0.2.0"): Promise<UpdateCheckResult> {
+export async function checkForUpdates(
+  currentVersion: string = typeof __APP_VERSION__ !== "undefined" ? __APP_VERSION__ : "0.2.0",
+): Promise<UpdateCheckResult> {
   try {
     const res = await fetch(GITHUB_RELEASE_API, {
       headers: { Accept: "application/vnd.github.v3+json" },

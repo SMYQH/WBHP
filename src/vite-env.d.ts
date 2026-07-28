@@ -48,3 +48,5 @@ interface Window {
 declare var globalThis: typeof globalThis & {
   chrome?: ChromeRuntimeApi;
 };
+
+declare const __APP_VERSION__: string;

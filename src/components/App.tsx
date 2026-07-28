@@ -63,7 +63,7 @@ export default function App() {
     const handler = (e: KeyboardEvent) => {
       // Avoid shortcuts if active element is input or textarea
       const targetTag = (e.target as HTMLElement)?.tagName?.toLowerCase();
-      const isEditing = targetTag === "input" || targetTag === "textarea" || targetTag === "select";
+      const isEditing = targetTag === "input" || targetTag === "textarea" || targetTag === "select" || (e.target as HTMLElement)?.isContentEditable;
 
       if (e.key === "Escape") {
         if (showSettings) setShowSettings(false);

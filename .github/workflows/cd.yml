@@ -1,5 +1,8 @@
 name: CD
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 # Triggered only by real tag pushes (e.g. `git push origin v0.1.0`).
 # workflow_dispatch is intentionally omitted: it sets `github.ref_name` to
 # the default branch, which previously created a bogus "WBHP master" release.
@@ -15,9 +18,9 @@ jobs:
       matrix:
         browser: [chrome, firefox]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 24
           cache: npm
@@ -47,7 +50,7 @@ jobs:
           cd ..
 
       - name: Upload CRX + ZIP
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: wbhp-${{ matrix.browser }}
           path: |
@@ -61,7 +64,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           pattern: wbhp-*
           merge-multiple: true

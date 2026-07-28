@@ -2,6 +2,24 @@ export type LanguageMode = "auto" | "zh" | "en";
 export type FontFamily = "misans" | "serif" | "opensans" | "system";
 
 export interface Translations {
+  zenMode: {
+    enter: string;
+    exit: string;
+    desc: string;
+  };
+  commandPalette: {
+    title: string;
+    placeholder: string;
+    noResults: string;
+    shortcutHint: string;
+    actions: {
+      openSettings: string;
+      toggleZen: string;
+      themeLight: string;
+      themeDark: string;
+      themeSystem: string;
+    };
+  };
   settings: {
     title: string;
     close: string;
@@ -42,6 +60,7 @@ export interface Translations {
       gradient: string;
       custom: string;
       preset: string;
+      bing: string;
       customUrl: string;
       customUpload: string;
       customUploadBtn: string;
@@ -116,6 +135,8 @@ export interface Translations {
       desc: string;
       placeholder: string;
       button: string;
+      aiMode: string;
+      aiPlaceholder: string;
     };
     links: {
       name: string;
@@ -123,6 +144,8 @@ export interface Translations {
       addBtn: string;
       titlePlaceholder: string;
       urlPlaceholder: string;
+      categoryPlaceholder: string;
+      allCategory: string;
       saveBtn: string;
       cancelBtn: string;
       titleRequired: string;
@@ -140,16 +163,76 @@ export interface Translations {
       temp: string;
       condition: string;
     };
+    todo: {
+      name: string;
+      desc: string;
+      placeholder: string;
+      addBtn: string;
+      all: string;
+      active: string;
+      completed: string;
+      clearCompleted: string;
+      emptyState: string;
+      itemsLeft: string;
+    };
+    notes: {
+      name: string;
+      desc: string;
+      placeholder: string;
+      clearBtn: string;
+      words: string;
+      chars: string;
+    };
+    quote: {
+      name: string;
+      desc: string;
+      refreshBtn: string;
+    };
+    worldclock: {
+      name: string;
+      desc: string;
+      addCity: string;
+      cityPlaceholder: string;
+      selectTimezone: string;
+    };
+    rss: {
+      name: string;
+      desc: string;
+      githubTrending: string;
+      hackerNews: string;
+      devTo: string;
+      refresh: string;
+      readMore: string;
+    };
   };
   backgrounds: {
     color: { name: string; desc: string };
     gradient: { name: string; desc: string };
     custom: { name: string; desc: string };
     preset: { name: string; desc: string };
+    bing: { name: string; desc: string };
   };
 }
 
 export const zhTranslations: Translations = {
+  zenMode: {
+    enter: "进入专注模式",
+    exit: "退出专注模式 (按 Esc 或 Z)",
+    desc: "隐藏所有挂件，极简沉浸沉思",
+  },
+  commandPalette: {
+    title: "快捷命令面板",
+    placeholder: "输入指令或搜索挂件 (Ctrl+K)...",
+    noResults: "未找到匹配的命令或挂件",
+    shortcutHint: "提示：使用 Ctrl+K 或 / 随时打开面板",
+    actions: {
+      openSettings: "打开设置面板",
+      toggleZen: "切换专注模式 / 禅模式",
+      themeLight: "切换至浅色外观",
+      themeDark: "切换至深色外观",
+      themeSystem: "跟随系统外观",
+    },
+  },
   settings: {
     title: "设置",
     close: "关闭设置",
@@ -187,9 +270,10 @@ export const zhTranslations: Translations = {
     background: {
       title: "背景模式",
       color: "纯色背景",
-      gradient: "渐变色背景",
+      gradient: "炫彩渐变",
       custom: "自定义图片/本地上传",
       preset: "内置离线矢量图案",
+      bing: "Bing 每日壁纸",
       customUrl: "自定义壁纸 URL 链接",
       customUpload: "本地图片上传",
       customUploadBtn: "选择本地图片",
@@ -261,16 +345,20 @@ export const zhTranslations: Translations = {
     },
     search: {
       name: "快捷搜索",
-      desc: "多引擎无缝切换的网页搜索栏",
+      desc: "多引擎无缝切换与 AI 智能问答搜索栏",
       placeholder: "输入关键词搜索...",
       button: "搜索",
+      aiMode: "AI 提问模式",
+      aiPlaceholder: "询问 AI 助手 (ChatGPT / Gemini / Perplexity)...",
     },
     links: {
       name: "快捷导航",
-      desc: "一键直达常用网站与书签",
+      desc: "支持分类标签与智能 Icon 的常用书签导航",
       addBtn: "添加导航",
       titlePlaceholder: "网站名称",
       urlPlaceholder: "https://example.com",
+      categoryPlaceholder: "分类标签 (可选，如 工作 / 娱乐)",
+      allCategory: "全部导航",
       saveBtn: "保存",
       cancelBtn: "取消",
       titleRequired: "请输入网站名称",
@@ -288,16 +376,76 @@ export const zhTranslations: Translations = {
       temp: "温度",
       condition: "天气状况",
     },
+    todo: {
+      name: "待办清单",
+      desc: "轻量级高效待办事项与任务管理",
+      placeholder: "添加一条新待办事项...",
+      addBtn: "添加",
+      all: "全部",
+      active: "进行中",
+      completed: "已完成",
+      clearCompleted: "清除已完成",
+      emptyState: "暂无待办事项，轻松一下吧！",
+      itemsLeft: "项未完成",
+    },
+    notes: {
+      name: "快捷便签",
+      desc: "随手灵感记录与 Markdown 草稿纸",
+      placeholder: "在此输入随手便签或思考...",
+      clearBtn: "清空便签",
+      words: "字",
+      chars: "字符",
+    },
+    quote: {
+      name: "每日名言",
+      desc: "发人深省与激发灵感的金句名言",
+      refreshBtn: "换一句",
+    },
+    worldclock: {
+      name: "世界时钟",
+      desc: "多时区跨国协作城市时间卡片",
+      addCity: "添加城市",
+      cityPlaceholder: "输入城市或时区名称",
+      selectTimezone: "选择时区",
+    },
+    rss: {
+      name: "科技动态流",
+      desc: "GitHub Trending 与技术开发者资讯大本营",
+      githubTrending: "GitHub Trending",
+      hackerNews: "Hacker News",
+      devTo: "Dev.to",
+      refresh: "刷新",
+      readMore: "阅读全文",
+    },
   },
   backgrounds: {
     color: { name: "纯色背景", desc: "简约干净的单色背景" },
     gradient: { name: "炫彩渐变", desc: "柔和优雅的平滑渐变色彩" },
     custom: { name: "自定义壁纸", desc: "支持上传本地图片或自定义图像 URL" },
     preset: { name: "艺术图腾", desc: "无需网络的高清纯离线矢量绘表" },
+    bing: { name: "Bing 每日壁纸", desc: "微软 Bing 官方每日高清精选风景摄影" },
   },
 };
 
 export const enTranslations: Translations = {
+  zenMode: {
+    enter: "Enter Zen Mode",
+    exit: "Exit Zen Mode (Press Esc or Z)",
+    desc: "Hide all widgets for pure focus and meditation",
+  },
+  commandPalette: {
+    title: "Command Palette",
+    placeholder: "Type a command or search widgets (Ctrl+K)...",
+    noResults: "No matching commands or widgets found",
+    shortcutHint: "Tip: Press Ctrl+K or / anywhere to open palette",
+    actions: {
+      openSettings: "Open Settings Panel",
+      toggleZen: "Toggle Zen / Focus Mode",
+      themeLight: "Switch to Light Theme",
+      themeDark: "Switch to Dark Theme",
+      themeSystem: "System Theme",
+    },
+  },
   settings: {
     title: "Settings",
     close: "Close Settings",
@@ -338,6 +486,7 @@ export const enTranslations: Translations = {
       gradient: "Smooth Gradient",
       custom: "Custom Image / Local Upload",
       preset: "Offline Vector Patterns",
+      bing: "Bing Daily Wallpaper",
       customUrl: "Custom Image URL",
       customUpload: "Local Image Upload",
       customUploadBtn: "Choose Local Image",
@@ -409,16 +558,20 @@ export const enTranslations: Translations = {
     },
     search: {
       name: "Search Bar",
-      desc: "Web search bar with multi-engine support",
+      desc: "Web search bar with multi-engine support & AI assistant",
       placeholder: "Search the web...",
       button: "Search",
+      aiMode: "AI Mode",
+      aiPlaceholder: "Ask AI (ChatGPT / Gemini / Perplexity)...",
     },
     links: {
       name: "Quick Links",
-      desc: "Your favorite bookmarks and quick launch shortcuts",
+      desc: "Your favorite bookmarks with category tabs and smart favicons",
       addBtn: "Add Link",
       titlePlaceholder: "Link Title",
       urlPlaceholder: "https://example.com",
+      categoryPlaceholder: "Category (Optional, e.g. Work / Media)",
+      allCategory: "All Links",
       saveBtn: "Save",
       cancelBtn: "Cancel",
       titleRequired: "Title is required",
@@ -436,11 +589,53 @@ export const enTranslations: Translations = {
       temp: "Temperature",
       condition: "Condition",
     },
+    todo: {
+      name: "Todo List",
+      desc: "Lightweight, distraction-free task manager",
+      placeholder: "Add a new task...",
+      addBtn: "Add",
+      all: "All",
+      active: "Active",
+      completed: "Completed",
+      clearCompleted: "Clear completed",
+      emptyState: "No tasks here! Take a break 🎉",
+      itemsLeft: "items left",
+    },
+    notes: {
+      name: "Quick Notes",
+      desc: "Instant notepad for ideas & draft thoughts",
+      placeholder: "Type your notes or ideas here...",
+      clearBtn: "Clear note",
+      words: "words",
+      chars: "chars",
+    },
+    quote: {
+      name: "Daily Quote",
+      desc: "Inspirational & thought-provoking quotes",
+      refreshBtn: "New Quote",
+    },
+    worldclock: {
+      name: "World Clock",
+      desc: "Multi-timezone cards for global teams",
+      addCity: "Add City",
+      cityPlaceholder: "City or timezone name",
+      selectTimezone: "Select timezone",
+    },
+    rss: {
+      name: "Dev & Tech Feed",
+      desc: "GitHub Trending & top developer news",
+      githubTrending: "GitHub Trending",
+      hackerNews: "Hacker News",
+      devTo: "Dev.to",
+      refresh: "Refresh",
+      readMore: "Read full story",
+    },
   },
   backgrounds: {
     color: { name: "Solid Color", desc: "Clean and minimal solid color" },
     gradient: { name: "Gradient", desc: "Smooth color transition" },
     custom: { name: "Custom Wallpaper", desc: "Upload local photo or enter image URL" },
     preset: { name: "Offline Patterns", desc: "High quality vector geometric backdrops" },
+    bing: { name: "Bing Daily Wallpaper", desc: "Official Microsoft Bing daily curated photography" },
   },
 };

@@ -7,11 +7,15 @@ interface SearchEngine {
   name: string;
   url: string;
   icon: string;
+  isAi?: boolean;
 }
 
 const ENGINES: SearchEngine[] = [
   { id: "google", name: "Google", url: "https://www.google.com/search?q=", icon: "🔍" },
   { id: "bing", name: "Bing", url: "https://www.bing.com/search?q=", icon: "🔎" },
+  { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com/?q=", icon: "🤖", isAi: true },
+  { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", icon: "✨", isAi: true },
+  { id: "perplexity", name: "Perplexity", url: "https://www.perplexity.ai/search?q=", icon: "🧠", isAi: true },
   { id: "duckduckgo", name: "DuckDuckGo", url: "https://duckduckgo.com/?q=", icon: "🦆" },
   { id: "baidu", name: "Baidu", url: "https://www.baidu.com/s?wd=", icon: "🐾" },
   { id: "github", name: "GitHub", url: "https://github.com/search?q=", icon: "🐙" },
@@ -50,7 +54,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           type="search"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          placeholder={`${t.placeholder} (${engine.name})`}
+          placeholder={engine.isAi ? `${t.aiPlaceholder}` : `${t.placeholder} (${engine.name})`}
           className="flex-1 rounded-xl border border-white/30 bg-white/20 px-4 py-3 text-lg backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-400 dark:bg-white/10"
           autoFocus
           autoComplete="off"
@@ -58,9 +62,10 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
         />
         <button
           type="submit"
-          className="rounded-xl bg-blue-500/90 px-5 py-3 font-medium text-white backdrop-blur transition-all hover:bg-blue-600 active:scale-95"
+          className="rounded-xl bg-blue-500/90 px-5 py-3 font-medium text-white backdrop-blur transition-all hover:bg-blue-600 active:scale-95 flex items-center gap-1.5"
         >
-          {t.button}
+          <span>{engine.icon}</span>
+          <span>{t.button}</span>
         </button>
       </form>
       <div className="mt-3 flex flex-wrap justify-center gap-2" role="group" aria-label="Search engines">
@@ -69,15 +74,16 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             key={e.id}
             type="button"
             onClick={() => api.data.set({ defaultEngine: e.id })}
-            className={`rounded-lg px-3 py-1 text-sm transition-all ${
+            className={`rounded-lg px-3 py-1 text-sm transition-all flex items-center gap-1 ${
               e.id === defaultEngine
-                ? "bg-white/30 font-medium dark:bg-white/20 scale-105 shadow-sm"
-                : "bg-white/10 hover:bg-white/20 dark:bg-white/5"
+                ? "bg-white/30 font-medium dark:bg-white/20 scale-105 shadow-sm ring-1 ring-white/40"
+                : "bg-white/10 hover:bg-white/20 dark:bg-white/5 opacity-80 hover:opacity-100"
             }`}
             title={e.name}
             aria-pressed={e.id === defaultEngine}
           >
-            {e.icon} {e.name}
+            <span>{e.icon}</span>
+            <span>{e.name}</span>
           </button>
         ))}
       </div>
@@ -88,7 +94,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 const config: PluginConfig<SearchData> = {
   id: "search",
   name: "Search",
-  description: "Search the web from your new tab.",
+  description: "Search the web or ask AI from your new tab.",
   type: "widget",
   defaultData: { defaultEngine: "google" },
   defaultSize: { width: 4, height: 1 },

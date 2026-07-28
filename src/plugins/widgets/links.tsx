@@ -6,10 +6,12 @@ interface Link {
   id: string;
   title: string;
   url: string;
+  category?: string;
 }
 
 interface LinksData {
   links: Link[];
+  activeCategory?: string;
 }
 
 const GRADIENTS = [
@@ -31,13 +33,36 @@ function stringHash(str: string): number {
 }
 
 function LinkAvatar({ title, url }: { title: string; url: string }) {
+  const [imgError, setImgError] = useState(false);
+  let domain = "";
+  try {
+    domain = new URL(url).hostname;
+  } catch {
+    domain = url;
+  }
+
+  const faviconUrl = `https://www.google.com/s2/favicons?domain=${domain}&sz=64`;
+
+  if (!imgError && domain) {
+    return (
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/60 p-2 shadow-sm backdrop-blur transition-transform group-hover:scale-105 dark:bg-gray-800/60">
+        <img
+          src={faviconUrl}
+          alt={title}
+          onError={() => setImgError(true)}
+          className="h-6 w-6 object-contain"
+        />
+      </div>
+    );
+  }
+
   const label = (title.trim() || url.trim()).charAt(0).toUpperCase() || "★";
   const hash = stringHash(title + url);
   const gradient = GRADIENTS[hash % GRADIENTS.length];
 
   return (
     <div
-      className={`flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-sm font-semibold text-white shadow-sm transition-transform group-hover:scale-105`}
+      className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-sm font-semibold text-white shadow-sm transition-transform group-hover:scale-105`}
     >
       {label}
     </div>
@@ -63,16 +88,27 @@ function normalizeUrl(raw: string): string {
 
 function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
   const data = useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get);
-  const { links } = data;
+  const links = data.links || [];
+  const activeCategory = data.activeCategory || "ALL";
   const t = getTranslations(api.settings.language).widgets.links;
 
   const [adding, setAdding] = useState(false);
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
+  const [category, setCategory] = useState("");
   const [formError, setFormError] = useState<string | null>(null);
 
+  const categories = Array.from(
+    new Set(links.map((l) => l.category).filter((c): c is string => Boolean(c && c.trim())))
+  );
+
+  const filteredLinks = links.filter((l) => {
+    if (activeCategory === "ALL") return true;
+    return l.category === activeCategory;
+  });
+
   const removeLink = (id: string) => {
-    api.data.set({ links: links.filter((l) => l.id !== id) });
+    api.data.set({ ...data, links: links.filter((l) => l.id !== id) });
   };
 
   const addLink = (e?: FormEvent) => {
@@ -90,18 +126,48 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
       id: crypto.randomUUID(),
       title: title.trim(),
       url: normalized,
+      category: category.trim() || undefined,
     };
-    api.data.set({ links: [...links, newLink] });
+    api.data.set({ ...data, links: [...links, newLink] });
     setTitle("");
     setUrl("");
+    setCategory("");
     setFormError(null);
     setAdding(false);
   };
 
   return (
-    <div>
+    <div className="w-full">
+      {categories.length > 0 && (
+        <div className="mb-3 flex flex-wrap gap-1.5 border-b border-white/10 pb-2">
+          <button
+            onClick={() => api.data.set({ ...data, activeCategory: "ALL" })}
+            className={`rounded-lg px-3 py-1 text-xs font-medium transition-all ${
+              activeCategory === "ALL"
+                ? "bg-white/30 text-white shadow-sm dark:bg-white/20"
+                : "bg-white/10 text-white/70 hover:bg-white/20"
+            }`}
+          >
+            {t.allCategory}
+          </button>
+          {categories.map((cat) => (
+            <button
+              key={cat}
+              onClick={() => api.data.set({ ...data, activeCategory: cat })}
+              className={`rounded-lg px-3 py-1 text-xs font-medium transition-all ${
+                activeCategory === cat
+                  ? "bg-white/30 text-white shadow-sm dark:bg-white/20"
+                  : "bg-white/10 text-white/70 hover:bg-white/20"
+              }`}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+      )}
+
       <div className="grid grid-cols-4 gap-3 sm:grid-cols-6 md:grid-cols-8">
-        {links.map((link) => (
+        {filteredLinks.map((link) => (
           <a
             key={link.id}
             href={link.url}
@@ -159,6 +225,13 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
               placeholder={t.urlPlaceholder}
               className="flex-[2] rounded-lg bg-white/20 px-3 py-2 text-sm backdrop-blur dark:bg-white/10"
             />
+            <input
+              type="text"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+              placeholder={t.categoryPlaceholder}
+              className="flex-1 rounded-lg bg-white/20 px-3 py-2 text-sm backdrop-blur dark:bg-white/10"
+            />
           </div>
           <div className="flex gap-2">
             <button
@@ -196,11 +269,12 @@ const config: PluginConfig<LinksData> = {
   type: "widget",
   defaultData: {
     links: [
-      { id: "1", title: "GitHub", url: "https://github.com" },
-      { id: "2", title: "YouTube", url: "https://youtube.com" },
-      { id: "3", title: "Bilibili", url: "https://bilibili.com" },
-      { id: "4", title: "Gmail", url: "https://mail.google.com" },
+      { id: "1", title: "GitHub", url: "https://github.com", category: "Dev" },
+      { id: "2", title: "YouTube", url: "https://youtube.com", category: "Media" },
+      { id: "3", title: "Bilibili", url: "https://bilibili.com", category: "Media" },
+      { id: "4", title: "Gmail", url: "https://mail.google.com", category: "Tools" },
     ],
+    activeCategory: "ALL",
   },
   defaultSize: { width: 4, height: 2 },
   component: LinksWidget,

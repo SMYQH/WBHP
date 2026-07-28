@@ -4,10 +4,19 @@ import { useSettings } from "../../hooks/useSettings";
 import PluginHost from "../PluginHost";
 import ErrorBoundary from "../ErrorBoundary";
 
-export default function Dashboard() {
+interface DashboardProps {
+  isZenMode?: boolean;
+}
+
+export default function Dashboard({ isZenMode = false }: DashboardProps) {
   const { settings, updateSettings } = useSettings();
 
   const activeWidgets = useMemo(() => {
+    if (isZenMode) {
+      const timePlugin = getPlugin("time");
+      return timePlugin ? [timePlugin] : [];
+    }
+
     if (settings.activeWidgets.length > 0) {
       return settings.activeWidgets
         .map((id) => getPlugin(id))
@@ -15,7 +24,7 @@ export default function Dashboard() {
     }
     // Empty list means "show all widgets" (first-run default).
     return getWidgetPlugins();
-  }, [settings.activeWidgets]);
+  }, [settings.activeWidgets, isZenMode]);
 
   return (
     <main className="relative z-10 flex min-h-screen flex-col items-center justify-center gap-8 px-4 py-12">

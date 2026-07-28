@@ -31,6 +31,7 @@ jobs:
         env:
           BROWSER: ${{ matrix.browser }}
           CRX_KEY: ${{ matrix.browser == 'chrome' && secrets.CRX_KEY || secrets.CRX_KEY_FIREFOX }}
+          BUILD_VERSION: ${{ github.ref_name }}
         run: npx vite build
 
       - name: Verify artifacts

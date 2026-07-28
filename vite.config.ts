@@ -77,13 +77,15 @@ function buildExtensionPlugin() {
       const manifestSrc = resolve(rootDir, "manifest", `${browser}.json`);
       const manifestDest = resolve(outDir, "manifest.json");
       if (existsSync(manifestSrc)) {
-        // Keep package version in sync with package.json when possible.
+        // Keep package version in sync with package.json or git release tag when building.
         try {
           const pkg = JSON.parse(readFileSync(resolve(rootDir, "package.json"), "utf8")) as {
             version?: string;
           };
           const manifest = JSON.parse(readFileSync(manifestSrc, "utf8")) as Record<string, unknown>;
-          if (pkg.version) manifest.version = pkg.version;
+          const envVer = (process.env.BUILD_VERSION || process.env.GITHUB_REF_NAME || "").replace(/^v/, "").trim();
+          const version = envVer && /^\d+\.\d+/.test(envVer) ? envVer : pkg.version;
+          if (version) manifest.version = version;
           writeFileSync(manifestDest, JSON.stringify(manifest, null, 2) + "\n");
         } catch {
           copyFileSync(manifestSrc, manifestDest);

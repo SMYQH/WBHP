@@ -47,6 +47,8 @@ function normalize(raw: unknown): WBHPSettings {
   };
 }
 
+let cachedNormalized: { raw: unknown; value: WBHPSettings } | null = null;
+
 /**
  * Snapshot must be pure and referentially stable when data is unchanged.
  * Never write to storage inside getSnapshot — that breaks React concurrent mode.
@@ -54,9 +56,12 @@ function normalize(raw: unknown): WBHPSettings {
 function getSnapshot(): WBHPSettings {
   const raw = getSettings<unknown>(DEFAULT_SETTINGS);
   if (isWellFormed(raw)) return raw;
-  // Return a normalized view without persisting during render.
-  // Persistence happens on the next explicit updateSettings call.
-  return normalize(raw);
+  if (cachedNormalized && cachedNormalized.raw === raw) {
+    return cachedNormalized.value;
+  }
+  const normalized = normalize(raw);
+  cachedNormalized = { raw, value: normalized };
+  return normalized;
 }
 
 function subscribe(listener: () => void): () => void {

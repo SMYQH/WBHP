@@ -5,12 +5,14 @@ import { exportAll, importAll } from "./storage";
 // ── Low-level WebDAV helpers ────────────────────────────────────────
 
 function authHeaders(config: WebDAVConfig): Record<string, string> {
-  // btoa is fine for ASCII credentials; encodeURIComponent handles unicode.
-  const token = btoa(
-    `${unescape(encodeURIComponent(config.username))}:${unescape(encodeURIComponent(config.password))}`,
-  );
+  const str = `${config.username}:${config.password}`;
+  const bytes = new TextEncoder().encode(str);
+  let bin = "";
+  for (let i = 0; i < bytes.length; i++) {
+    bin += String.fromCharCode(bytes[i]);
+  }
   return {
-    Authorization: `Basic ${token}`,
+    Authorization: `Basic ${btoa(bin)}`,
   };
 }
 

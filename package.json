@@ -10,7 +10,7 @@
     "dev": "vite",
     "dev:firefox": "cross-env BROWSER=firefox vite",
     "build": "tsc -b && vite build",
-    "build:firefox": "cross-env BROWSER=firefox tsc -b && vite build",
+    "build:firefox": "tsc -b && cross-env BROWSER=firefox vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
     "build:all": "npm run build && npm run build:firefox"

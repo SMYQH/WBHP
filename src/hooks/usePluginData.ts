@@ -1,37 +1,36 @@
-import { useSyncExternalStore, useCallback } from "react";
+import { useMemo, useRef, useSyncExternalStore } from "react";
 import type { PluginDataStore, PluginCacheStore } from "../plugins/types";
-import { getPluginData, setPluginData } from "../services/storage";
+import {
+  getPluginData,
+  setPluginData,
+  subscribePluginData,
+} from "../services/storage";
 
 /** Create a reactive PluginDataStore backed by localStorage. */
 function createDataStore<D>(pluginId: string, fallback: D): PluginDataStore<D> {
-  const listeners = new Set<() => void>();
-
-  const getSnapshot = (): D => getPluginData<D>(pluginId, fallback);
-
-  const subscribe = (listener: () => void) => {
-    listeners.add(listener);
-    return () => listeners.delete(listener);
-  };
-
-  const set = (updater: D | ((prev: D) => D)) => {
-    const prev = getSnapshot();
-    const next =
-      typeof updater === "function" ? (updater as (prev: D) => D)(prev) : updater;
-    if (next === prev) return;
-    setPluginData(pluginId, next);
-    listeners.forEach((l) => l());
-  };
-
   return {
-    get: getSnapshot,
-    set,
-    subscribe,
+    get: () => getPluginData<D>(pluginId, fallback),
+    set: (updater) => {
+      const prev = getPluginData<D>(pluginId, fallback);
+      const next =
+        typeof updater === "function"
+          ? (updater as (prev: D) => D)(prev)
+          : updater;
+      if (Object.is(next, prev)) return;
+      setPluginData(pluginId, next);
+    },
+    subscribe: (listener) => subscribePluginData(pluginId, listener),
   };
 }
 
-/** Create an in-memory cache store (not persisted). */
+/** Create an in-memory cache store with subscription support. */
 function createCacheStore<C>(fallback: C): PluginCacheStore<C> {
-  let state = { ...fallback };
+  let state: C =
+    fallback !== null && typeof fallback === "object"
+      ? ({ ...(fallback as object) } as C)
+      : fallback;
+  const listeners = new Set<() => void>();
+
   return {
     get: () => state,
     set: (updater) => {
@@ -39,40 +38,41 @@ function createCacheStore<C>(fallback: C): PluginCacheStore<C> {
         typeof updater === "function"
           ? (updater as (prev: C) => C)(state)
           : updater;
-      if (next === state) return;
-      state = { ...next };
+      if (Object.is(next, state)) return;
+      state = next;
+      listeners.forEach((l) => l());
+    },
+    subscribe: (listener) => {
+      listeners.add(listener);
+      return () => listeners.delete(listener);
     },
   };
 }
 
 /**
- * React hook that returns a PluginDataStore + PluginCacheStore for a plugin.
- * Uses useSyncExternalStore for efficient reactivity.
+ * React hook that returns a stable PluginDataStore + PluginCacheStore.
+ * Both stores trigger re-renders via useSyncExternalStore.
  */
-export function usePluginData<D, C>(
+export function usePluginData<D, C = Record<string, never>>(
   pluginId: string,
   defaultData: D,
-  defaultCache: C,
+  defaultCache: C = {} as C,
 ): { data: PluginDataStore<D>; cache: PluginCacheStore<C> } {
-  // We wrap in useCallback to keep stable refs across renders.
-  const data = useCallback(
-    () => createDataStore<D>(pluginId, defaultData),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  )();
+  const dataRef = useRef<PluginDataStore<D> | null>(null);
+  const cacheRef = useRef<PluginCacheStore<C> | null>(null);
+  const idRef = useRef(pluginId);
 
-  const cache = useCallback(
-    () => createCacheStore<C>(defaultCache),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [],
-  )();
+  if (dataRef.current === null || idRef.current !== pluginId) {
+    idRef.current = pluginId;
+    dataRef.current = createDataStore(pluginId, defaultData);
+    cacheRef.current = createCacheStore(defaultCache);
+  }
 
-  // Subscribe to data changes so components re-render.
-  useSyncExternalStore(
-    data.subscribe,
-    data.get,
-    data.get,
-  );
+  const data = dataRef.current;
+  const cache = cacheRef.current!;
 
-  return { data, cache };
+  useSyncExternalStore(data.subscribe, data.get, data.get);
+  useSyncExternalStore(cache.subscribe, cache.get, cache.get);
+
+  return useMemo(() => ({ data, cache }), [data, cache]);
 }

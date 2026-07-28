@@ -77,15 +77,26 @@ function buildExtensionPlugin() {
       const manifestSrc = resolve(rootDir, "manifest", `${browser}.json`);
       const manifestDest = resolve(outDir, "manifest.json");
       if (existsSync(manifestSrc)) {
-        copyFileSync(manifestSrc, manifestDest);
+        // Keep package version in sync with package.json when possible.
+        try {
+          const pkg = JSON.parse(readFileSync(resolve(rootDir, "package.json"), "utf8")) as {
+            version?: string;
+          };
+          const manifest = JSON.parse(readFileSync(manifestSrc, "utf8")) as Record<string, unknown>;
+          if (pkg.version) manifest.version = pkg.version;
+          writeFileSync(manifestDest, JSON.stringify(manifest, null, 2) + "\n");
+        } catch {
+          copyFileSync(manifestSrc, manifestDest);
+        }
         console.log(`✅ Copied ${browser} manifest.json`);
       }
 
       // 2. Generate PNG icons from SVG (Chrome requires raster icons in manifest)
       try {
         await generatePngIcons(outDir);
-      } catch (err: any) {
-        console.warn(`⚠️  PNG icon generation failed: ${err.message}`);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        console.warn(`⚠️  PNG icon generation failed: ${message}`);
       }
 
       // 3. Copy other public assets, excluding icons/ (handled above)
@@ -120,18 +131,22 @@ function buildExtensionPlugin() {
           try { unlinkSync(tmpKeyPath); } catch { /* ignore */ }
           tmpKeyPath = null;
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         if (tmpKeyPath) {
           try { unlinkSync(tmpKeyPath); } catch { /* ignore */ }
           tmpKeyPath = null;
         }
-        console.warn(`⚠️  CRX packaging skipped: ${err.message}`);
+        const message = err instanceof Error ? err.message : String(err);
+        console.warn(`⚠️  CRX packaging skipped: ${message}`);
       }
     },
   };
 }
 
 export default defineConfig({
+  // Extension pages are loaded as chrome-extension://…/index.html — absolute
+  // root paths break asset loading. Relative base keeps JS/CSS co-located.
+  base: "./",
   plugins: [tailwindcss(), react(), buildExtensionPlugin()],
   resolve: {
     alias: {
@@ -141,5 +156,16 @@ export default defineConfig({
   build: {
     outDir: "dist",
     emptyOutDir: true,
+    target: "es2022",
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        // Keep chunk names stable and avoid hashed entry names that confuse
+        // manual inspection of unpacked extensions.
+        entryFileNames: "assets/[name]-[hash].js",
+        chunkFileNames: "assets/[name]-[hash].js",
+        assetFileNames: "assets/[name]-[hash][extname]",
+      },
+    },
   },
 });

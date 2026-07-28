@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import type { WBHPSettings, ThemeMode, WebDAVConfig } from "../../plugins/types";
 import { getBackgroundPlugins, getWidgetPlugins } from "../../plugins/registry";
 import { checkWebDAVConnection, backupToWebDAV, restoreFromWebDAV } from "../../services/webdav";
 import { exportAll, importAll, clearAll } from "../../services/storage";
 import type { StorageSnapshot } from "../../services/storage";
+import PluginCard from "../ui/PluginCard";
 
 interface SettingsPanelProps {
   settings: WBHPSettings;
@@ -17,6 +18,9 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
   const [tab, setTab] = useState<Tab>("general");
   const [webdavStatus, setWebdavStatus] = useState<string | null>(null);
   const [backupMsg, setBackupMsg] = useState<string | null>(null);
+  const titleId = useId();
+  const panelRef = useRef<HTMLDivElement>(null);
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
 
   const tabs: { id: Tab; label: string }[] = [
     { id: "general", label: "General" },
@@ -31,27 +35,73 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
     { value: "dark", label: "Dark" },
   ];
 
+  useEffect(() => {
+    closeBtnRef.current?.focus();
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key !== "Tab" || !panelRef.current) return;
+      const focusable = panelRef.current.querySelectorAll<HTMLElement>(
+        'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+      );
+      if (focusable.length === 0) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+    };
+  }, []);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col m-4">
-        {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-semibold">Settings</h2>
+    <div
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in"
+      onMouseDown={(e) => {
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div
+        ref={panelRef}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="m-4 flex max-h-[80vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl animate-scale-in dark:bg-gray-900"
+      >
+        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
+          <h2 id={titleId} className="text-lg font-semibold">
+            Settings
+          </h2>
           <button
+            ref={closeBtnRef}
+            type="button"
             onClick={onClose}
-            className="w-8 h-8 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700 flex items-center justify-center"
+            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700"
+            aria-label="Close settings"
           >
             ✕
           </button>
         </div>
 
-        {/* Tabs */}
-        <div className="flex border-b border-gray-200 dark:border-gray-700 px-6">
+        <div className="flex border-b border-gray-200 px-6 dark:border-gray-700" role="tablist" aria-label="Settings sections">
           {tabs.map((t) => (
             <button
               key={t.id}
+              type="button"
+              role="tab"
+              aria-selected={tab === t.id}
               onClick={() => setTab(t.id)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              className={`border-b-2 px-4 py-2 text-sm font-medium transition-colors ${
                 tab === t.id
                   ? "border-blue-500 text-blue-500"
                   : "border-transparent hover:text-gray-700 dark:hover:text-gray-300"
@@ -62,22 +112,23 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
           ))}
         </div>
 
-        {/* Content */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+        <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4" role="tabpanel">
           {tab === "general" && (
             <>
               <div>
-                <label className="block text-sm font-medium mb-1">Theme</label>
-                <div className="flex gap-2">
+                <label className="mb-1 block text-sm font-medium">Theme</label>
+                <div className="flex gap-2" role="group" aria-label="Theme">
                   {themeOptions.map((opt) => (
                     <button
                       key={opt.value}
+                      type="button"
                       onClick={() => updateSettings({ theme: opt.value })}
-                      className={`px-4 py-2 rounded-lg text-sm transition-colors ${
+                      className={`rounded-lg px-4 py-2 text-sm transition-colors ${
                         settings.theme === opt.value
                           ? "bg-blue-500 text-white"
-                          : "bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700"
+                          : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
                       }`}
+                      aria-pressed={settings.theme === opt.value}
                     >
                       {opt.label}
                     </button>
@@ -86,31 +137,37 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
               </div>
 
               <div>
-                <label className="block text-sm font-medium mb-1">Your Name</label>
+                <label htmlFor="wbhp-user-name" className="mb-1 block text-sm font-medium">
+                  Your Name
+                </label>
                 <input
+                  id="wbhp-user-name"
                   type="text"
                   value={settings.userName}
                   onChange={(e) => updateSettings({ userName: e.target.value })}
                   placeholder="Enter your name..."
-                  className="w-full px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+                  className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 dark:border-gray-700 dark:bg-gray-800"
+                  autoComplete="nickname"
                 />
               </div>
 
-              {/* Active widgets picker */}
               <div>
-                <label className="block text-sm font-medium mb-2">
-                  Active Widgets (drag to reorder — coming soon)
-                </label>
+                <label className="mb-2 block text-sm font-medium">Active Widgets</label>
+                <p className="mb-2 text-xs opacity-60">
+                  Empty selection shows all widgets. Click to toggle.
+                </p>
                 <div className="space-y-2">
                   {getWidgetPlugins().map((p) => {
-                    const isActive = settings.activeWidgets.length === 0
-                      ? true // show all by default
-                      : settings.activeWidgets.includes(p.id);
+                    const isActive =
+                      settings.activeWidgets.length === 0
+                        ? true
+                        : settings.activeWidgets.includes(p.id);
                     return (
-                      <div
+                      <PluginCard
                         key={p.id}
-                        onClick={() => {
-                          // If user has never customized, seed with all widgets
+                        plugin={p}
+                        isActive={isActive}
+                        onToggle={() => {
                           const base =
                             settings.activeWidgets.length === 0
                               ? getWidgetPlugins().map((wp) => wp.id)
@@ -120,23 +177,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                             : [...base, p.id];
                           updateSettings({ activeWidgets: updated });
                         }}
-                        className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                          isActive
-                            ? "border-blue-400 bg-blue-500/10"
-                            : "border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                        }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <span className="font-medium text-sm">{p.name}</span>
-                          <div
-                            className={`w-4 h-4 rounded-full border-2 flex items-center justify-center ${
-                              isActive ? "border-blue-400 bg-blue-400" : "border-gray-300"
-                            }`}
-                          >
-                            {isActive && <span className="text-white text-[10px]">✓</span>}
-                          </div>
-                        </div>
-                      </div>
+                      />
                     );
                   })}
                 </div>
@@ -146,23 +187,15 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
           {tab === "background" && (
             <div>
-              <label className="block text-sm font-medium mb-2">Background</label>
+              <label className="mb-2 block text-sm font-medium">Background</label>
               <div className="space-y-2">
                 {getBackgroundPlugins().map((p) => (
-                  <div
+                  <PluginCard
                     key={p.id}
-                    onClick={() => updateSettings({ activeBackground: p.id })}
-                    className={`p-3 rounded-lg border cursor-pointer transition-colors ${
-                      settings.activeBackground === p.id
-                        ? "border-blue-400 bg-blue-500/10"
-                        : "border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-medium text-sm">{p.name}</span>
-                      <span className="text-xs opacity-60">{p.description}</span>
-                    </div>
-                  </div>
+                    plugin={p}
+                    isActive={settings.activeBackground === p.id}
+                    onToggle={() => updateSettings({ activeBackground: p.id })}
+                  />
                 ))}
               </div>
             </div>
@@ -181,16 +214,12 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
             />
           )}
 
-          {tab === "data" && (
-            <DataSection />
-          )}
+          {tab === "data" && <DataSection />}
         </div>
       </div>
     </div>
   );
 }
-
-// ── WebDAV Sub-component ────────────────────────────────────────────
 
 function WebDAVSection({
   config,
@@ -207,36 +236,60 @@ function WebDAVSection({
   backupMsg: string | null;
   setBackupMsg: (s: string | null) => void;
 }) {
+  const [busy, setBusy] = useState(false);
+
   const testConnection = async () => {
+    setBusy(true);
     setStatus("Testing...");
-    const ok = await checkWebDAVConnection(config);
-    setStatus(ok ? "✓ Connected successfully" : "✗ Connection failed");
+    try {
+      const ok = await checkWebDAVConnection(config);
+      setStatus(ok ? "✓ Connected successfully" : "✗ Connection failed");
+    } finally {
+      setBusy(false);
+    }
   };
 
   const doBackup = async () => {
+    setBusy(true);
     setBackupMsg("Backing up...");
-    const result = await backupToWebDAV(config);
-    setBackupMsg(result.message);
+    try {
+      const result = await backupToWebDAV(config);
+      setBackupMsg(result.message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   const doRestore = async () => {
+    if (!confirm("Restore will overwrite local WBHP data. Continue?")) return;
+    setBusy(true);
     setBackupMsg("Restoring...");
-    const result = await restoreFromWebDAV(config);
-    setBackupMsg(result.message);
+    try {
+      const result = await restoreFromWebDAV(config);
+      setBackupMsg(result.message);
+    } finally {
+      setBusy(false);
+    }
   };
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium">Enable WebDAV</label>
+        <label className="text-sm font-medium" htmlFor="wbhp-webdav-toggle">
+          Enable WebDAV
+        </label>
         <button
+          id="wbhp-webdav-toggle"
+          type="button"
+          role="switch"
+          aria-checked={config.enabled}
           onClick={() => updateConfig({ enabled: !config.enabled })}
-          className={`w-10 h-6 rounded-full transition-colors ${
+          className={`h-6 w-10 rounded-full transition-colors ${
             config.enabled ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"
           }`}
         >
           <div
-            className={`w-4 h-4 rounded-full bg-white transition-transform m-1 ${
+            className={`m-1 h-4 w-4 rounded-full bg-white transition-transform ${
               config.enabled ? "translate-x-4" : ""
             }`}
           />
@@ -249,67 +302,78 @@ function WebDAVSection({
             type="url"
             value={config.url}
             onChange={(e) => updateConfig({ url: e.target.value })}
-            placeholder="WebDAV URL (e.g. https://dav.example.com/)"
-            className="w-full px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm"
+            placeholder="WebDAV URL (e.g. https://dav.example.com/remote.php/dav/files/user/)"
+            className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
+            autoComplete="url"
           />
           <input
             type="text"
             value={config.username}
             onChange={(e) => updateConfig({ username: e.target.value })}
             placeholder="Username"
-            className="w-full px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm"
+            className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
+            autoComplete="username"
           />
           <input
             type="password"
             value={config.password}
             onChange={(e) => updateConfig({ password: e.target.value })}
-            placeholder="Password"
-            className="w-full px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm"
+            placeholder="Password / app token"
+            className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
+            autoComplete="current-password"
           />
           <div>
-            <label className="block text-sm font-medium mb-1">
+            <label className="mb-1 block text-sm font-medium" htmlFor="wbhp-autobackup">
               Auto-backup interval (minutes, 0 = off)
             </label>
             <input
+              id="wbhp-autobackup"
               type="number"
               min={0}
               value={config.autoBackupInterval}
               onChange={(e) =>
-                updateConfig({ autoBackupInterval: parseInt(e.target.value, 10) || 0 })
+                updateConfig({ autoBackupInterval: Math.max(0, parseInt(e.target.value, 10) || 0) })
               }
-              className="w-full px-3 py-2 rounded-lg bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-sm"
+              className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
             />
           </div>
 
-          <div className="flex gap-2">
+          <div className="flex flex-wrap gap-2">
             <button
+              type="button"
+              disabled={busy}
               onClick={testConnection}
-              className="px-4 py-2 rounded-lg bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-sm"
+              className="rounded-lg bg-gray-200 px-4 py-2 text-sm hover:bg-gray-300 disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600"
             >
               Test Connection
             </button>
             <button
+              type="button"
+              disabled={busy}
               onClick={doBackup}
-              className="px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm"
+              className="rounded-lg bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600 disabled:opacity-50"
             >
               Backup Now
             </button>
             <button
+              type="button"
+              disabled={busy}
               onClick={doRestore}
-              className="px-4 py-2 rounded-lg bg-amber-500 hover:bg-amber-600 text-white text-sm"
+              className="rounded-lg bg-amber-500 px-4 py-2 text-sm text-white hover:bg-amber-600 disabled:opacity-50"
             >
               Restore
             </button>
           </div>
-          {status && <p className="text-sm">{status}</p>}
-          {backupMsg && <p className="text-sm">{backupMsg}</p>}
+          {status && <p className="text-sm" role="status">{status}</p>}
+          {backupMsg && <p className="text-sm" role="status">{backupMsg}</p>}
+          <p className="text-xs opacity-60">
+            Credentials are stored locally in this browser profile. Prefer app passwords / tokens.
+          </p>
         </>
       )}
     </div>
   );
 }
-
-// ── Data Management Sub-component ───────────────────────────────────
 
 function DataSection() {
   const [msg, setMsg] = useState<string | null>(null);
@@ -331,7 +395,7 @@ function DataSection() {
   const handleImport = () => {
     const input = document.createElement("input");
     input.type = "file";
-    input.accept = ".json";
+    input.accept = "application/json,.json";
     input.onchange = () => {
       const file = input.files?.[0];
       if (!file) return;
@@ -341,7 +405,7 @@ function DataSection() {
           const snapshot = JSON.parse(reader.result as string) as StorageSnapshot;
           importAll(snapshot);
           setMsg("Data imported. Refreshing...");
-          setTimeout(() => window.location.reload(), 1000);
+          setTimeout(() => window.location.reload(), 800);
         } catch {
           setMsg("Invalid backup file.");
         }
@@ -355,31 +419,38 @@ function DataSection() {
     if (confirm("Are you sure? This will delete all WBHP data.")) {
       clearAll();
       setMsg("All data cleared. Refreshing...");
-      setTimeout(() => window.location.reload(), 1000);
+      setTimeout(() => window.location.reload(), 800);
     }
   };
 
   return (
     <div className="space-y-3">
       <button
+        type="button"
         onClick={handleExport}
-        className="w-full px-4 py-2 rounded-lg bg-blue-500 hover:bg-blue-600 text-white text-sm"
+        className="w-full rounded-lg bg-blue-500 px-4 py-2 text-sm text-white hover:bg-blue-600"
       >
         Export Data (JSON)
       </button>
       <button
+        type="button"
         onClick={handleImport}
-        className="w-full px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white text-sm"
+        className="w-full rounded-lg bg-green-500 px-4 py-2 text-sm text-white hover:bg-green-600"
       >
         Import Data (JSON)
       </button>
       <button
+        type="button"
         onClick={handleClear}
-        className="w-full px-4 py-2 rounded-lg bg-red-500 hover:bg-red-600 text-white text-sm"
+        className="w-full rounded-lg bg-red-500 px-4 py-2 text-sm text-white hover:bg-red-600"
       >
         Clear All Data
       </button>
-      {msg && <p className="text-sm text-center">{msg}</p>}
+      {msg && (
+        <p className="text-center text-sm" role="status">
+          {msg}
+        </p>
+      )}
     </div>
   );
 }

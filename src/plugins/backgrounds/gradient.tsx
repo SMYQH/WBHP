@@ -1,9 +1,27 @@
+import { useSyncExternalStore } from "react";
 import type { PluginConfig, PluginAPI } from "../types";
 
 interface GradientData {
   from: string;
   to: string;
   direction: string;
+}
+
+function GradientBackground({ api }: { api: PluginAPI<GradientData> }) {
+  const { from, to, direction } = useSyncExternalStore(
+    api.data.subscribe,
+    api.data.get,
+    api.data.get,
+  );
+  return (
+    <div
+      className="fixed inset-0 -z-10"
+      style={{
+        background: `linear-gradient(${direction}, ${from}, ${to})`,
+      }}
+      aria-hidden
+    />
+  );
 }
 
 const config: PluginConfig<GradientData> = {
@@ -18,17 +36,5 @@ const config: PluginConfig<GradientData> = {
   },
   component: GradientBackground,
 };
-
-function GradientBackground({ api }: { api: PluginAPI<GradientData> }) {
-  const { from, to, direction } = api.data.get();
-  return (
-    <div
-      className="fixed inset-0 -z-10"
-      style={{
-        background: `linear-gradient(${direction}, ${from}, ${to})`,
-      }}
-    />
-  );
-}
 
 export default config;

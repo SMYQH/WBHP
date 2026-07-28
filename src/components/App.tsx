@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import type { PluginAPI } from "../plugins/types";
+import { useState, useEffect, useCallback } from "react";
 import { getPlugin } from "../plugins/registry";
 import { useSettings } from "../hooks/useSettings";
 import { startAutoBackup, stopAutoBackup } from "../services/webdav";
 import Dashboard from "./Dashboard/Dashboard";
 import SettingsPanel from "./Settings/SettingsPanel";
+import PluginHost from "./PluginHost";
+import ErrorBoundary from "./ErrorBoundary";
 
 import "../plugins/widgets";
 import "../plugins/backgrounds";
@@ -13,24 +14,28 @@ export default function App() {
   const { settings, updateSettings } = useSettings();
   const [showSettings, setShowSettings] = useState(false);
 
+  const openSettings = useCallback(() => setShowSettings(true), []);
+  const closeSettings = useCallback(() => setShowSettings(false), []);
+
   // ── Theme management ──────────────────────────────────────────────
   useEffect(() => {
     const root = document.documentElement;
-    const isDark =
-      settings.theme === "dark" ||
-      (settings.theme === "system" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches);
+    const mq = window.matchMedia("(prefers-color-scheme: dark)");
 
-    root.classList.toggle("dark", isDark);
+    const apply = () => {
+      const isDark =
+        settings.theme === "dark" ||
+        (settings.theme === "system" && mq.matches);
+      root.classList.toggle("dark", isDark);
+      root.style.colorScheme = isDark ? "dark" : "light";
+    };
 
-    if (settings.theme === "system") {
-      const mq = window.matchMedia("(prefers-color-scheme: dark)");
-      const handler = (e: MediaQueryListEvent) => {
-        root.classList.toggle("dark", e.matches);
-      };
-      mq.addEventListener("change", handler);
-      return () => mq.removeEventListener("change", handler);
-    }
+    apply();
+
+    if (settings.theme !== "system") return;
+
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
   }, [settings.theme]);
 
   // ── WebDAV auto-backup ─────────────────────────────────────────────
@@ -39,57 +44,56 @@ export default function App() {
     return () => stopAutoBackup();
   }, [settings.webdav]);
 
-  // ── Keyboard shortcut for settings ─────────────────────────────────
+  // ── Keyboard shortcuts ─────────────────────────────────────────────
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setShowSettings(false);
+      if (e.key === "Escape") {
+        setShowSettings(false);
+        return;
+      }
+      // Ctrl/Cmd + , → settings (common desktop convention)
+      if ((e.ctrlKey || e.metaKey) && e.key === ",") {
+        e.preventDefault();
+        setShowSettings(true);
+      }
     };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, []);
 
-  // ── Render active background plugin ────────────────────────────────
   const bgPlugin = getPlugin(settings.activeBackground);
-  const BackgroundComponent = bgPlugin?.component;
 
   return (
-    <div className="relative min-h-screen">
+    <div className="relative min-h-screen text-gray-900 dark:text-gray-100">
       {/* Background layer */}
-      {BackgroundComponent && bgPlugin && (
-        <BackgroundComponent
-          api={
-            {
-              data: {
-                get: () => bgPlugin.defaultData,
-                set: () => {},
-                subscribe: () => () => {},
-              },
-              cache: { get: () => ({}), set: () => {} },
-              settings,
-              updateSettings,
-            } satisfies PluginAPI
-          }
-        />
+      {bgPlugin && bgPlugin.type === "background" && (
+        <ErrorBoundary fallbackLabel={`Background: ${bgPlugin.name}`}>
+          <PluginHost
+            plugin={bgPlugin}
+            settings={settings}
+            updateSettings={updateSettings}
+          />
+        </ErrorBoundary>
       )}
 
-      {/* Settings toggle button */}
+      {/* Settings toggle */}
       <button
-        onClick={() => setShowSettings(true)}
-        className="fixed top-4 right-4 z-40 w-10 h-10 rounded-full bg-white/20 dark:bg-white/10 backdrop-blur hover:bg-white/30 dark:hover:bg-white/20 transition-colors flex items-center justify-center text-lg"
-        title="Settings"
+        type="button"
+        onClick={openSettings}
+        className="fixed top-4 right-4 z-40 flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-lg backdrop-blur transition-colors hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
+        title="Settings (Ctrl+,)"
+        aria-label="Open settings"
       >
         ⚙
       </button>
 
-      {/* Main dashboard */}
       <Dashboard />
 
-      {/* Settings modal */}
       {showSettings && (
         <SettingsPanel
           settings={settings}
           updateSettings={updateSettings}
-          onClose={() => setShowSettings(false)}
+          onClose={closeSettings}
         />
       )}
     </div>

@@ -12,11 +12,15 @@ export interface PluginDataStore<D = Record<string, unknown>> {
 export interface PluginCacheStore<C = Record<string, unknown>> {
   get(): C;
   set(updater: C | ((prev: C) => C)): void;
+  subscribe(listener: () => void): () => void;
 }
 
 // ── Plugin API ─────────────────────────────────────────────────────
 /** The API surface exposed to every plugin component. */
-export interface PluginAPI<D = Record<string, unknown>, C = Record<string, unknown>> {
+export interface PluginAPI<
+  D = Record<string, unknown>,
+  C = Record<string, unknown>,
+> {
   /** Persisted data store scoped to this plugin. */
   data: PluginDataStore<D>;
   /** Ephemeral cache scoped to this plugin. */

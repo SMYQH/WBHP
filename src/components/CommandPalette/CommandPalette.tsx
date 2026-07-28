@@ -57,6 +57,16 @@ export default function CommandPalette({
       },
     },
     {
+      id: "action-update",
+      label: t.updater.checkUpdateBtn,
+      category: "System",
+      icon: "🚀",
+      perform: () => {
+        onOpenSettings();
+        onClose();
+      },
+    },
+    {
       id: "action-zen",
       label: isZenMode ? t.zenMode.exit : t.zenMode.enter,
       category: "Mode",

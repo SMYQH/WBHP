@@ -20,6 +20,15 @@ export interface Translations {
       themeSystem: string;
     };
   };
+  updater: {
+    currentVersion: string;
+    checkUpdateBtn: string;
+    checking: string;
+    upToDate: string;
+    updateAvailable: string;
+    downloadUpdate: string;
+    failed: string;
+  };
   settings: {
     title: string;
     close: string;
@@ -221,6 +230,15 @@ export const zhTranslations: Translations = {
       themeSystem: "跟随系统外观",
     },
   },
+  updater: {
+    currentVersion: "当前版本",
+    checkUpdateBtn: "检查 GitHub 官方新版本",
+    checking: "正在检查 GitHub Release 更新...",
+    upToDate: "已是最新版本 (v0.2.0)",
+    updateAvailable: "发现 GitHub 官方新版本",
+    downloadUpdate: "前往 GitHub 下载最新版",
+    failed: "检查更新失败，请稍后再试",
+  },
   settings: {
     title: "设置",
     close: "关闭设置",
@@ -421,6 +439,15 @@ export const enTranslations: Translations = {
       themeDark: "Switch to Dark Theme",
       themeSystem: "System Theme",
     },
+  },
+  updater: {
+    currentVersion: "Current Version",
+    checkUpdateBtn: "Check for Updates on GitHub",
+    checking: "Checking GitHub Releases...",
+    upToDate: "Up to date (v0.2.0)",
+    updateAvailable: "New Version Available",
+    downloadUpdate: "Download on GitHub",
+    failed: "Failed to check updates",
   },
   settings: {
     title: "Settings",

@@ -8,6 +8,7 @@ import type { CustomBackgroundData } from "../../plugins/backgrounds/custom";
 import type { PresetBackgroundData, PresetStyle } from "../../plugins/backgrounds/preset";
 import { getTranslations } from "../../i18n";
 import PluginCard from "../ui/PluginCard";
+import { checkForUpdates, type UpdateCheckResult } from "../../services/updater";
 
 interface SettingsPanelProps {
   settings: WBHPSettings;
@@ -243,6 +244,8 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                   })}
                 </div>
               </div>
+
+              <UpdateSection language={settings.language} />
             </>
           )}
 
@@ -668,3 +671,64 @@ function DataSection({ language }: { language: LanguageMode }) {
     </div>
   );
 }
+
+function UpdateSection({ language }: { language: LanguageMode }) {
+  const t = getTranslations(language).updater;
+  const [checking, setChecking] = useState(false);
+  const [result, setResult] = useState<UpdateCheckResult | null>(null);
+
+  const handleCheck = async () => {
+    setChecking(true);
+    setResult(null);
+    try {
+      const res = await checkForUpdates("0.2.0");
+      setResult(res);
+    } finally {
+      setChecking(false);
+    }
+  };
+
+  return (
+    <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-gray-800/40 space-y-3">
+      <div className="flex items-center justify-between">
+        <div>
+          <h4 className="text-sm font-semibold flex items-center gap-2">
+            <span>🚀</span> WBHP v0.2.0
+          </h4>
+          <p className="text-xs opacity-60">Web Browser Home Page</p>
+        </div>
+        <button
+          type="button"
+          disabled={checking}
+          onClick={handleCheck}
+          className="rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-600 disabled:opacity-50 transition-colors"
+        >
+          {checking ? t.checking : t.checkUpdateBtn}
+        </button>
+      </div>
+
+      {result && (
+        <div className="pt-2 border-t border-gray-200/50 text-xs dark:border-gray-700/50">
+          {result.hasUpdate ? (
+            <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400">
+              <span>🎉 {t.updateAvailable}: v{result.latestVersion}</span>
+              <a
+                href={result.releaseUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="underline font-semibold hover:text-emerald-700"
+              >
+                {t.downloadUpdate} ↗
+              </a>
+            </div>
+          ) : result.error ? (
+            <span className="text-rose-500">{t.failed}: {result.error}</span>
+          ) : (
+            <span className="text-gray-500 dark:text-gray-400">✓ {t.upToDate}</span>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+

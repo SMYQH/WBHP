@@ -20,12 +20,6 @@ export const DEFAULT_SETTINGS: WBHPSettings = {
     password: "",
     autoBackupInterval: 0,
   },
-  gdrive: {
-    enabled: false,
-    clientId: "",
-    accessToken: "",
-    autoBackupInterval: 0,
-  },
 };
 
 function isWellFormed(raw: unknown): raw is WBHPSettings {
@@ -40,8 +34,6 @@ function isWellFormed(raw: unknown): raw is WBHPSettings {
     !!s.webdav &&
     typeof s.webdav === "object" &&
     typeof s.webdav.url === "string" &&
-    !!s.gdrive &&
-    typeof s.gdrive === "object" &&
     typeof s.userName === "string"
   );
 }
@@ -56,10 +48,6 @@ function normalize(raw: unknown): WBHPSettings {
     webdav: {
       ...DEFAULT_SETTINGS.webdav,
       ...(r.webdav ?? {}),
-    },
-    gdrive: {
-      ...DEFAULT_SETTINGS.gdrive,
-      ...(r.gdrive ?? {}),
     },
     activeWidgets: Array.isArray(r.activeWidgets) ? r.activeWidgets : [],
   };
@@ -92,7 +80,6 @@ function applyPatch(patch: Partial<WBHPSettings>): void {
     ...prev,
     ...patch,
     webdav: patch.webdav ? { ...prev.webdav, ...patch.webdav } : prev.webdav,
-    gdrive: patch.gdrive ? { ...prev.gdrive, ...patch.gdrive } : prev.gdrive,
   };
   setSettings(next);
 }

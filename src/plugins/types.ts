@@ -79,18 +79,6 @@ export interface WebDAVConfig {
   autoBackupInterval: number;
 }
 
-export interface GoogleDriveConfig {
-  enabled: boolean;
-  clientId: string;
-  accessToken: string;
-  refreshToken?: string;
-  tokenExpiry?: number;
-  userEmail?: string;
-  userName?: string;
-  /** Auto-backup interval in minutes (0 = disabled). */
-  autoBackupInterval: number;
-}
-
 export interface WBHPSettings {
   theme: ThemeMode;
   language: LanguageMode;
@@ -100,7 +88,7 @@ export interface WBHPSettings {
   /** Id of the active background plugin. */
   activeBackground: string;
   webdav: WebDAVConfig;
-  gdrive: GoogleDriveConfig;
   /** User's display name for the greeting widget. */
   userName: string;
 }
+

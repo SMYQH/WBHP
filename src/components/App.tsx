@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import { getPlugin } from "../plugins/registry";
 import { useSettings } from "../hooks/useSettings";
 import { startAutoBackup, stopAutoBackup } from "../services/webdav";
-import { startGDriveAutoBackup, stopGDriveAutoBackup } from "../services/gdrive";
 import Dashboard from "./Dashboard/Dashboard";
 import SettingsPanel from "./Settings/SettingsPanel";
 import CommandPalette from "./CommandPalette/CommandPalette";
@@ -57,10 +56,7 @@ export default function App() {
     return () => stopAutoBackup();
   }, [settings.webdav]);
 
-  useEffect(() => {
-    startGDriveAutoBackup(settings.gdrive);
-    return () => stopGDriveAutoBackup();
-  }, [settings.gdrive]);
+
 
   // ── Keyboard shortcuts ─────────────────────────────────────────────
   useEffect(() => {

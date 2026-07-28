@@ -1,7 +1,13 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from "react";
-import type { WBHPSettings, ThemeMode, LanguageMode, FontFamily, WebDAVConfig } from "../../plugins/types";
+import type { WBHPSettings, ThemeMode, LanguageMode, FontFamily, WebDAVConfig, GoogleDriveConfig } from "../../plugins/types";
 import { getBackgroundPlugins, getWidgetPlugins } from "../../plugins/registry";
 import { checkWebDAVConnection, backupToWebDAV, restoreFromWebDAV } from "../../services/webdav";
+import {
+  authenticateWithGoogle,
+  checkGoogleDriveConnection,
+  backupToGoogleDrive,
+  restoreFromGoogleDrive,
+} from "../../services/gdrive";
 import { exportAll, importAll, clearAll, getItem, setItem } from "../../services/storage";
 import type { StorageSnapshot } from "../../services/storage";
 import type { CustomBackgroundData } from "../../plugins/backgrounds/custom";
@@ -251,17 +257,26 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
           )}
 
           {tab === "backup" && (
-            <WebDAVSection
-              config={settings.webdav}
-              language={settings.language}
-              updateConfig={(patch) =>
-                updateSettings({ webdav: { ...settings.webdav, ...patch } })
-              }
-              status={webdavStatus}
-              setStatus={setWebdavStatus}
-              backupMsg={backupMsg}
-              setBackupMsg={setBackupMsg}
-            />
+            <div className="space-y-6">
+              <GoogleDriveSection
+                config={settings.gdrive}
+                language={settings.language}
+                updateConfig={(patch) =>
+                  updateSettings({ gdrive: { ...settings.gdrive, ...patch } })
+                }
+              />
+              <WebDAVSection
+                config={settings.webdav}
+                language={settings.language}
+                updateConfig={(patch) =>
+                  updateSettings({ webdav: { ...settings.webdav, ...patch } })
+                }
+                status={webdavStatus}
+                setStatus={setWebdavStatus}
+                backupMsg={backupMsg}
+                setBackupMsg={setBackupMsg}
+              />
+            </div>
           )}
 
           {tab === "data" && <DataSection language={settings.language} />}
@@ -421,6 +436,229 @@ function BackgroundSettingsSection({
               </button>
             ))}
           </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function GoogleDriveSection({
+  config,
+  language,
+  updateConfig,
+}: {
+  config: GoogleDriveConfig;
+  language: LanguageMode;
+  updateConfig: (patch: Partial<GoogleDriveConfig>) => void;
+}) {
+  const [status, setStatus] = useState<string | null>(null);
+  const [backupMsg, setBackupMsg] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
+  const t = getTranslations(language).settings.backup;
+
+  const handleAuthorize = async () => {
+    if (!config.clientId.trim()) {
+      setStatus(t.gdriveClientIdPlaceholder);
+      return;
+    }
+    setBusy(true);
+    setStatus(t.testing);
+    try {
+      const res = await authenticateWithGoogle(config.clientId);
+      updateConfig({
+        accessToken: res.accessToken,
+        tokenExpiry: res.expiresAt,
+        userEmail: res.userEmail,
+        userName: res.userName,
+        enabled: true,
+      });
+      setStatus(t.gdriveAuthSuccess);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      setStatus(`${t.gdriveAuthFailed}: ${msg}`);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const handleDisconnect = () => {
+    updateConfig({
+      accessToken: "",
+      tokenExpiry: undefined,
+      userEmail: undefined,
+      userName: undefined,
+      enabled: false,
+    });
+    setStatus(null);
+    setBackupMsg(null);
+  };
+
+  const testConnection = async () => {
+    setBusy(true);
+    setStatus(t.testing);
+    try {
+      const ok = await checkGoogleDriveConnection(config.accessToken);
+      setStatus(ok ? t.connected : t.failed);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const doBackup = async () => {
+    setBusy(true);
+    setBackupMsg(t.backingUp);
+    try {
+      const result = await backupToGoogleDrive(config);
+      setBackupMsg(result.message);
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const doRestore = async () => {
+    if (!confirm(t.restoreConfirm)) return;
+    setBusy(true);
+    setBackupMsg(t.restoring);
+    try {
+      const result = await restoreFromGoogleDrive(config);
+      setBackupMsg(result.message);
+      if (result.success) {
+        setTimeout(() => window.location.reload(), 800);
+      }
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  const isConnected = Boolean(config.accessToken && config.enabled);
+
+  return (
+    <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-4 dark:border-gray-800 dark:bg-gray-800/40">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <svg className="h-5 w-5 text-blue-500" viewBox="0 0 87.3 78" fill="currentColor">
+            <path d="m6.6 66.85 3.85 6.65c.8 1.4 1.95 2.5 3.3 3.3l13.75-23.8h-27.5c0 1.55.4 3.1 1.2 4.5z" fill="#0066da"/>
+            <path d="m43.65 25-13.75-23.8c-1.35.8-2.5 1.9-3.3 3.3l-25.4 44c-.8 1.4-1.2 2.95-1.2 4.5h27.5z" fill="#00ac47"/>
+            <path d="m73.55 76.8c1.35-.8 2.5-1.9 3.3-3.3l3.85-6.65c.8-1.4 1.2-2.95 1.2-4.5h-27.5l13.75 23.85c1.45 0 3-.4 4.4-1.4z" fill="#ea4335"/>
+            <path d="m43.65 25 13.75-23.8c-1.35-.8-2.9-1.2-4.45-1.2h-18.6c-1.55 0-3.1.4-4.45 1.2z" fill="#00832d"/>
+            <path d="m57.4 1.2-13.75 23.8 27.5 47.6h18.6c1.55 0 3.1-.4 4.45-1.2l-25.45-44.1c-.8-1.35-1.95-2.5-3.35-3.3z" fill="#ffba00"/>
+            <path d="m27.5 53-13.75 23.8c1.35.8 2.9 1.2 4.45 1.2h50.9c1.55 0 3.1-.4 4.45-1.2l-13.75-23.8z" fill="#2684fc"/>
+          </svg>
+          <span className="text-sm font-semibold">{t.gdriveTitle}</span>
+        </div>
+        <button
+          type="button"
+          role="switch"
+          aria-checked={config.enabled}
+          onClick={() => updateConfig({ enabled: !config.enabled })}
+          className={`h-6 w-10 rounded-full transition-colors ${
+            config.enabled ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"
+          }`}
+        >
+          <div
+            className={`m-1 h-4 w-4 rounded-full bg-white transition-transform ${
+              config.enabled ? "translate-x-4" : ""
+            }`}
+          />
+        </button>
+      </div>
+
+      {config.enabled && (
+        <div className="space-y-3 pt-1">
+          <div>
+            <label className="mb-1 block text-xs font-medium opacity-80">
+              {t.gdriveClientId}
+            </label>
+            <input
+              type="text"
+              value={config.clientId}
+              onChange={(e) => updateConfig({ clientId: e.target.value })}
+              placeholder={t.gdriveClientIdPlaceholder}
+              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
+            />
+          </div>
+
+          <div className="flex items-center justify-between rounded-lg bg-gray-100 p-3 dark:bg-gray-800">
+            <div className="text-xs">
+              <span className="font-medium opacity-70">
+                {isConnected ? t.gdriveConnectedAs : t.gdriveNotConnected}
+              </span>
+              {isConnected && (
+                <span className="ml-1 font-semibold text-blue-600 dark:text-blue-400">
+                  {config.userEmail || config.userName || "Google User"}
+                </span>
+              )}
+            </div>
+            {isConnected ? (
+              <button
+                type="button"
+                onClick={handleDisconnect}
+                className="rounded-md bg-rose-100 px-3 py-1.5 text-xs font-medium text-rose-700 hover:bg-rose-200 dark:bg-rose-900/40 dark:text-rose-300"
+              >
+                {t.gdriveDisconnectBtn}
+              </button>
+            ) : (
+              <button
+                type="button"
+                disabled={busy || !config.clientId.trim()}
+                onClick={handleAuthorize}
+                className="rounded-md bg-blue-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-600 disabled:opacity-50"
+              >
+                {t.gdriveAuthorizeBtn}
+              </button>
+            )}
+          </div>
+
+          <div>
+            <label className="mb-1 block text-xs font-medium opacity-80">
+              {t.autoInterval}
+            </label>
+            <input
+              type="number"
+              min={0}
+              value={config.autoBackupInterval}
+              onChange={(e) =>
+                updateConfig({ autoBackupInterval: Math.max(0, parseInt(e.target.value, 10) || 0) })
+              }
+              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
+            />
+          </div>
+
+          {isConnected && (
+            <div className="flex flex-wrap gap-2 pt-1">
+              <button
+                type="button"
+                disabled={busy}
+                onClick={testConnection}
+                className="rounded-lg bg-gray-200 px-3 py-1.5 text-xs font-medium hover:bg-gray-300 disabled:opacity-50 dark:bg-gray-700 dark:hover:bg-gray-600"
+              >
+                {t.testBtn}
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={doBackup}
+                className="rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-600 disabled:opacity-50"
+              >
+                {t.backupBtn}
+              </button>
+              <button
+                type="button"
+                disabled={busy}
+                onClick={doRestore}
+                className="rounded-lg bg-amber-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+              >
+                {t.restoreBtn}
+              </button>
+            </div>
+          )}
+
+          {status && <p className="text-xs font-medium text-blue-600 dark:text-blue-400" role="status">{status}</p>}
+          {backupMsg && <p className="text-xs font-medium text-emerald-600 dark:text-emerald-400" role="status">{backupMsg}</p>}
+
+          <p className="text-xs opacity-60">
+            {t.gdriveNotice}
+          </p>
         </div>
       )}
     </div>

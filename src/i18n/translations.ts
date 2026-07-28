@@ -71,6 +71,18 @@ export interface Translations {
       noBackup: string;
       corrupted: string;
       notice: string;
+      enableGDrive: string;
+      gdriveTitle: string;
+      webdavTitle: string;
+      gdriveClientId: string;
+      gdriveClientIdPlaceholder: string;
+      gdriveAuthorizeBtn: string;
+      gdriveDisconnectBtn: string;
+      gdriveConnectedAs: string;
+      gdriveNotConnected: string;
+      gdriveNotice: string;
+      gdriveAuthSuccess: string;
+      gdriveAuthFailed: string;
     };
     data: {
       exportBtn: string;
@@ -207,6 +219,18 @@ export const zhTranslations: Translations = {
       noBackup: "服务器上未找到备份文件",
       corrupted: "备份文件损坏或格式不正确",
       notice: "所有凭据安全存储在本地浏览器配置文件中，建议使用应用专用独立密码/Token。",
+      enableGDrive: "启用 Google Drive 云端硬盘备份",
+      gdriveTitle: "Google 云盘 OAuth",
+      webdavTitle: "WebDAV 协议备份",
+      gdriveClientId: "Google OAuth Client ID",
+      gdriveClientIdPlaceholder: "请输入 OAuth 2.0 客户端 ID",
+      gdriveAuthorizeBtn: "授权登录 Google 账号",
+      gdriveDisconnectBtn: "断开 Google 账号连接",
+      gdriveConnectedAs: "已连接账号：",
+      gdriveNotConnected: "未授权 Google 账号",
+      gdriveNotice: "备份文件将安全加密保存在您个人 Google Drive 的独立 Application Data 隔离空间中。",
+      gdriveAuthSuccess: "✓ 成功授权 Google 云盘账号",
+      gdriveAuthFailed: "✗ Google OAuth 授权失败",
     },
     data: {
       exportBtn: "导出数据配置 (JSON)",
@@ -343,6 +367,18 @@ export const enTranslations: Translations = {
       noBackup: "No backup found on server.",
       corrupted: "Backup file is corrupted.",
       notice: "Credentials are stored locally in your browser. App tokens recommended.",
+      enableGDrive: "Enable Google Drive Sync",
+      gdriveTitle: "Google Drive OAuth",
+      webdavTitle: "WebDAV Server",
+      gdriveClientId: "Google OAuth Client ID",
+      gdriveClientIdPlaceholder: "Enter Client ID...",
+      gdriveAuthorizeBtn: "Authorize with Google",
+      gdriveDisconnectBtn: "Disconnect Google Account",
+      gdriveConnectedAs: "Connected as: ",
+      gdriveNotConnected: "Not authorized with Google",
+      gdriveNotice: "Backups are saved securely in your personal Google Drive isolated App Data folder.",
+      gdriveAuthSuccess: "✓ Successfully authorized with Google Drive",
+      gdriveAuthFailed: "✗ Google OAuth authorization failed",
     },
     data: {
       exportBtn: "Export Config (JSON)",

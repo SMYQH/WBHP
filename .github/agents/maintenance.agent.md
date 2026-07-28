@@ -19,7 +19,7 @@ This document serves as your authoritative Knowledge Base and Maintenance Playbo
 - **CSS Engine**: Tailwind CSS v4 (`@tailwindcss/vite`, `tailwindcss` using `@import "tailwindcss";`)
 - **Extension Bundling & Signing**: `crx3` (CRX3 format packaging)
 - **Image Processing**: `sharp` (SVG-to-PNG rasterization at build time)
-- **Execution Engine**: Node.js >= 20
+- **Execution Engine**: Node.js >= 24
 
 ---
 

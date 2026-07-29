@@ -146,6 +146,13 @@ export interface Translations {
       catAi: string;
       catDev: string;
       shortcutTip: string;
+      tavilySidebarTitle: string;
+      tavilySidebarDesc: string;
+      tavilyQueryPlaceholder: string;
+      tavilySearchBtn: string;
+      tavilySearching: string;
+      tavilySources: string;
+      tavilyApiKeyNotice: string;
     };
     links: {
       name: string;
@@ -356,6 +363,13 @@ export const zhTranslations: Translations = {
       catAi: "AI 智算",
       catDev: "代码/技术",
       shortcutTip: "Tab 快速切换引擎 · Enter 立即搜索",
+      tavilySidebarTitle: "Tavily AI 深度搜索",
+      tavilySidebarDesc: "针对开发者与研究者的实时 Web & AI 网页情报搜索",
+      tavilyQueryPlaceholder: "输入深度研究主题或搜索 Query...",
+      tavilySearchBtn: "开始深度检索",
+      tavilySearching: "正在全网深度检索与聚合...",
+      tavilySources: "网页来源与参考资料",
+      tavilyApiKeyNotice: "可直接使用基础搜索或填入个人 Tavily API Key 解锁全量能力",
     },
     links: {
       name: "快捷导航",
@@ -566,6 +580,13 @@ export const enTranslations: Translations = {
       catAi: "AI",
       catDev: "Code & Dev",
       shortcutTip: "Tab / Arrow keys to cycle engines · Enter to execute",
+      tavilySidebarTitle: "Tavily AI Deep Search",
+      tavilySidebarDesc: "Real-time web & AI intelligence search for developers & researchers",
+      tavilyQueryPlaceholder: "Enter research topic or search query...",
+      tavilySearchBtn: "Execute Deep Search",
+      tavilySearching: "Searching & aggregating across the web...",
+      tavilySources: "Web Sources & Citations",
+      tavilyApiKeyNotice: "Use instant search or enter your Tavily API Key for full API access",
     },
     links: {
       name: "Quick Links",

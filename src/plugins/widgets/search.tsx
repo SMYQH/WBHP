@@ -20,14 +20,16 @@ export interface SearchEngine {
 export const ENGINES: SearchEngine[] = [
   { id: "google", name: "Google", url: "https://www.google.com/search?q=", icon: "🔍", category: "web", shortcutKey: "1" },
   { id: "bing", name: "Bing", url: "https://www.bing.com/search?q=", icon: "🔎", category: "web", shortcutKey: "2" },
-  { id: "duckduckgo", name: "DuckDuckGo", url: "https://duckduckgo.com/?q=", icon: "🦆", category: "web", shortcutKey: "3" },
-  { id: "baidu", name: "Baidu", url: "https://www.baidu.com/s?wd=", icon: "🐾", category: "web", shortcutKey: "4" },
+  { id: "baidu", name: "Baidu", url: "https://www.baidu.com/s?wd=", icon: "🐾", category: "web", shortcutKey: "3" },
+  { id: "duckduckgo", name: "DuckDuckGo", url: "https://duckduckgo.com/?q=", icon: "🦆", category: "web", shortcutKey: "4" },
   { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com/?q=", icon: "🤖", isAi: true, category: "ai", shortcutKey: "5" },
-  { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", icon: "✨", isAi: true, category: "ai", shortcutKey: "6" },
-  { id: "perplexity", name: "Perplexity", url: "https://www.perplexity.ai/search?q=", icon: "🧠", isAi: true, category: "ai", shortcutKey: "7" },
-  { id: "github", name: "GitHub", url: "https://github.com/search?q=", icon: "🐙", category: "dev", shortcutKey: "8" },
-  { id: "stackoverflow", name: "StackOverflow", url: "https://stackoverflow.com/search?q=", icon: "⚡", category: "dev", shortcutKey: "9" },
-  { id: "mdn", name: "MDN Web", url: "https://developer.mozilla.org/search?q=", icon: "📚", category: "dev", shortcutKey: "0" },
+  { id: "claude", name: "Claude", url: "https://claude.ai/new?q=", icon: "🧠", isAi: true, category: "ai", shortcutKey: "6" },
+  { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", icon: "✨", isAi: true, category: "ai", shortcutKey: "7" },
+  { id: "perplexity", name: "Perplexity", url: "https://www.perplexity.ai/search?q=", icon: "🔮", isAi: true, category: "ai", shortcutKey: "8" },
+  { id: "tavily", name: "Tavily AI", url: "tavily:sidebar", icon: "🌐", isAi: true, category: "ai", shortcutKey: "t" },
+  { id: "github", name: "GitHub", url: "https://github.com/search?q=", icon: "🐙", category: "dev", shortcutKey: "g" },
+  { id: "stackoverflow", name: "StackOverflow", url: "https://stackoverflow.com/search?q=", icon: "⚡", category: "dev", shortcutKey: "s" },
+  { id: "mdn", name: "MDN Web", url: "https://developer.mozilla.org/search?q=", icon: "📚", category: "dev", shortcutKey: "m" },
 ];
 
 interface SearchData {
@@ -57,6 +59,12 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
     (e?: FormEvent) => {
       e?.preventDefault();
       const q = query.trim();
+
+      if (currentEngine.id === "tavily") {
+        window.dispatchEvent(new CustomEvent("wbhp:open-tavily", { detail: { query: q } }));
+        return;
+      }
+
       if (!q) return;
       setIsSubmitting(true);
       setTimeout(() => {

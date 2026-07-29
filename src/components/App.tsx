@@ -14,6 +14,7 @@ import {
 import Dashboard from "./Dashboard/Dashboard";
 import SettingsPanel from "./Settings/SettingsPanel";
 import CommandPalette from "./CommandPalette/CommandPalette";
+import { TavilySidebar } from "./TavilySidebar";
 import PluginHost from "./PluginHost";
 import ErrorBoundary from "./ErrorBoundary";
 import { getTranslations } from "../i18n";
@@ -32,6 +33,8 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false);
   const [showPalette, setShowPalette] = useState(false);
   const [isZenMode, setIsZenMode] = useState(false);
+  const [showTavily, setShowTavily] = useState(false);
+  const [tavilyQuery, setTavilyQuery] = useState("");
   const [updateBanner, setUpdateBanner] = useState<UpdateCheckResult | null>(() =>
     pickBannerResult(getLastUpdateResult()),
   );
@@ -41,6 +44,17 @@ export default function App() {
   const toggleZen = useCallback(() => setIsZenMode((prev) => !prev), []);
 
   const t = getTranslations(settings.language);
+
+  // ── Tavily Sidebar event listener ──────────────────────────────────
+  useEffect(() => {
+    const handleOpenTavily = (e: CustomEvent<{ query?: string }>) => {
+      setTavilyQuery(e.detail?.query || "");
+      setShowTavily(true);
+    };
+
+    window.addEventListener("wbhp:open-tavily", handleOpenTavily as EventListener);
+    return () => window.removeEventListener("wbhp:open-tavily", handleOpenTavily as EventListener);
+  }, []);
 
   // ── Theme management ──────────────────────────────────────────────
   useEffect(() => {
@@ -258,6 +272,13 @@ export default function App() {
           onClose={closeSettings}
         />
       )}
+
+      <TavilySidebar
+        isOpen={showTavily}
+        onClose={() => setShowTavily(false)}
+        language={settings.language}
+        initialQuery={tavilyQuery}
+      />
     </div>
   );
 }

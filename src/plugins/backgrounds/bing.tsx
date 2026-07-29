@@ -8,6 +8,15 @@ export interface BingBackgroundData {
 
 const DEFAULT_BING_IMAGE = "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=1920&auto=format&fit=crop";
 
+interface CachedBingWallpaper {
+  url: string;
+  copyright: string;
+  date: string;
+  timestamp: number;
+}
+
+const BING_CACHE_KEY = "wbhp_bing_wallpaper_cache";
+
 function BingBackground({ api }: { api: PluginAPI<BingBackgroundData> }) {
   const data = api.data.get();
   const blur = data?.blur ?? 0;
@@ -15,19 +24,52 @@ function BingBackground({ api }: { api: PluginAPI<BingBackgroundData> }) {
 
   const [imageUrl, setImageUrl] = useState<string>(DEFAULT_BING_IMAGE);
   const [copyright, setCopyright] = useState<string>("Bing Wallpaper of the Day");
+  const [isCached, setIsCached] = useState<boolean>(false);
 
   useEffect(() => {
-    // In browser extensions, CORS for Bing API can be fetched directly or fallback cleanly
+    const todayStr = new Date().toISOString().slice(0, 10);
+    
+    // Check local storage cache first
+    try {
+      const rawCache = localStorage.getItem(BING_CACHE_KEY);
+      if (rawCache) {
+        const parsed: CachedBingWallpaper = JSON.parse(rawCache);
+        if (parsed && parsed.url && parsed.date === todayStr) {
+          // Valid cache from today -> instant render from local cache
+          setImageUrl(parsed.url);
+          if (parsed.copyright) setCopyright(parsed.copyright);
+          setIsCached(true);
+          return;
+        }
+      }
+    } catch {
+      // Ignore cache parse error & fallback to network fetch
+    }
+
+    // Cache expired or missing -> fetch new daily wallpaper from Bing API
     fetch("https://bing.biturl.top/?resolution=1920&format=json&index=0&mkt=zh-CN")
       .then((res) => res.json())
       .then((resData) => {
         if (resData && resData.url) {
-          setImageUrl(resData.url);
-          if (resData.copyright) setCopyright(resData.copyright);
+          const newUrl = resData.url;
+          const newCopyright = resData.copyright || "Bing Wallpaper of the Day";
+
+          setImageUrl(newUrl);
+          setCopyright(newCopyright);
+
+          // Save to local storage cache with today's date
+          const cacheData: CachedBingWallpaper = {
+            url: newUrl,
+            copyright: newCopyright,
+            date: todayStr,
+            timestamp: Date.now(),
+          };
+          localStorage.setItem(BING_CACHE_KEY, JSON.stringify(cacheData));
+          setIsCached(true);
         }
       })
       .catch(() => {
-        // Fallback to Bing archive static mirror if direct API fails
+        // Fallback to static mirror if network offline
         setImageUrl("https://picsum.photos/1920/1080?nature");
       });
   }, []);
@@ -49,7 +91,7 @@ function BingBackground({ api }: { api: PluginAPI<BingBackgroundData> }) {
         />
       )}
       <div className="pointer-events-auto absolute bottom-4 left-4 rounded-lg bg-black/40 px-3 py-1.5 text-xs text-white/80 backdrop-blur opacity-0 hover:opacity-100 transition-opacity">
-        🖼️ {copyright}
+        🖼️ {copyright} {isCached && <span className="opacity-60 text-[10px] ml-1">(Cached)</span>}
       </div>
     </div>
   );

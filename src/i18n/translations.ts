@@ -144,6 +144,11 @@ export interface Translations {
       button: string;
       aiMode: string;
       aiPlaceholder: string;
+      catAll: string;
+      catWeb: string;
+      catAi: string;
+      catDev: string;
+      shortcutTip: string;
     };
     links: {
       name: string;
@@ -359,10 +364,15 @@ export const zhTranslations: Translations = {
     search: {
       name: "快捷搜索",
       desc: "多引擎无缝切换与 AI 智能问答搜索栏",
-      placeholder: "输入关键词搜索...",
+      placeholder: "输入关键词或代码指令搜索...",
       button: "搜索",
       aiMode: "AI 提问模式",
       aiPlaceholder: "询问 AI 助手 (ChatGPT / Gemini / Perplexity)...",
+      catAll: "全部引擎",
+      catWeb: "网页搜索",
+      catAi: "AI 智算",
+      catDev: "代码/技术",
+      shortcutTip: "Tab 快速切换引擎 · Enter 立即搜索",
     },
     links: {
       name: "快捷导航",
@@ -576,12 +586,17 @@ export const enTranslations: Translations = {
       evening: "Good evening",
     },
     search: {
-      name: "Search Bar",
-      desc: "Web search bar with multi-engine support & AI assistant",
-      placeholder: "Search the web...",
+      name: "Search Console",
+      desc: "Multi-engine web, code & AI search terminal",
+      placeholder: "Search web, code, or ask AI...",
       button: "Search",
       aiMode: "AI Mode",
       aiPlaceholder: "Ask AI (ChatGPT / Gemini / Perplexity)...",
+      catAll: "All",
+      catWeb: "Web",
+      catAi: "AI",
+      catDev: "Code & Dev",
+      shortcutTip: "Tab / Arrow keys to cycle engines · Enter to execute",
     },
     links: {
       name: "Quick Links",

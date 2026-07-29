@@ -3,7 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 import vm from "node:vm";
 
-const rootDir = path.resolve(__dirname, "../../");
+const rootDir = process.cwd();
 
 describe("Extension Build & Background Script Regression Tests", () => {
   it("verifies public/background.js exists and evaluates cleanly without top-level errors", () => {

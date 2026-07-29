@@ -55,7 +55,7 @@ jobs:
           DIST_DIR="dist-${{ matrix.browser }}"
           cp $DIST_DIR/wbhp-${{ matrix.browser }}.crx wbhp-${{ matrix.browser }}.crx
           cd $DIST_DIR
-          zip -r ../wbhp-${{ matrix.browser }}.zip . -x "*.crx"
+          zip -r ../wbhp-${{ matrix.browser }}.zip .
           cd ..
 
       - name: Upload CRX + ZIP
@@ -135,10 +135,11 @@ jobs:
 
             ### 📦 安装
 
-            **Chrome / Edge（推荐 CRX，支持自动更新）:**
-            1. 下载 `wbhp-chrome.crx`，拖到 `chrome://extensions`（需开启开发者模式）
-            2. 或下载 `wbhp-chrome.zip` 解压后「加载已解压的扩展程序」
-            3. 通过 CRX 安装后，浏览器会按 `update_url` 自动检查并安装后续版本
+            **Chrome / Edge（推荐使用 ZIP 内的 CRX，支持自动更新）:**
+            1. 下载 `wbhp-chrome.zip` 并解压，解压后目录中包含 `wbhp-chrome.crx` 安装包及解压扩展源码
+            2. 拖拽解压出的 `wbhp-chrome.crx` 到 `chrome://extensions` 页面（需开启开发者模式）
+            3. 或在 `chrome://extensions` 点击「加载已解压的扩展程序」选择解压目录
+            4. 通过 CRX 安装后，浏览器会按 `update_url` 自动检查并安装后续更新
 
             **Firefox:**
             1. 下载 `wbhp-firefox.zip` 并解压

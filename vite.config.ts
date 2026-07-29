@@ -78,7 +78,7 @@ function getAppVersion(): string {
 
 const appVersion = getAppVersion();
 
-const outDirName = browser === "firefox" ? "dist-firefox" : "dist";
+const outDirName = browser === "firefox" ? "dist-firefox" : "dist-chromium";
 
 function buildExtensionPlugin() {
   return {

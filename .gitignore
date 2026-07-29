@@ -1,5 +1,5 @@
 node_modules
-dist
+dist-chromium
 keys
 *.tsbuildinfo
 *.js
@@ -8,4 +8,4 @@ keys
 !src/vite-env.d.ts
 !*.config.d.ts
 release_downloads
-.agents
+dist-firefox

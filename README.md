@@ -17,15 +17,15 @@ npm install
 npm run dev            # Chrome-oriented Vite dev server
 npm run dev:firefox    # same, with BROWSER=firefox
 npm run typecheck
-npm run build          # Chrome build → dist/
-npm run build:firefox  # Firefox build
+npm run build          # Chrome build → dist-chromium/
+npm run build:firefox  # Firefox build → dist-firefox/
 ```
 
-Load the unpacked extension from `dist/`:
+Load the unpacked extension:
 
-1. Build once (`npm run build`)
-2. Chrome: `chrome://extensions` → Developer mode → Load unpacked → select `dist/`
-3. Firefox: `about:debugging` → This Firefox → Load Temporary Add-on → `dist/manifest.json`
+1. Build once (`npm run build` or `npm run build:firefox`)
+2. Chrome / Edge / Brave: `chrome://extensions` → Developer mode → Load unpacked → select `dist-chromium/`
+3. Firefox: `about:debugging` → This Firefox → Load Temporary Add-on → `dist-firefox/manifest.json`
 
 ## Architecture notes
 

@@ -15,8 +15,9 @@
     "noEmit": true,
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": ["@testing-library/jest-dom"]
   },
-  "include": ["src"],
+  "include": ["src", "tests"],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

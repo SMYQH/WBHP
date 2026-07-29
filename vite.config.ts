@@ -78,11 +78,13 @@ function getAppVersion(): string {
 
 const appVersion = getAppVersion();
 
+const outDirName = browser === "firefox" ? "dist-firefox" : "dist";
+
 function buildExtensionPlugin() {
   return {
     name: "build-extension",
     async closeBundle() {
-      const outDir = resolve(rootDir, "dist");
+      const outDir = resolve(rootDir, outDirName);
       if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
 
       // 1. Copy browser-specific manifest
@@ -166,7 +168,7 @@ export default defineConfig({
     },
   },
   build: {
-    outDir: "dist",
+    outDir: outDirName,
     emptyOutDir: true,
     target: "es2022",
     sourcemap: false,

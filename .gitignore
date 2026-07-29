@@ -8,3 +8,4 @@ keys
 !src/vite-env.d.ts
 !*.config.d.ts
 release_downloads
+.agents

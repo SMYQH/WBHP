@@ -101,7 +101,7 @@ WBHP uses a side-effect self-registration plugin pattern.
 | `npm run dev` | Launch Vite development server (Chrome target) |
 | `npm run dev:firefox` | Launch Vite dev server with `BROWSER=firefox` |
 | `npm run typecheck` | Run TypeScript strict type check (`tsc --noEmit`) |
-| `npm run build` | Build Chrome extension into `dist-chromium/` |
+| `npm run build` | Build Chrome extension into `dist-chrome/` |
 | `npm run build:firefox` | Build Firefox extension into `dist-firefox/` |
 | `npm run build:all` | Run TypeScript check and build both `.crx` bundles |
 

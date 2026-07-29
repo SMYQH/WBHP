@@ -1,6 +1,6 @@
 {
   "name": "wbhp",
-  "version": "0.4.3",
+  "version": "0.4.4",
   "private": true,
   "type": "module",
   "description": "WBHP - Web Browser Home Page. A modern, pluggable browser new tab extension.",
@@ -13,7 +13,11 @@
     "build:firefox": "tsc -b && cross-env BROWSER=firefox vite build",
     "preview": "vite preview",
     "typecheck": "tsc --noEmit",
-    "build:all": "npm run build && npm run build:firefox"
+    "build:all": "npm run build && npm run build:firefox",
+    "release": "node scripts/release.js",
+    "release:patch": "node scripts/release.js patch",
+    "release:minor": "node scripts/release.js minor",
+    "release:major": "node scripts/release.js major"
   },
   "dependencies": {
     "react": "^19.2.8",

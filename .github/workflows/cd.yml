@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       tag_name:
-        description: "Release tag (e.g. v0.4.2)"
+        description: "Release tag (e.g. v0.4.4)"
         required: false
         default: ""
 
@@ -31,14 +31,14 @@ jobs:
       - run: npm ci
 
       - name: Type Check
-        run: npx tsc --noEmit
+        run: npm run typecheck
 
       - name: Build (${{ matrix.browser }})
         env:
           BROWSER: ${{ matrix.browser }}
           CRX_KEY: ${{ matrix.browser == 'chrome' && secrets.CRX_KEY || secrets.CRX_KEY_FIREFOX }}
           BUILD_VERSION: ${{ inputs.tag_name || github.ref_name }}
-        run: npx vite build
+        run: ${{ matrix.browser == 'firefox' && 'npm run build:firefox' || 'npm run build' }}
 
       - name: Verify artifacts
         run: |

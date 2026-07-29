@@ -128,7 +128,7 @@ export default function App() {
     return () => window.removeEventListener("keydown", handler);
   }, [showSettings, showPalette, isZenMode]);
 
-  const bgPlugin = getPlugin(settings.activeBackground);
+  const bgPlugin = getPlugin(settings.activeBackground) || getPlugin("preset");
 
   const dismissBanner = () => {
     if (updateBanner?.latestVersion) {

@@ -9,7 +9,6 @@ import TodoWidget from "./todo";
 import NotesWidget from "./notes";
 import QuoteWidget from "./quote";
 import WorldClockWidget from "./worldclock";
-import RssWidget from "./rss";
 
 export {
   TimeWidget,
@@ -21,7 +20,6 @@ export {
   NotesWidget,
   QuoteWidget,
   WorldClockWidget,
-  RssWidget,
 };
 
 // Self-register on import
@@ -34,4 +32,4 @@ registerPlugin(TodoWidget);
 registerPlugin(NotesWidget);
 registerPlugin(QuoteWidget);
 registerPlugin(WorldClockWidget);
-registerPlugin(RssWidget);
+

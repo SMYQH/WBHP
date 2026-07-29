@@ -44,7 +44,6 @@ export interface Translations {
     tabs: {
       general: string;
       background: string;
-      backup: string;
       data: string;
     };
     general: {
@@ -74,8 +73,6 @@ export interface Translations {
     };
     background: {
       title: string;
-      color: string;
-      gradient: string;
       custom: string;
       preset: string;
       bing: string;
@@ -206,19 +203,8 @@ export interface Translations {
       cityPlaceholder: string;
       selectTimezone: string;
     };
-    rss: {
-      name: string;
-      desc: string;
-      githubTrending: string;
-      hackerNews: string;
-      devTo: string;
-      refresh: string;
-      readMore: string;
-    };
   };
   backgrounds: {
-    color: { name: string; desc: string };
-    gradient: { name: string; desc: string };
     custom: { name: string; desc: string };
     preset: { name: string; desc: string };
     bing: { name: string; desc: string };
@@ -268,7 +254,6 @@ export const zhTranslations: Translations = {
     tabs: {
       general: "常规",
       background: "背景外观",
-      backup: "云端备份",
       data: "数据管理",
     },
     general: {
@@ -298,8 +283,6 @@ export const zhTranslations: Translations = {
     },
     background: {
       title: "背景模式",
-      color: "纯色背景",
-      gradient: "炫彩渐变",
       custom: "自定义图片/本地上传",
       preset: "内置离线矢量图案",
       bing: "Bing 每日壁纸",
@@ -332,7 +315,7 @@ export const zhTranslations: Translations = {
       noBackup: "服务器上未找到备份文件",
       corrupted: "备份文件损坏或格式不正确",
       notice: "所有凭据安全存储在本地浏览器配置文件中，建议使用应用专用独立密码/Token。",
-      webdavTitle: "WebDAV 协议备份",
+      webdavTitle: "WebDAV 云端备份",
     },
     data: {
       exportBtn: "导出数据配置 (JSON)",
@@ -430,19 +413,8 @@ export const zhTranslations: Translations = {
       cityPlaceholder: "输入城市或时区名称",
       selectTimezone: "选择时区",
     },
-    rss: {
-      name: "科技动态流",
-      desc: "GitHub Trending 与技术开发者资讯大本营",
-      githubTrending: "GitHub Trending",
-      hackerNews: "Hacker News",
-      devTo: "Dev.to",
-      refresh: "刷新",
-      readMore: "阅读全文",
-    },
   },
   backgrounds: {
-    color: { name: "纯色背景", desc: "简约干净的单色背景" },
-    gradient: { name: "炫彩渐变", desc: "柔和优雅的平滑渐变色彩" },
     custom: { name: "自定义壁纸", desc: "支持上传本地图片或自定义图像 URL" },
     preset: { name: "艺术图腾", desc: "无需网络的高清纯离线矢量绘表" },
     bing: { name: "Bing 每日壁纸", desc: "微软 Bing 官方每日高清精选风景摄影" },
@@ -492,7 +464,6 @@ export const enTranslations: Translations = {
     tabs: {
       general: "General",
       background: "Background",
-      backup: "Cloud Sync",
       data: "Data",
     },
     general: {
@@ -522,8 +493,6 @@ export const enTranslations: Translations = {
     },
     background: {
       title: "Background Mode",
-      color: "Solid Color",
-      gradient: "Smooth Gradient",
       custom: "Custom Image / Local Upload",
       preset: "Offline Vector Patterns",
       bing: "Bing Daily Wallpaper",
@@ -556,7 +525,7 @@ export const enTranslations: Translations = {
       noBackup: "No backup found on server.",
       corrupted: "Backup file is corrupted.",
       notice: "Credentials are stored locally in your browser. App tokens recommended.",
-      webdavTitle: "WebDAV Server",
+      webdavTitle: "WebDAV Cloud Backup",
     },
     data: {
       exportBtn: "Export Config (JSON)",
@@ -654,19 +623,8 @@ export const enTranslations: Translations = {
       cityPlaceholder: "City or timezone name",
       selectTimezone: "Select timezone",
     },
-    rss: {
-      name: "Dev & Tech Feed",
-      desc: "GitHub Trending & top developer news",
-      githubTrending: "GitHub Trending",
-      hackerNews: "Hacker News",
-      devTo: "Dev.to",
-      refresh: "Refresh",
-      readMore: "Read full story",
-    },
   },
   backgrounds: {
-    color: { name: "Solid Color", desc: "Clean and minimal solid color" },
-    gradient: { name: "Gradient", desc: "Smooth color transition" },
     custom: { name: "Custom Wallpaper", desc: "Upload local photo or enter image URL" },
     preset: { name: "Offline Patterns", desc: "High quality vector geometric backdrops" },
     bing: { name: "Bing Daily Wallpaper", desc: "Official Microsoft Bing daily curated photography" },

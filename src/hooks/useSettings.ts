@@ -11,7 +11,7 @@ export const DEFAULT_SETTINGS: WBHPSettings = {
   language: "auto",
   fontFamily: "misans",
   activeWidgets: [],
-  activeBackground: "gradient",
+  activeBackground: "preset",
   userName: "",
   webdav: {
     enabled: false,

@@ -16,7 +16,7 @@ interface SettingsPanelProps {
   onClose: () => void;
 }
 
-type Tab = "general" | "background" | "backup" | "data";
+type Tab = "general" | "background" | "data";
 
 export default function SettingsPanel({ settings, updateSettings, onClose }: SettingsPanelProps) {
   const [tab, setTab] = useState<Tab>("general");
@@ -31,7 +31,6 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
   const tabs: { id: Tab; label: string }[] = [
     { id: "general", label: t.settings.tabs.general },
     { id: "background", label: t.settings.tabs.background },
-    { id: "backup", label: t.settings.tabs.backup },
     { id: "data", label: t.settings.tabs.data },
   ];
 
@@ -266,23 +265,33 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
             <BackgroundSettingsSection settings={settings} updateSettings={updateSettings} />
           )}
 
-          {tab === "backup" && (
+          {tab === "data" && (
             <div className="space-y-6">
-              <WebDAVSection
-                config={settings.webdav}
-                language={settings.language}
-                updateConfig={(patch) =>
-                  updateSettings({ webdav: { ...settings.webdav, ...patch } })
-                }
-                status={webdavStatus}
-                setStatus={setWebdavStatus}
-                backupMsg={backupMsg}
-                setBackupMsg={setBackupMsg}
-              />
+              <div className="space-y-3">
+                <h3 className="text-sm font-semibold flex items-center gap-1.5 border-b border-gray-200 pb-2 dark:border-gray-800">
+                  <span>☁️</span> {t.settings.backup.webdavTitle}
+                </h3>
+                <WebDAVSection
+                  config={settings.webdav}
+                  language={settings.language}
+                  updateConfig={(patch) =>
+                    updateSettings({ webdav: { ...settings.webdav, ...patch } })
+                  }
+                  status={webdavStatus}
+                  setStatus={setWebdavStatus}
+                  backupMsg={backupMsg}
+                  setBackupMsg={setBackupMsg}
+                />
+              </div>
+
+              <div className="space-y-3 pt-2">
+                <h3 className="text-sm font-semibold flex items-center gap-1.5 border-b border-gray-200 pb-2 dark:border-gray-800">
+                  <span>💾</span> {settings.language === "en" ? "Local JSON Backup & Restore" : "本地 JSON 备份与恢复"}
+                </h3>
+                <DataSection language={settings.language} />
+              </div>
             </div>
           )}
-
-          {tab === "data" && <DataSection language={settings.language} />}
         </div>
       </div>
     </div>

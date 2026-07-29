@@ -16,7 +16,7 @@ describe("plugin registry", () => {
     expect(timePlugin?.type).toBe("widget");
 
     const widgets = getWidgetPlugins();
-    expect(widgets.length).toBeGreaterThanOrEqual(10);
+    expect(widgets.length).toBeGreaterThanOrEqual(9);
     const ids = widgets.map((w) => w.id);
     expect(ids).toContain("time");
     expect(ids).toContain("greeting");
@@ -25,20 +25,20 @@ describe("plugin registry", () => {
   });
 
   it("registers backgrounds correctly", () => {
-    const colorBg = getPlugin("color");
-    expect(colorBg).toBeDefined();
-    expect(colorBg?.type).toBe("background");
+    const presetBg = getPlugin("preset");
+    expect(presetBg).toBeDefined();
+    expect(presetBg?.type).toBe("background");
 
     const backgrounds = getBackgroundPlugins();
-    expect(backgrounds.length).toBeGreaterThanOrEqual(5);
+    expect(backgrounds.length).toBeGreaterThanOrEqual(3);
     const ids = backgrounds.map((b) => b.id);
-    expect(ids).toContain("color");
-    expect(ids).toContain("gradient");
+    expect(ids).toContain("preset");
     expect(ids).toContain("bing");
+    expect(ids).toContain("custom");
   });
 
   it("retrieves all plugins via getAllPlugins", () => {
     const all = getAllPlugins();
-    expect(all.length).toBeGreaterThanOrEqual(15);
+    expect(all.length).toBeGreaterThanOrEqual(12);
   });
 });

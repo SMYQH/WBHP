@@ -11,7 +11,7 @@ describe("useSettings hook", () => {
   it("returns default settings initially", () => {
     const { result } = renderHook(() => useSettings());
     expect(result.current.settings.theme).toBe("system");
-    expect(result.current.settings.activeBackground).toBe("gradient");
+    expect(result.current.settings.activeBackground).toBe("preset");
   });
 
   it("updates settings reactively when updateSettings is called", () => {

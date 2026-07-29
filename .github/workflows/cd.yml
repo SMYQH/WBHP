@@ -33,6 +33,9 @@ jobs:
       - name: Type Check
         run: npm run typecheck
 
+      - name: Run Automated Tests
+        run: npm run test
+
       - name: Build (${{ matrix.browser }})
         env:
           BROWSER: ${{ matrix.browser }}
@@ -42,14 +45,16 @@ jobs:
 
       - name: Verify artifacts
         run: |
-          test -f dist/wbhp-${{ matrix.browser }}.crx || (echo "❌ CRX missing" && exit 1)
-          test -f dist/icons/icon-128.png || (echo "❌ PNG icons missing" && exit 1)
-          echo "✅ dist contents:" && ls -la dist/ dist/icons/
+          DIST_DIR="dist-${{ matrix.browser }}"
+          test -f $DIST_DIR/wbhp-${{ matrix.browser }}.crx || (echo "❌ CRX missing" && exit 1)
+          test -f $DIST_DIR/icons/icon-128.png || (echo "❌ PNG icons missing" && exit 1)
+          echo "✅ $DIST_DIR contents:" && ls -la $DIST_DIR/ $DIST_DIR/icons/
 
       - name: Package artifacts
         run: |
-          cp dist/wbhp-${{ matrix.browser }}.crx wbhp-${{ matrix.browser }}.crx
-          cd dist
+          DIST_DIR="dist-${{ matrix.browser }}"
+          cp $DIST_DIR/wbhp-${{ matrix.browser }}.crx wbhp-${{ matrix.browser }}.crx
+          cd $DIST_DIR
           zip -r ../wbhp-${{ matrix.browser }}.zip . -x "*.crx"
           cd ..
 

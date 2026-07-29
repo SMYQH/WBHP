@@ -17,9 +17,9 @@ jobs:
       matrix:
         browser: [chrome, firefox]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
@@ -29,6 +29,9 @@ jobs:
       - name: Type Check
         run: npm run typecheck
 
+      - name: Run Automated Tests
+        run: npm run test
+
       - name: Build (${{ matrix.browser }})
         env:
           BROWSER: ${{ matrix.browser }}
@@ -37,23 +40,24 @@ jobs:
 
       - name: Verify artifacts
         run: |
-          echo "=== dist/ contents ==="
-          ls -la dist/ dist/icons/
+          DIST_DIR="dist-${{ matrix.browser }}"
+          echo "=== $DIST_DIR/ contents ==="
+          ls -la $DIST_DIR/ $DIST_DIR/icons/
           echo ""
-          if [ -f dist/wbhp-${{ matrix.browser }}.crx ]; then
-            echo "✅ CRX file created ($(stat -c%s dist/wbhp-${{ matrix.browser }}.crx) bytes)"
+          if [ -f $DIST_DIR/wbhp-${{ matrix.browser }}.crx ]; then
+            echo "✅ CRX file created ($(stat -c%s $DIST_DIR/wbhp-${{ matrix.browser }}.crx) bytes)"
           else
             echo "❌ CRX file missing!"
             exit 1
           fi
-          if [ -f dist/manifest.json ]; then
+          if [ -f $DIST_DIR/manifest.json ]; then
             echo "✅ manifest.json present"
           else
             echo "❌ manifest.json missing!"
             exit 1
           fi
           for size in 16 32 48 128; do
-            if [ ! -f "dist/icons/icon-${size}.png" ]; then
+            if [ ! -f "$DIST_DIR/icons/icon-${size}.png" ]; then
               echo "❌ icons/icon-${size}.png missing!"
               exit 1
             fi

@@ -26,7 +26,6 @@ export const ENGINES: SearchEngine[] = [
   { id: "claude", name: "Claude", url: "https://claude.ai/new?q=", icon: "🧠", isAi: true, category: "ai", shortcutKey: "6" },
   { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", icon: "✨", isAi: true, category: "ai", shortcutKey: "7" },
   { id: "perplexity", name: "Perplexity", url: "https://www.perplexity.ai/search?q=", icon: "🔮", isAi: true, category: "ai", shortcutKey: "8" },
-  { id: "tavily", name: "Tavily AI", url: "tavily:sidebar", icon: "🌐", isAi: true, category: "ai", shortcutKey: "t" },
   { id: "github", name: "GitHub", url: "https://github.com/search?q=", icon: "🐙", category: "dev", shortcutKey: "g" },
   { id: "stackoverflow", name: "StackOverflow", url: "https://stackoverflow.com/search?q=", icon: "⚡", category: "dev", shortcutKey: "s" },
   { id: "mdn", name: "MDN Web", url: "https://developer.mozilla.org/search?q=", icon: "📚", category: "dev", shortcutKey: "m" },
@@ -133,10 +132,22 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           })}
         </div>
 
-        {/* Engine status indicator */}
-        <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-cyan-400/80 bg-black/30 dark:bg-white/5 px-2.5 py-1 rounded-md border border-cyan-500/20">
-          <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
-          <span>{getModeLabel()}</span>
+        {/* Dedicated Tavily AI Research Launcher & Engine status indicator */}
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent("wbhp:open-tavily", { detail: { query } }))}
+            className="flex items-center gap-1.5 rounded-lg bg-emerald-500/20 px-2.5 py-1 font-mono font-bold text-xs text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 hover:border-emerald-400/60 transition-all shadow-sm active:scale-95"
+            title={t.tavilySidebarTitle}
+          >
+            <span>🌐</span>
+            <span>{t.tavilySidebarTitle}</span>
+          </button>
+
+          <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-cyan-400/80 bg-black/30 dark:bg-white/5 px-2.5 py-1 rounded-md border border-cyan-500/20">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
+            <span>{getModeLabel()}</span>
+          </div>
         </div>
       </div>
 

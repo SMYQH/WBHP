@@ -153,6 +153,19 @@ export interface Translations {
       tavilySearching: string;
       tavilySources: string;
       tavilyApiKeyNotice: string;
+      tavilyBasic: string;
+      tavilyAdvanced: string;
+      tavilyGeneral: string;
+      tavilyNews: string;
+      tavilyNoKeySet: string;
+      tavilyKeySet: string;
+      tavilyEditKey: string;
+      tavilySaveKey: string;
+      tavilyAiOverview: string;
+      tavilyImageReferences: string;
+      tavilyOpenLink: string;
+      tavilyLatency: string;
+      tavilyCount: string;
     };
     links: {
       name: string;
@@ -369,7 +382,20 @@ export const zhTranslations: Translations = {
       tavilySearchBtn: "开始深度检索",
       tavilySearching: "正在全网深度检索与聚合...",
       tavilySources: "网页来源与参考资料",
-      tavilyApiKeyNotice: "可直接使用基础搜索或填入个人 Tavily API Key 解锁全量能力",
+      tavilyApiKeyNotice: "填入个人 Tavily API Key (tvly-...) 解锁极速 JSON 抽取与 AI 知识总结",
+      tavilyBasic: "基础检索",
+      tavilyAdvanced: "深度检索",
+      tavilyGeneral: "综合网页",
+      tavilyNews: "新闻资讯",
+      tavilyNoKeySet: "未配置 API Key (点击配置)",
+      tavilyKeySet: "Tavily API Key 已生效",
+      tavilyEditKey: "修改 Key",
+      tavilySaveKey: "保存 Key",
+      tavilyAiOverview: "AI 总结概览",
+      tavilyImageReferences: "参考图片",
+      tavilyOpenLink: "打开 ↗",
+      tavilyLatency: "耗时",
+      tavilyCount: "结果数",
     },
     links: {
       name: "快捷导航",
@@ -586,7 +612,20 @@ export const enTranslations: Translations = {
       tavilySearchBtn: "Execute Deep Search",
       tavilySearching: "Searching & aggregating across the web...",
       tavilySources: "Web Sources & Citations",
-      tavilyApiKeyNotice: "Use instant search or enter your Tavily API Key for full API access",
+      tavilyApiKeyNotice: "Enter your Tavily API Key (tvly-...) to unlock raw JSON extractions & AI syntheses",
+      tavilyBasic: "Basic",
+      tavilyAdvanced: "Advanced",
+      tavilyGeneral: "General",
+      tavilyNews: "News",
+      tavilyNoKeySet: "No API Key Set (Click to Configure)",
+      tavilyKeySet: "Tavily API Key Active",
+      tavilyEditKey: "Edit Key",
+      tavilySaveKey: "Save Key",
+      tavilyAiOverview: "AI Synthesized Overview",
+      tavilyImageReferences: "Image References",
+      tavilyOpenLink: "Open ↗",
+      tavilyLatency: "LATENCY",
+      tavilyCount: "COUNT",
     },
     links: {
       name: "Quick Links",

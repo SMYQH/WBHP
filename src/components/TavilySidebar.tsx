@@ -100,23 +100,25 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
 
           if (!res.ok) {
             const errJson = await res.json().catch(() => ({}));
-            throw new Error(errJson.detail || `Tavily API status ${res.status}: ${res.statusText}`);
+            throw new Error(errJson.detail || `Tavily API ${res.status}: ${res.statusText}`);
           }
 
           const data: TavilyResponse = await res.json();
           setTavilyData(data);
         } else {
-          // Direct web fallback integration: open Tavily search stream
-          await new Promise((resolve) => setTimeout(resolve, 500));
-          window.open(`https://tavily.com/?q=${encodeURIComponent(q)}`, "_blank");
+          // No API key: show in-panel prompt with direct web search action button
           setTavilyData({
             query: q,
-            answer: `Opened deep research on Tavily AI web platform. To view AI synthesized answers and raw citation cards in-place within WBHP, please set your Tavily API Key above.`,
+            answer: language === "zh"
+              ? `已为您生成 Tavily AI Web 搜索链接。为直接在本侧边栏查看完整的 JSON 抽取、AI 综合回答与参考图片，请在上方配置您的 Tavily API Key (tvly-...)。`
+              : `Generated Tavily AI Web search link for query. To view raw JSON extraction, AI synthesized answers, and reference cards in-place within this sidebar, please configure your Tavily API Key above.`,
             results: [
               {
                 title: `Tavily AI Search: "${q}"`,
                 url: `https://tavily.com/?q=${encodeURIComponent(q)}`,
-                content: `Direct Tavily search opened in browser. Obtain your free API key at https://tavily.com for full REST API integration.`,
+                content: language === "zh"
+                  ? `点击下方的外部链接直接在 Tavily AI Web 平台查看深度网页检索结果，或前往 https://tavily.com 免费获取 API Key 开启侧边栏嵌入抽取。`
+                  : `Click the link below to open deep search on Tavily AI web platform, or visit https://tavily.com to obtain a free API key.`,
                 score: 1.0,
               },
             ],
@@ -128,7 +130,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
         setIsLoading(false);
       }
     },
-    [query, apiKey, searchDepth, topic],
+    [query, apiKey, searchDepth, topic, language],
   );
 
   const onSubmit = (e: FormEvent) => {
@@ -196,7 +198,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                           : "text-slate-400 hover:text-white"
                       }`}
                     >
-                      Basic
+                      {t.tavilyBasic}
                     </button>
                     <button
                       type="button"
@@ -207,7 +209,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                           : "text-slate-400 hover:text-white"
                       }`}
                     >
-                      Advanced
+                      {t.tavilyAdvanced}
                     </button>
                   </div>
 
@@ -221,7 +223,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                           : "text-slate-400 hover:text-white"
                       }`}
                     >
-                      General
+                      {t.tavilyGeneral}
                     </button>
                     <button
                       type="button"
@@ -232,7 +234,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                           : "text-slate-400 hover:text-white"
                       }`}
                     >
-                      News
+                      {t.tavilyNews}
                     </button>
                   </div>
                 </div>
@@ -242,7 +244,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                   disabled={isLoading || !query.trim()}
                   className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-md text-xs transition-all shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-40"
                 >
-                  {isLoading ? "SEARCHING..." : t.tavilySearchBtn}
+                  {isLoading ? t.tavilySearching : t.tavilySearchBtn}
                 </button>
               </div>
             </form>
@@ -263,10 +265,10 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                   />
                   <button
                     type="button"
-                    onClick={() => setShowKeyInput(false)}
+                    onClick={() => saveApiKey(apiKey)}
                     className="text-emerald-400 hover:text-emerald-300 px-2 text-xs font-bold"
                   >
-                    Save
+                    {t.tavilySaveKey}
                   </button>
                 </div>
               ) : (
@@ -274,7 +276,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                   <span className="flex items-center gap-1">
                     <span>🔑</span>
                     <span className={apiKey ? "text-emerald-400" : "text-amber-400"}>
-                      {apiKey ? "Tavily API Key Active" : "No API Key Set"}
+                      {apiKey ? t.tavilyKeySet : t.tavilyNoKeySet}
                     </span>
                   </span>
                   <button
@@ -282,7 +284,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                     onClick={() => setShowKeyInput(true)}
                     className="text-emerald-400 hover:underline font-mono"
                   >
-                    {apiKey ? "Edit Key" : "Set API Key (tvly-...)"}
+                    {apiKey ? t.tavilyEditKey : "Set API Key (tvly-...)"}
                   </button>
                 </div>
               )}
@@ -300,7 +302,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
 
             {error && (
               <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3.5 text-red-300 text-xs font-mono space-y-1">
-                <div className="font-bold">🚨 Request Error:</div>
+                <div className="font-bold">🚨 Error:</div>
                 <div className="text-[11px] opacity-90">{error}</div>
               </div>
             )}
@@ -311,7 +313,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                 {tavilyData.response_time !== undefined && (
                   <div className="text-[10px] font-mono text-slate-500 flex items-center justify-between border-b border-white/5 pb-1">
                     <span>QUERY: {tavilyData.query}</span>
-                    <span>LATENCY: {tavilyData.response_time.toFixed(2)}s</span>
+                    <span>{t.tavilyLatency}: {tavilyData.response_time.toFixed(2)}s</span>
                   </div>
                 )}
 
@@ -320,7 +322,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                   <div className="rounded-xl border border-emerald-500/40 bg-emerald-950/20 p-4 space-y-2 backdrop-blur-sm">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 font-mono uppercase tracking-wider">
                       <span>✨</span>
-                      <span>AI Synthesized Overview</span>
+                      <span>{t.tavilyAiOverview}</span>
                     </div>
                     <p className="text-xs text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
                       {tavilyData.answer}
@@ -332,7 +334,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                 {tavilyData.images && tavilyData.images.length > 0 && (
                   <div className="space-y-2">
                     <div className="font-mono text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                      🖼️ Image References ({tavilyData.images.length})
+                      🖼️ {t.tavilyImageReferences} ({tavilyData.images.length})
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       {tavilyData.images.slice(0, 6).map((img, i) => (
@@ -345,7 +347,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                         >
                           <img
                             src={img.url}
-                            alt={img.description || "Tavily image result"}
+                            alt={img.description || "Tavily image"}
                             className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
                             onError={(e) => {
                               (e.target as HTMLElement).style.display = "none";
@@ -362,7 +364,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                   <div className="space-y-2.5">
                     <div className="font-mono text-[11px] font-semibold text-emerald-400 uppercase tracking-wider flex items-center justify-between">
                       <span>{t.tavilySources}</span>
-                      <span className="text-slate-500">COUNT: {tavilyData.results.length}</span>
+                      <span className="text-slate-500">{t.tavilyCount}: {tavilyData.results.length}</span>
                     </div>
 
                     {tavilyData.results.map((res, idx) => (
@@ -393,7 +395,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                             {new URL(res.url).hostname}
                           </span>
                           <span className="text-emerald-400/80 group-hover:translate-x-0.5 transition-transform">
-                            Open ↗
+                            {t.tavilyOpenLink}
                           </span>
                         </div>
                       </a>

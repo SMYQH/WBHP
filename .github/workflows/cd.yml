@@ -3,13 +3,16 @@ name: CD
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-# Triggered only by real tag pushes (e.g. `git push origin v0.1.0`).
-# workflow_dispatch is intentionally omitted: it sets `github.ref_name` to
-# the default branch, which previously created a bogus "WBHP master" release.
 on:
   push:
     tags:
       - "v*"
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Release tag (e.g. v0.4.2)"
+        required: false
+        default: ""
 
 jobs:
   build:
@@ -18,9 +21,9 @@ jobs:
       matrix:
         browser: [chrome, firefox]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v5
+      - uses: actions/setup-node@v4
         with:
           node-version: 24
           cache: npm
@@ -34,7 +37,7 @@ jobs:
         env:
           BROWSER: ${{ matrix.browser }}
           CRX_KEY: ${{ matrix.browser == 'chrome' && secrets.CRX_KEY || secrets.CRX_KEY_FIREFOX }}
-          BUILD_VERSION: ${{ github.ref_name }}
+          BUILD_VERSION: ${{ inputs.tag_name || github.ref_name }}
         run: npx vite build
 
       - name: Verify artifacts
@@ -43,18 +46,19 @@ jobs:
           test -f dist/icons/icon-128.png || (echo "❌ PNG icons missing" && exit 1)
           echo "✅ dist contents:" && ls -la dist/ dist/icons/
 
-      - name: Package ZIP
+      - name: Package artifacts
         run: |
+          cp dist/wbhp-${{ matrix.browser }}.crx wbhp-${{ matrix.browser }}.crx
           cd dist
           zip -r ../wbhp-${{ matrix.browser }}.zip . -x "*.crx"
           cd ..
 
       - name: Upload CRX + ZIP
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
           name: wbhp-${{ matrix.browser }}
           path: |
-            dist/wbhp-${{ matrix.browser }}.crx
+            wbhp-${{ matrix.browser }}.crx
             wbhp-${{ matrix.browser }}.zip
           if-no-files-found: error
 
@@ -64,40 +68,30 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
 
-      - uses: actions/download-artifact@v7
+      - uses: actions/download-artifact@v4
         with:
           pattern: wbhp-*
           merge-multiple: true
-          path: artifacts
+          path: release_assets
 
-      - name: List assets
-        run: ls -la artifacts/
-
-      - name: Flatten artifacts (CRX is under dist/ after upload)
-        run: |
-          mkdir -p flattened
-          cp artifacts/wbhp-chrome.zip flattened/
-          cp artifacts/wbhp-firefox.zip flattened/
-          cp artifacts/dist/wbhp-chrome.crx flattened/
-          cp artifacts/dist/wbhp-firefox.crx flattened/
-          ls -la flattened/
+      - name: List release assets
+        run: ls -la release_assets/
 
       - name: Sync browser update manifests to release version
         env:
-          TAG: ${{ github.ref_name }}
+          TAG: ${{ inputs.tag_name || github.ref_name }}
         run: |
           VERSION="${TAG#v}"
           cat > updates-chrome.xml <<EOF
           <?xml version='1.0' encoding='UTF-8'?>
           <gupdate xmlns='http://www.google.com/update2/response' protocol='2.0'>
             <app appid="apjmikgceehobplahpekiibgkjnfpbdb">
-              <updatecheck codebase="https://github.com/SMYQH/wbhp/releases/download/${TAG}/wbhp-chrome.crx" version="${VERSION}" />
+              <updatecheck codebase="https://github.com/SMYQH/wbhp/releases/latest/download/wbhp-chrome.crx" version="${VERSION}" />
             </app>
           </gupdate>
           EOF
-          # Strip leading indentation introduced by the heredoc above
           sed -i 's/^[[:space:]]*//' updates-chrome.xml
 
           cat > updates-firefox.json <<EOF
@@ -107,7 +101,7 @@ jobs:
                 "updates": [
                   {
                     "version": "${VERSION}",
-                    "update_link": "https://github.com/SMYQH/wbhp/releases/download/${TAG}/wbhp-firefox.zip"
+                    "update_link": "https://github.com/SMYQH/wbhp/releases/latest/download/wbhp-firefox.zip"
                   }
                 ]
               }
@@ -122,7 +116,6 @@ jobs:
             echo "Update manifests already current"
           else
             git commit -m "chore: bump update manifests to ${TAG}"
-            # Push to the default branch so update_url keeps serving the latest version.
             DEFAULT_BRANCH="$(git remote show origin | sed -n '/HEAD branch/s/.*: //p')"
             git push origin "HEAD:refs/heads/${DEFAULT_BRANCH}"
           fi
@@ -130,10 +123,10 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ github.ref_name }}
-          name: "WBHP ${{ github.ref_name }}"
+          tag_name: ${{ inputs.tag_name || github.ref_name }}
+          name: "WBHP ${{ inputs.tag_name || github.ref_name }}"
           body: |
-            ## 🚀 WBHP ${{ github.ref_name }}
+            ## 🚀 WBHP ${{ inputs.tag_name || github.ref_name }}
 
             ### 📦 安装
 
@@ -152,10 +145,10 @@ jobs:
             - CRX3 签名格式，兼容 Chrome 64+ / Firefox 109+
             - 使用固定密钥签名，扩展 ID 保持一致，支持浏览器原生自动更新
           files: |
-            flattened/wbhp-chrome.crx
-            flattened/wbhp-chrome.zip
-            flattened/wbhp-firefox.crx
-            flattened/wbhp-firefox.zip
+            release_assets/wbhp-chrome.crx
+            release_assets/wbhp-chrome.zip
+            release_assets/wbhp-firefox.crx
+            release_assets/wbhp-firefox.zip
           draft: false
-          prerelease: ${{ contains(github.ref_name, '-') }}
+          prerelease: ${{ contains(inputs.tag_name || github.ref_name, '-') }}
           generate_release_notes: true

@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "WBHP",
-  "version": "0.4.9",
+  "version": "0.5.0",
   "description": "Web Browser Home Page — A modern, pluggable new tab page.",
   "author": "WBHP Contributors",
   "update_url": "https://raw.githubusercontent.com/SMYQH/wbhp/master/updates-chrome.xml",

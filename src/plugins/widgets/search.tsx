@@ -237,18 +237,6 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           );
         })}
       </div>
-
-      {/* Technical Footer Telemetry Bar */}
-      <div className="mt-2.5 flex items-center justify-between text-[11px] font-mono text-white/50 px-1">
-        <div className="flex items-center gap-2">
-          <span className="hidden sm:inline-block">LEN: {query.length}</span>
-          <span className="hidden sm:inline-block text-white/20">|</span>
-          <span className="text-cyan-400/70">{t.shortcutTip}</span>
-        </div>
-        <div className="text-right text-white/40">
-          <span>SYS.SEARCH_V2.0</span>
-        </div>
-      </div>
     </div>
   );
 }

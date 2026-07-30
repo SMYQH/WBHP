@@ -124,4 +124,4 @@ WBHP/
 4. **Event Bus Naming Standard**: Use `wbhp:<action>` naming convention for global `CustomEvent` communications.
 5. **Windows Shell Safety**: Use `pwsh -c` wrapper when executing shell commands if running under PowerShell restricted execution environments.
 6. **Build Verification**: Before declaring success, execute `pwsh -c "npm run build:all"` to ensure zero compilation or bundling errors.
-7. **Release Workflow**: After completing optimization tasks, run `pwsh -c "npm run release"` to auto-increment the patch version (e.g., v0.5.1 -> v0.5.2), sync manifests and update files, run full build, commit, tag, and push to GitHub to trigger the `cd.yml` CD release workflow.
+7. **Release & CD Monitoring Workflow**: After completing optimization tasks, run `pwsh -c "npm run release"` to auto-increment the patch version (e.g., v0.5.1 -> v0.5.2), sync manifests and update files, run full build, commit, tag, and push to GitHub. The script automatically waits 30 seconds for GitHub Actions to trigger, then streams and monitors the CD workflow logs via `gh CLI` (`gh run watch` / `gh run view`) until release completion.

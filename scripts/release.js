@@ -103,7 +103,31 @@ async function main() {
   runCmd(`git tag -a v${nextVersion} -m "v${nextVersion} release"`);
   runCmd("git push origin master --tags");
 
-  console.log(`\n✅ Release v${nextVersion} successfully published and pushed to GitHub!\n`);
+  console.log(`\n✅ Release v${nextVersion} successfully published and pushed to GitHub!`);
+
+  // 8. Wait 30s and monitor CD workflow logs via gh cli
+  console.log("\n⏳ Waiting 30s before initiating GitHub Actions CD workflow log monitoring...");
+  await new Promise((resolve) => setTimeout(resolve, 30000));
+
+  try {
+    console.log(`\n🔍 Fetching CD workflow run for tag v${nextVersion}...`);
+    const runInfoJson = execSync(
+      `gh run list --workflow=cd.yml -L 1 --json databaseId,status,conclusion,headBranch`,
+      { cwd: rootDir, encoding: "utf-8" }
+    );
+    const runs = JSON.parse(runInfoJson);
+    if (runs && runs.length > 0) {
+      const runId = runs[0].databaseId;
+      console.log(`\n📡 Watching CD workflow run (ID: ${runId})...`);
+      runCmd(`gh run watch ${runId} --exit-status`);
+      console.log(`\n📊 CD Workflow Summary for v${nextVersion}:`);
+      runCmd(`gh run view ${runId}`);
+    } else {
+      console.warn("⚠️ No active CD workflow run found via gh CLI.");
+    }
+  } catch (err) {
+    console.warn(`⚠️ GitHub CLI monitoring completed with notice: ${err.message}`);
+  }
 }
 
 main().catch((err) => {

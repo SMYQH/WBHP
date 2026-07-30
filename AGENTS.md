@@ -9,9 +9,9 @@ Welcome to **WBHP (Web Browser Home Page)**! This document serves as the authori
 WBHP is a modern, pluggable **new tab** browser extension built with **React 19**, **Vite 8**, **TypeScript**, and **Tailwind CSS 4**. It supports both **Chrome (Manifest V3)** and **Firefox (Manifest V3)**.
 
 * **Repository Root**: `E:\GitHub\WBHP`
-* **Architecture**: Pluggable Plugin System (Widgets & Backgrounds)
+* **Architecture**: Pluggable Plugin System (Widgets & Backgrounds) + Event-Driven Communication
 * **Storage**: `localStorage` + `useSyncExternalStore` reactive store, with fallback mirroring to `chrome.storage.local`
-* **Cloud Sync**: WebDAV sync + Local JSON Backup/Restore
+* **Cloud Sync & Updater**: WebDAV sync + Local JSON Backup/Restore + Auto Update Check Service (`updater.ts`)
 
 ---
 
@@ -20,8 +20,8 @@ WBHP is a modern, pluggable **new tab** browser extension built with **React 19*
 * **Framework**: React 19 (`react`, `react-dom`)
 * **Build Tool**: Vite 8 (`vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`)
 * **Styling**: Tailwind CSS 4
-* **Language**: TypeScript (`tsc --noEmit` for type checking)
-* **Packaging**: `crx3` for `.crx` extension bundling
+* **Language**: TypeScript (`tsc -b` for type checking)
+* **Packaging & Utilities**: `crx3` for `.crx` bundling, `sharp` for SVG-to-PNG icon rasterization
 
 ---
 
@@ -39,18 +39,20 @@ WBHP/
 │   │   ├── CommandPalette/  # Global command palette (Ctrl+K or /)
 │   │   ├── Dashboard/       # Main widget container (supports Zen/Focus mode)
 │   │   ├── Settings/        # Settings modal dialog
+│   │   ├── TavilySidebar.tsx # Tavily AI deep research sidebar & drawer
 │   │   ├── PluginHost.tsx   # Generic wrapper for rendering plugins with PluginAPI
-│   │   └── ErrorBoundary.tsx
-│   ├── hooks/               # React hooks (e.g., useSettings)
+│   │   ├── ErrorBoundary.tsx
+│   │   └── ui/              # Reusable UI components (e.g. PluginCard.tsx)
+│   ├── hooks/               # React hooks (useSettings.ts, usePluginData.ts)
 │   ├── i18n/                # Internationalization (zh & en translations)
 │   │   ├── index.ts
 │   │   └── translations.ts
 │   ├── plugins/             # Pluggable plugin system
 │   │   ├── registry.ts      # Global plugin registration & lookup registry
 │   │   ├── types.ts         # Plugin API & Settings type definitions
-│   │   ├── backgrounds/     # Background plugins (Color, Gradient, Custom, Preset, Bing)
-│   │   └── widgets/         # Widget plugins (Time, Greeting, Search+AI, Links, Weather, Todo, Notes, Quote, WorldClock, RSS)
-│   ├── services/            # Persistence & Sync services (storage.ts, webdav.ts)
+│   │   ├── backgrounds/     # Background plugins (Bing, Custom, Preset, Unsplash)
+│   │   └── widgets/         # Widget plugins (Time, Greeting, Search, Links, Weather, Todo, Notes, Quote, WorldClock)
+│   ├── services/            # Persistence, Sync & Update services (storage.ts, webdav.ts, updater.ts)
 │   ├── styles/              # Global CSS & Tailwind imports
 │   ├── main.tsx             # Application entry point
 │   └── vite-env.d.ts
@@ -62,9 +64,7 @@ WBHP/
 
 ---
 
-## 🧩 Plugin Architecture
-
-WBHP uses a side-effect self-registration plugin pattern.
+## 🧩 Architecture & Key Patterns
 
 1. **Plugin Definition** (`PluginConfig<Data>`):
    Every widget or background exports a `PluginConfig` object containing:
@@ -82,6 +82,10 @@ WBHP uses a side-effect self-registration plugin pattern.
 3. **Reactive Data Access**:
    Inside plugin components, read state reactively using `useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get)` and update using `api.data.set(...)`.
 
+4. **Event Bus Communication**:
+   Components communicate cross-plugin via global `CustomEvent`.
+   - Example: Search widget dispatches `wbhp:open-tavily` event, captured by `App.tsx` / `TavilySidebar.tsx`.
+
 ---
 
 ## ⌨️ Key Features & Shortcuts
@@ -89,7 +93,7 @@ WBHP uses a side-effect self-registration plugin pattern.
 * **Command Palette**: `Ctrl + K` / `Cmd + K` or `/` anywhere on the page
 * **Zen / Focus Mode**: `Z` key toggle or floating toolbar button 🧘
 * **Settings Dialog**: `Ctrl + ,` or floating toolbar button ⚙️
-* **AI Search Integration**: Switch search engines to ChatGPT, Gemini, or Perplexity directly from the search widget
+* **AI Search & Deep Research**: Switch search engines to ChatGPT, Gemini, or Perplexity + Tavily AI Deep Research sidebar
 * **Favicon & Category Filtering**: Quick links widget supports custom tags and Google Favicon fetching
 
 ---
@@ -100,16 +104,24 @@ WBHP uses a side-effect self-registration plugin pattern.
 | :--- | :--- |
 | `npm run dev` | Launch Vite development server (Chrome target) |
 | `npm run dev:firefox` | Launch Vite dev server with `BROWSER=firefox` |
-| `npm run typecheck` | Run TypeScript strict type check (`tsc --noEmit`) |
+| `npm run typecheck` | Run TypeScript strict type check (`tsc -b`) |
 | `npm run build` | Build Chrome extension into `dist-chrome/` |
 | `npm run build:firefox` | Build Firefox extension into `dist-firefox/` |
 | `npm run build:all` | Run TypeScript check and build both `.crx` bundles |
+| `npm run release` | Auto-bump patch version, update manifests, build, commit, tag vX.Y.Z, and push to GitHub |
+| `npm run release:patch` | Same as `npm run release` (auto patch version increment) |
+| `npm run release:minor` | Minor version bump and release |
+
+> **Windows Shell Tip**: If running on Windows PowerShell where script execution policy is restricted, execute npm commands via `cmd /c` (e.g. `cmd /c "npm run build:all"` or `cmd /c "npm run release"`).
 
 ---
 
 ## 🤖 Guidelines for AI Agents
 
-1. **Always Verify Types**: Run `npm run typecheck` after adding or modifying components/plugins.
+1. **Always Verify Types**: Run `npm run typecheck` or `npm run build:all` after adding or modifying components/plugins.
 2. **Preserve i18n**: Whenever introducing user-facing text, add corresponding key-value pairs in `src/i18n/translations.ts` for both `zh` and `en`.
 3. **Keep Plugins Self-Contained**: Place new widget plugins in `src/plugins/widgets/` and backgrounds in `src/plugins/backgrounds/`, and register them in `index.ts`.
-4. **Build Verification**: Before declaring success, execute `npm run build:all` to ensure zero compilation or bundling errors.
+4. **Event Bus Naming Standard**: Use `wbhp:<action>` naming convention for global `CustomEvent` communications.
+5. **Windows Shell Safety**: Use `cmd /c` wrapper when executing shell commands if running under PowerShell restricted execution environments.
+6. **Build Verification**: Before declaring success, execute `cmd /c "npm run build:all"` to ensure zero compilation or bundling errors.
+7. **Release Workflow**: After completing optimization tasks, run `cmd /c "npm run release"` to auto-increment the patch version (e.g., v0.5.1 -> v0.5.2), sync manifests and update files, run full build, commit, tag, and push to GitHub to trigger the `cd.yml` CD release workflow.

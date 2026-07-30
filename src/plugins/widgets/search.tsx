@@ -145,7 +145,6 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           </button>
 
           <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-cyan-400/80 bg-black/30 dark:bg-white/5 px-2.5 py-1 rounded-md border border-cyan-500/20">
-            <span className="inline-block w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" />
             <span>{getModeLabel()}</span>
           </div>
         </div>

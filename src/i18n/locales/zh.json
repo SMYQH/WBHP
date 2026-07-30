@@ -1,0 +1,299 @@
+{
+  "app": {
+    "commandPaletteTooltip": "快捷命令面板 (Ctrl+K 或 /)",
+    "commandPaletteAria": "打开快捷命令面板",
+    "zenModeTooltip": "切换专注模式",
+    "zenModeAria": "切换专注模式",
+    "settingsTooltip": "设置 (Ctrl+,)",
+    "settingsAria": "打开设置",
+    "bgFallbackPrefix": "背景："
+  },
+  "errorBoundary": {
+    "title": "发生了一些错误",
+    "tryAgain": "重试"
+  },
+  "zenMode": {
+    "enter": "进入专注模式",
+    "exit": "退出专注模式 (按 Esc 或 Z)",
+    "desc": "隐藏所有挂件，极简沉浸沉思"
+  },
+  "commandPalette": {
+    "title": "快捷命令面板",
+    "placeholder": "输入指令或搜索挂件 (Ctrl+K)...",
+    "noResults": "未找到匹配的命令或挂件",
+    "shortcutHint": "提示：使用 Ctrl+K 或 / 随时打开面板",
+    "categories": {
+      "system": "系统",
+      "mode": "模式",
+      "theme": "外观主题",
+      "widgets": "挂件",
+      "backgrounds": "背景"
+    },
+    "actions": {
+      "openSettings": "打开设置面板",
+      "toggleZen": "切换专注模式 / 禅模式",
+      "themeLight": "切换至浅色外观",
+      "themeDark": "切换至深色外观",
+      "themeSystem": "跟随系统外观",
+      "hideWidget": "隐藏挂件",
+      "showWidget": "显示挂件",
+      "setBackground": "应用背景"
+    }
+  },
+  "updater": {
+    "currentVersion": "当前版本",
+    "checkUpdateBtn": "检查更新",
+    "checking": "正在检查更新...",
+    "upToDate": "已是最新版本",
+    "updateAvailable": "发现新版本",
+    "downloadUpdate": "前往 GitHub 下载",
+    "autoDownloadBtn": "立即下载安装包",
+    "failed": "检查更新失败，请稍后再试",
+    "autoCheck": "自动检查更新",
+    "autoCheckHelp": "打开新标签页时自动检查 GitHub Release，并尝试触发浏览器原生更新。",
+    "autoDownload": "发现新版本时自动下载",
+    "autoDownloadHelp": "检测到新版本后自动下载安装包（仍需手动安装；商店版由浏览器自动更新）。",
+    "bannerTitle": "WBHP 有新版本可用",
+    "bannerLater": "稍后",
+    "bannerDownload": "下载更新",
+    "bannerInstallHint": "下载后在扩展管理页拖入 .crx / 加载解压包即可完成更新。"
+  },
+  "settings": {
+    "title": "设置",
+    "close": "关闭设置",
+    "tabs": {
+      "general": "常规",
+      "background": "背景外观",
+      "data": "数据管理"
+    },
+    "general": {
+      "theme": "外观主题",
+      "themeOptions": {
+        "system": "跟随系统",
+        "light": "浅色模式",
+        "dark": "深色模式"
+      },
+      "language": "界面语言",
+      "languageOptions": {
+        "auto": "自动检测",
+        "zh": "简体中文",
+        "en": "English"
+      },
+      "font": "界面字体",
+      "fontOptions": {
+        "misans": "小米字体 (MiSans)",
+        "serif": "思源宋体 (Serif)",
+        "opensans": "Open Sans (极客)",
+        "system": "无障碍系统默认"
+      },
+      "userName": "您的称呼",
+      "userNamePlaceholder": "请输入您的名字...",
+      "activeWidgets": "启用挂件",
+      "activeWidgetsHelp": "未选择任何挂件时默认全选。点击挂件卡片可自由切换显示/隐藏。"
+    },
+    "background": {
+      "title": "背景模式",
+      "custom": "自定义图片/本地上传",
+      "preset": "内置离线矢量图案",
+      "bing": "Bing 每日壁纸",
+      "customUrl": "自定义壁纸 URL 链接",
+      "customUpload": "本地图片上传",
+      "customUploadBtn": "选择本地图片",
+      "blur": "高斯模糊",
+      "overlay": "暗化遮罩",
+      "presetStyle": "图案风格"
+    },
+    "backup": {
+      "enableWebdav": "启用 WebDAV 云备份",
+      "urlPlaceholder": "WebDAV URL (如 https://dav.example.com/files/)",
+      "usernamePlaceholder": "用户名",
+      "passwordPlaceholder": "密码 / 应用授权码",
+      "autoInterval": "自动备份间隔（分钟，0 表示关闭）",
+      "testBtn": "测试连接",
+      "backupBtn": "立即备份",
+      "restoreBtn": "恢复备份",
+      "testing": "正在测试连接...",
+      "connected": "WebDAV 连接成功",
+      "failed": "连接失败，请检查配置",
+      "backingUp": "正在上传备份...",
+      "restoring": "正在从云端恢复...",
+      "backupSuccess": "备份已成功保存至 WebDAV 服务器",
+      "backupFailed": "备份保存失败",
+      "restoreSuccess": "数据已成功恢复",
+      "restoreFailed": "恢复数据失败",
+      "restoreConfirm": "确定要从云端恢复数据吗？这将覆盖当前本地配置。",
+      "noBackup": "服务器上未找到备份文件",
+      "corrupted": "备份文件损坏或格式不正确",
+      "notice": "所有凭据安全存储在本地浏览器配置文件中，建议使用应用专用独立密码/Token。",
+      "webdavTitle": "WebDAV 云端备份"
+    },
+    "data": {
+      "localBackupTitle": "本地 JSON 备份与恢复",
+      "exportBtn": "导出数据配置 (JSON)",
+      "importBtn": "导入数据配置 (JSON)",
+      "clearBtn": "清空所有本地数据",
+      "exported": "配置数据已成功导出为 JSON 文件。",
+      "imported": "配置数据导入成功，正在刷新页面...",
+      "cleared": "所有本地数据已清空，正在重置...",
+      "invalid": "无效的备份 JSON 文件。",
+      "clearConfirm": "警告：确定要清空 WBHP 的所有本地配置与数据吗？此操作不可逆！"
+    }
+  },
+  "widgets": {
+    "time": {
+      "name": "精美时钟",
+      "desc": "高清数字时钟与日期显示",
+      "showSeconds": "显示秒数",
+      "showDate": "显示日期",
+      "hour12": "12小时制"
+    },
+    "greeting": {
+      "name": "问候语",
+      "desc": "根据时间动态变化的人性化问候",
+      "night": "夜深了，注意休息",
+      "morning": "早上好",
+      "afternoon": "下午好",
+      "evening": "晚上好"
+    },
+    "search": {
+      "name": "快捷搜索",
+      "desc": "多引擎无缝切换与 AI 智能问答搜索栏",
+      "placeholder": "输入关键词或代码指令搜索...",
+      "button": "搜索",
+      "aiMode": "AI 提问模式",
+      "aiPlaceholder": "询问 AI 助手 (ChatGPT / Gemini / Perplexity)...",
+      "catAll": "全部引擎",
+      "catWeb": "网页搜索",
+      "catAi": "AI 智算",
+      "catDev": "代码/技术",
+      "shortcutTip": "Tab 快速切换引擎 · Enter 立即搜索",
+      "tavilySidebarTitle": "Tavily AI 深度搜索",
+      "tavilySidebarDesc": "针对开发者与研究者的实时 Web & AI 网页情报搜索",
+      "tavilyQueryPlaceholder": "输入深度研究主题或搜索 Query...",
+      "tavilySearchBtn": "开始深度检索",
+      "tavilySearching": "正在全网深度检索与聚合...",
+      "tavilySources": "网页来源与参考资料",
+      "tavilyApiKeyNotice": "填入个人 Tavily API Key (tvly-...) 解锁极速 JSON 抽取与 AI 知识总结",
+      "tavilyBasic": "基础检索",
+      "tavilyAdvanced": "深度检索",
+      "tavilyGeneral": "综合网页",
+      "tavilyNews": "新闻资讯",
+      "tavilyNoKeySet": "未配置 API Key (点击配置)",
+      "tavilyKeySet": "Tavily API Key 已生效",
+      "tavilyEditKey": "修改 Key",
+      "tavilySaveKey": "保存 Key",
+      "tavilyAiOverview": "AI 总结概览",
+      "tavilyImageReferences": "参考图片",
+      "tavilyOpenLink": "打开 ↗",
+      "tavilyLatency": "耗时",
+      "tavilyCount": "结果数",
+      "tavilyPromptAnswer": "已为您生成 Tavily AI Web 搜索链接。为直接在本侧边栏查看完整的 JSON 抽取、AI 综合回答与参考图片，请在上方配置您的 Tavily API Key (tvly-...)。",
+      "tavilyPromptContent": "点击下方的外部链接直接在 Tavily AI Web 平台查看深度网页检索结果，或前往 https://tavily.com 免费获取 API Key 开启侧边栏嵌入抽取。",
+      "tavilyImageAlt": "Tavily 参考图片"
+    },
+    "links": {
+      "name": "快捷导航",
+      "desc": "支持分类标签与智能 Icon 的常用书签导航",
+      "addBtn": "添加导航",
+      "titlePlaceholder": "网站名称",
+      "urlPlaceholder": "https://example.com",
+      "categoryPlaceholder": "分类标签 (可选，如 工作 / 娱乐)",
+      "allCategory": "全部导航",
+      "saveBtn": "保存",
+      "cancelBtn": "取消",
+      "titleRequired": "请输入网站名称",
+      "urlInvalid": "请输入有效的 http(s) 网址",
+      "remove": "删除此导航"
+    },
+    "weather": {
+      "name": "天气面板",
+      "desc": "基于 IP 定位的实时天气预报",
+      "locationPlaceholder": "城市名称",
+      "unitCelsius": "摄氏度 (°C)",
+      "unitFahrenheit": "华氏度 (°F)",
+      "city": "城市",
+      "temp": "温度",
+      "condition": "天气状况"
+    },
+    "todo": {
+      "name": "待办清单",
+      "desc": "轻量级高效待办事项与任务管理",
+      "placeholder": "添加一条新待办事项...",
+      "addBtn": "添加",
+      "all": "全部",
+      "active": "进行中",
+      "completed": "已完成",
+      "clearCompleted": "清除已完成",
+      "emptyState": "暂无待办事项，轻松一下吧！",
+      "itemsLeft": "项未完成"
+    },
+    "notes": {
+      "name": "快捷便签",
+      "desc": "随手灵感记录与 Markdown 草稿纸",
+      "placeholder": "在此输入随手便签或思考...",
+      "clearBtn": "清空便签",
+      "words": "字",
+      "chars": "字符"
+    },
+    "quote": {
+      "name": "一言金句",
+      "desc": "海量 ACG、文学、诗词与哲学灵感金句",
+      "refreshBtn": "换一句",
+      "copyBtn": "复制金句",
+      "copied": "已复制",
+      "favBtn": "收藏金句",
+      "unfavBtn": "取消收藏",
+      "settingsTitle": "一言设置",
+      "sourceMode": "金句来源模式",
+      "modeHitokoto": "一言 Core API (在线)",
+      "modePreset": "离线预设金句",
+      "modeFavorites": "我的收藏金句",
+      "categories": "一言分类筛选",
+      "catAll": "全部分类",
+      "catAnime": "动画",
+      "catComic": "漫画",
+      "catGame": "游戏",
+      "catLiterature": "文学",
+      "catOriginal": "原创",
+      "catNetwork": "来自网络",
+      "catOther": "其他",
+      "catTv": "影视",
+      "catPoetry": "诗词",
+      "catMusic": "网易云",
+      "catPhilosophy": "哲学",
+      "catJoke": "抖机灵",
+      "modes": {
+        "hitokoto": "Hitokoto",
+        "preset": "预设",
+        "favorites": "收藏"
+      },
+      "autoRefresh": "自动更新周期",
+      "autoRefreshOff": "手动刷新",
+      "autoRefresh5m": "每 5 分钟",
+      "autoRefresh30m": "每 30 分钟",
+      "autoRefresh1h": "每 1 小时",
+      "addCustom": "添加自定义金句",
+      "customTextPlaceholder": "输入名言/金句正文...",
+      "customAuthorPlaceholder": "作者 (可选)...",
+      "customSourcePlaceholder": "出处/作品名 (可选)...",
+      "addBtn": "添加金句",
+      "noFavorites": "暂无收藏的金句，点击名言卡片右下角 ❤️ 保存喜欢的金句！",
+      "tabQuote": "金句推荐",
+      "tabFavorites": "我的收藏",
+      "tabSettings": "挂件设置",
+      "deleteFav": "移除此收藏"
+    },
+    "worldclock": {
+      "name": "世界时钟",
+      "desc": "多时区跨国协作城市时间卡片",
+      "addCity": "添加城市",
+      "cityPlaceholder": "输入城市或时区名称",
+      "selectTimezone": "选择时区"
+    }
+  },
+  "backgrounds": {
+    "custom": { "name": "自定义壁纸", "desc": "支持上传本地图片或自定义图像 URL" },
+    "preset": { "name": "艺术图腾", "desc": "无需网络的高清纯离线矢量绘表" },
+    "bing": { "name": "Bing 每日壁纸", "desc": "微软 Bing 官方每日高清精选风景摄影" }
+  }
+}

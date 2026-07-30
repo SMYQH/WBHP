@@ -162,7 +162,7 @@ export default function App() {
     <div className="relative min-h-screen text-gray-900 dark:text-gray-100">
       {/* Background layer */}
       {bgPlugin && bgPlugin.type === "background" && (
-        <ErrorBoundary fallbackLabel={`Background: ${bgPlugin.name}`}>
+        <ErrorBoundary fallbackLabel={`${t.app.bgFallbackPrefix}${bgPlugin.name}`}>
           <PluginHost
             plugin={bgPlugin}
             settings={settings}
@@ -221,8 +221,8 @@ export default function App() {
           type="button"
           onClick={() => setShowPalette(true)}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10"
-          title="Command Palette (Ctrl+K or /)"
-          aria-label="Open Command Palette"
+          title={t.app.commandPaletteTooltip}
+          aria-label={t.app.commandPaletteAria}
         >
           <Search className="w-4 h-4 opacity-80" />
         </button>
@@ -236,7 +236,7 @@ export default function App() {
               : "bg-white/20 hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20 border-white/10"
           }`}
           title={isZenMode ? t.zenMode.exit : t.zenMode.enter}
-          aria-label="Toggle Zen Mode"
+          aria-label={t.app.zenModeAria}
         >
           {isZenMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4 opacity-80" />}
         </button>
@@ -245,8 +245,8 @@ export default function App() {
           type="button"
           onClick={openSettings}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10"
-          title="Settings (Ctrl+,)"
-          aria-label="Open settings"
+          title={t.app.settingsTooltip}
+          aria-label={t.app.settingsAria}
         >
           <Settings className="w-4 h-4 opacity-80" />
         </button>

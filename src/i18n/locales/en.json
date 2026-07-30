@@ -1,0 +1,299 @@
+{
+  "app": {
+    "commandPaletteTooltip": "Command Palette (Ctrl+K or /)",
+    "commandPaletteAria": "Open Command Palette",
+    "zenModeTooltip": "Toggle Zen Mode",
+    "zenModeAria": "Toggle Zen Mode",
+    "settingsTooltip": "Settings (Ctrl+,)",
+    "settingsAria": "Open settings",
+    "bgFallbackPrefix": "Background: "
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "tryAgain": "Try again"
+  },
+  "zenMode": {
+    "enter": "Enter Zen Mode",
+    "exit": "Exit Zen Mode (Press Esc or Z)",
+    "desc": "Hide all widgets for pure focus and meditation"
+  },
+  "commandPalette": {
+    "title": "Command Palette",
+    "placeholder": "Type a command or search widgets (Ctrl+K)...",
+    "noResults": "No matching commands or widgets found",
+    "shortcutHint": "Tip: Press Ctrl+K or / anywhere to open palette",
+    "categories": {
+      "system": "System",
+      "mode": "Mode",
+      "theme": "Theme",
+      "widgets": "Widgets",
+      "backgrounds": "Backgrounds"
+    },
+    "actions": {
+      "openSettings": "Open Settings Panel",
+      "toggleZen": "Toggle Zen / Focus Mode",
+      "themeLight": "Switch to Light Theme",
+      "themeDark": "Switch to Dark Theme",
+      "themeSystem": "System Theme",
+      "hideWidget": "Hide Widget",
+      "showWidget": "Show Widget",
+      "setBackground": "Set Background"
+    }
+  },
+  "updater": {
+    "currentVersion": "Current Version",
+    "checkUpdateBtn": "Check for Updates",
+    "checking": "Checking for updates...",
+    "upToDate": "Up to date",
+    "updateAvailable": "New Version Available",
+    "downloadUpdate": "Download on GitHub",
+    "autoDownloadBtn": "Download Installer Now",
+    "failed": "Failed to check updates",
+    "autoCheck": "Auto-check for updates",
+    "autoCheckHelp": "Check GitHub Releases when opening a new tab, and request the browser's native update.",
+    "autoDownload": "Auto-download when available",
+    "autoDownloadHelp": "Download the package automatically when a newer version is found (manual install still required for sideloaded builds).",
+    "bannerTitle": "A new WBHP version is available",
+    "bannerLater": "Later",
+    "bannerDownload": "Download",
+    "bannerInstallHint": "After download, drag the .crx onto the extensions page or load the unpacked zip."
+  },
+  "settings": {
+    "title": "Settings",
+    "close": "Close Settings",
+    "tabs": {
+      "general": "General",
+      "background": "Background",
+      "data": "Data"
+    },
+    "general": {
+      "theme": "Theme Mode",
+      "themeOptions": {
+        "system": "System",
+        "light": "Light",
+        "dark": "Dark"
+      },
+      "language": "Language",
+      "languageOptions": {
+        "auto": "Auto Detect",
+        "zh": "Chinese",
+        "en": "English"
+      },
+      "font": "Typography Font",
+      "fontOptions": {
+        "misans": "MiSans (Xiaomi)",
+        "serif": "Source Han Serif",
+        "opensans": "Open Sans (Monospace/Modern)",
+        "system": "System Default"
+      },
+      "userName": "Your Name",
+      "userNamePlaceholder": "Enter your name...",
+      "activeWidgets": "Active Widgets",
+      "activeWidgetsHelp": "Selecting none displays all widgets by default. Click to toggle."
+    },
+    "background": {
+      "title": "Background Mode",
+      "custom": "Custom Image / Local Upload",
+      "preset": "Offline Vector Patterns",
+      "bing": "Bing Daily Wallpaper",
+      "customUrl": "Custom Image URL",
+      "customUpload": "Local Image Upload",
+      "customUploadBtn": "Choose Local Image",
+      "blur": "Gaussian Blur",
+      "overlay": "Dark Overlay",
+      "presetStyle": "Pattern Style"
+    },
+    "backup": {
+      "enableWebdav": "Enable WebDAV Sync",
+      "urlPlaceholder": "WebDAV URL (e.g. https://dav.example.com/files/)",
+      "usernamePlaceholder": "Username",
+      "passwordPlaceholder": "Password / App Token",
+      "autoInterval": "Auto-backup interval (minutes, 0 = off)",
+      "testBtn": "Test Connection",
+      "backupBtn": "Backup Now",
+      "restoreBtn": "Restore",
+      "testing": "Testing connection...",
+      "connected": "WebDAV Connected successfully",
+      "failed": "Connection failed, check credentials",
+      "backingUp": "Uploading backup...",
+      "restoring": "Restoring from cloud...",
+      "backupSuccess": "Backup uploaded successfully.",
+      "backupFailed": "Backup upload failed.",
+      "restoreSuccess": "Data restored successfully.",
+      "restoreFailed": "Failed to restore data.",
+      "restoreConfirm": "Restore will overwrite local data. Proceed?",
+      "noBackup": "No backup found on server.",
+      "corrupted": "Backup file is corrupted.",
+      "notice": "Credentials are stored locally in your browser. App tokens recommended.",
+      "webdavTitle": "WebDAV Cloud Backup"
+    },
+    "data": {
+      "localBackupTitle": "Local JSON Backup & Restore",
+      "exportBtn": "Export Config (JSON)",
+      "importBtn": "Import Config (JSON)",
+      "clearBtn": "Clear All Data",
+      "exported": "Configuration exported as JSON file.",
+      "imported": "Import successful. Reloading page...",
+      "cleared": "All data cleared. Resetting...",
+      "invalid": "Invalid backup JSON file.",
+      "clearConfirm": "Warning: Clear all local WBHP data? This action cannot be undone!"
+    }
+  },
+  "widgets": {
+    "time": {
+      "name": "Clock",
+      "desc": "Digital clock with date and custom time format",
+      "showSeconds": "Show seconds",
+      "showDate": "Show date",
+      "hour12": "12-hour format"
+    },
+    "greeting": {
+      "name": "Greeting",
+      "desc": "Time-aware friendly greeting message",
+      "night": "Good night",
+      "morning": "Good morning",
+      "afternoon": "Good afternoon",
+      "evening": "Good evening"
+    },
+    "search": {
+      "name": "Search Console",
+      "desc": "Multi-engine web, code & AI search terminal",
+      "placeholder": "Search web, code, or ask AI...",
+      "button": "Search",
+      "aiMode": "AI Mode",
+      "aiPlaceholder": "Ask AI (ChatGPT / Gemini / Perplexity)...",
+      "catAll": "All",
+      "catWeb": "Web",
+      "catAi": "AI",
+      "catDev": "Code & Dev",
+      "shortcutTip": "Tab / Arrow keys to cycle engines · Enter to execute",
+      "tavilySidebarTitle": "Tavily AI Deep Search",
+      "tavilySidebarDesc": "Real-time web & AI intelligence search for developers & researchers",
+      "tavilyQueryPlaceholder": "Enter research topic or search query...",
+      "tavilySearchBtn": "Execute Deep Search",
+      "tavilySearching": "Searching & aggregating across the web...",
+      "tavilySources": "Web Sources & Citations",
+      "tavilyApiKeyNotice": "Enter your Tavily API Key (tvly-...) to unlock raw JSON extractions & AI syntheses",
+      "tavilyBasic": "Basic",
+      "tavilyAdvanced": "Advanced",
+      "tavilyGeneral": "General",
+      "tavilyNews": "News",
+      "tavilyNoKeySet": "No API Key Set (Click to Configure)",
+      "tavilyKeySet": "Tavily API Key Active",
+      "tavilyEditKey": "Edit Key",
+      "tavilySaveKey": "Save Key",
+      "tavilyAiOverview": "AI Synthesized Overview",
+      "tavilyImageReferences": "Image References",
+      "tavilyOpenLink": "Open ↗",
+      "tavilyLatency": "LATENCY",
+      "tavilyCount": "COUNT",
+      "tavilyPromptAnswer": "Generated Tavily AI Web search link for query. To view raw JSON extraction, AI synthesized answers, and reference cards in-place within this sidebar, please configure your Tavily API Key above.",
+      "tavilyPromptContent": "Click the link below to open deep search on Tavily AI web platform, or visit https://tavily.com to obtain a free API key.",
+      "tavilyImageAlt": "Tavily reference image"
+    },
+    "links": {
+      "name": "Quick Links",
+      "desc": "Your favorite bookmarks with category tabs and smart favicons",
+      "addBtn": "Add Link",
+      "titlePlaceholder": "Link Title",
+      "urlPlaceholder": "https://example.com",
+      "categoryPlaceholder": "Category (Optional, e.g. Work / Media)",
+      "allCategory": "All Links",
+      "saveBtn": "Save",
+      "cancelBtn": "Cancel",
+      "titleRequired": "Title is required",
+      "urlInvalid": "Please enter a valid http(s) URL",
+      "remove": "Remove link"
+    },
+    "weather": {
+      "name": "Weather",
+      "desc": "Real-time weather forecast based on IP location",
+      "locationPlaceholder": "City Name",
+      "unitCelsius": "Celsius (°C)",
+      "unitFahrenheit": "Fahrenheit (°F)",
+      "city": "City",
+      "temp": "Temperature",
+      "condition": "Condition"
+    },
+    "todo": {
+      "name": "Todo List",
+      "desc": "Lightweight, distraction-free task manager",
+      "placeholder": "Add a new task...",
+      "addBtn": "Add",
+      "all": "All",
+      "active": "Active",
+      "completed": "Completed",
+      "clearCompleted": "Clear completed",
+      "emptyState": "No tasks here! Take a break",
+      "itemsLeft": "items left"
+    },
+    "notes": {
+      "name": "Quick Notes",
+      "desc": "Instant notepad for ideas & draft thoughts",
+      "placeholder": "Type your notes or ideas here...",
+      "clearBtn": "Clear note",
+      "words": "words",
+      "chars": "chars"
+    },
+    "quote": {
+      "name": "Hitokoto Quotes",
+      "desc": "Anime, literature, poetry & philosophy quotes from Hitokoto API",
+      "refreshBtn": "Next Quote",
+      "copyBtn": "Copy Quote",
+      "copied": "Copied",
+      "favBtn": "Bookmark Quote",
+      "unfavBtn": "Remove Bookmark",
+      "settingsTitle": "Hitokoto Settings",
+      "sourceMode": "Quote Source Mode",
+      "modeHitokoto": "Hitokoto Core API (Online)",
+      "modePreset": "Offline Preset Quotes",
+      "modeFavorites": "My Saved Favorites",
+      "categories": "Hitokoto Categories",
+      "catAll": "All Categories",
+      "catAnime": "Anime",
+      "catComic": "Comic",
+      "catGame": "Game",
+      "catLiterature": "Literature",
+      "catOriginal": "Original",
+      "catNetwork": "Network",
+      "catOther": "Other",
+      "catTv": "Movie & TV",
+      "catPoetry": "Poetry",
+      "catMusic": "Netease Music",
+      "catPhilosophy": "Philosophy",
+      "catJoke": "Joke",
+      "modes": {
+        "hitokoto": "Hitokoto",
+        "preset": "Preset",
+        "favorites": "Favorites"
+      },
+      "autoRefresh": "Auto Refresh Interval",
+      "autoRefreshOff": "Manual Only",
+      "autoRefresh5m": "Every 5 mins",
+      "autoRefresh30m": "Every 30 mins",
+      "autoRefresh1h": "Every 1 hour",
+      "addCustom": "Add Custom Quote",
+      "customTextPlaceholder": "Enter quote text...",
+      "customAuthorPlaceholder": "Author (optional)...",
+      "customSourcePlaceholder": "Source (optional)...",
+      "addBtn": "Add Quote",
+      "noFavorites": "No saved quotes yet. Click ❤️ on any quote to bookmark!",
+      "tabQuote": "Quote Card",
+      "tabFavorites": "Favorites",
+      "tabSettings": "Settings",
+      "deleteFav": "Delete favorite"
+    },
+    "worldclock": {
+      "name": "World Clock",
+      "desc": "Multi-timezone cards for global teams",
+      "addCity": "Add City",
+      "cityPlaceholder": "City or timezone name",
+      "selectTimezone": "Select timezone"
+    }
+  },
+  "backgrounds": {
+    "custom": { "name": "Custom Wallpaper", "desc": "Upload local photo or enter image URL" },
+    "preset": { "name": "Offline Patterns", "desc": "High quality vector geometric backdrops" },
+    "bing": { "name": "Bing Daily Wallpaper", "desc": "Official Microsoft Bing daily curated photography" }
+  }
+}

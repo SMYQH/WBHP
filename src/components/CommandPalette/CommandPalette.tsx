@@ -61,7 +61,7 @@ export default function CommandPalette({
     {
       id: "action-settings",
       label: t.commandPalette.actions.openSettings,
-      category: "System",
+      category: t.commandPalette.categories.system,
       icon: <Settings className="w-4 h-4" />,
       perform: () => {
         onOpenSettings();
@@ -71,7 +71,7 @@ export default function CommandPalette({
     {
       id: "action-update",
       label: t.updater.checkUpdateBtn,
-      category: "System",
+      category: t.commandPalette.categories.system,
       icon: <Sparkles className="w-4 h-4" />,
       perform: () => {
         onOpenSettings();
@@ -81,7 +81,7 @@ export default function CommandPalette({
     {
       id: "action-zen",
       label: isZenMode ? t.zenMode.exit : t.zenMode.enter,
-      category: "Mode",
+      category: t.commandPalette.categories.mode,
       icon: <Eye className="w-4 h-4" />,
       perform: () => {
         onToggleZen();
@@ -91,7 +91,7 @@ export default function CommandPalette({
     {
       id: "theme-light",
       label: t.commandPalette.actions.themeLight,
-      category: "Theme",
+      category: t.commandPalette.categories.theme,
       icon: <Sun className="w-4 h-4" />,
       perform: () => {
         updateSettings({ theme: "light" });
@@ -101,7 +101,7 @@ export default function CommandPalette({
     {
       id: "theme-dark",
       label: t.commandPalette.actions.themeDark,
-      category: "Theme",
+      category: t.commandPalette.categories.theme,
       icon: <Moon className="w-4 h-4" />,
       perform: () => {
         updateSettings({ theme: "dark" });
@@ -111,7 +111,7 @@ export default function CommandPalette({
     {
       id: "theme-system",
       label: t.commandPalette.actions.themeSystem,
-      category: "Theme",
+      category: t.commandPalette.categories.theme,
       icon: <Monitor className="w-4 h-4" />,
       perform: () => {
         updateSettings({ theme: "system" });
@@ -128,8 +128,8 @@ export default function CommandPalette({
         : settings.activeWidgets.includes(p.id);
     actions.push({
       id: `widget-${p.id}`,
-      label: `${active ? "Hide" : "Show"} Widget: ${p.name}`,
-      category: "Widgets",
+      label: `${active ? t.commandPalette.actions.hideWidget : t.commandPalette.actions.showWidget}: ${p.name}`,
+      category: t.commandPalette.categories.widgets,
       icon: <LayoutGrid className="w-4 h-4" />,
       perform: () => {
         const base =
@@ -149,8 +149,8 @@ export default function CommandPalette({
   getBackgroundPlugins().forEach((p) => {
     actions.push({
       id: `bg-${p.id}`,
-      label: `Set Background: ${p.name}`,
-      category: "Backgrounds",
+      label: `${t.commandPalette.actions.setBackground}: ${p.name}`,
+      category: t.commandPalette.categories.backgrounds,
       icon: <Image className="w-4 h-4" />,
       perform: () => {
         updateSettings({ activeBackground: p.id });

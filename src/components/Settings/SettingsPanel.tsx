@@ -287,7 +287,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
               <div className="space-y-3 pt-2">
                 <h3 className="text-sm font-semibold flex items-center gap-1.5 border-b border-gray-200 pb-2 dark:border-gray-800">
-                  <HardDrive className="w-4 h-4 text-emerald-500 shrink-0" /> {settings.language === "en" ? "Local JSON Backup & Restore" : "本地 JSON 备份与恢复"}
+                  <HardDrive className="w-4 h-4 text-emerald-500 shrink-0" /> {t.settings.data.localBackupTitle}
                 </h3>
                 <DataSection language={settings.language} />
               </div>

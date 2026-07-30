@@ -13,7 +13,10 @@ import {
   Sliders,
 } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
-import { getTranslations } from "../../i18n";
+import { getTranslations, type Translations } from "../../i18n";
+
+type QuoteTranslations = Translations["widgets"]["quote"];
+type CatKey = Extract<keyof QuoteTranslations, `cat${string}`>;
 
 export interface QuoteItem {
   id?: number | string;
@@ -50,19 +53,19 @@ const PRESET_QUOTES: QuoteItem[] = [
   { text: "人生如逆旅，我亦是行人。", author: "苏轼", source: "临江仙", category: "i" },
 ];
 
-const CATEGORY_MAP: Record<string, { labelZh: string; labelEn: string; color: string }> = {
-  a: { labelZh: "动画", labelEn: "Anime", color: "from-pink-500/20 to-rose-500/20 text-rose-300" },
-  b: { labelZh: "漫画", labelEn: "Comic", color: "from-purple-500/20 to-indigo-500/20 text-purple-300" },
-  c: { labelZh: "游戏", labelEn: "Game", color: "from-emerald-500/20 to-teal-500/20 text-emerald-300" },
-  d: { labelZh: "文学", labelEn: "Literature", color: "from-amber-500/20 to-yellow-500/20 text-amber-300" },
-  e: { labelZh: "原创", labelEn: "Original", color: "from-cyan-500/20 to-blue-500/20 text-cyan-300" },
-  f: { labelZh: "网络", labelEn: "Network", color: "from-blue-500/20 to-indigo-500/20 text-blue-300" },
-  g: { labelZh: "其他", labelEn: "Other", color: "from-slate-500/20 to-zinc-500/20 text-slate-300" },
-  h: { labelZh: "影视", labelEn: "Movie/TV", color: "from-violet-500/20 to-purple-500/20 text-violet-300" },
-  i: { labelZh: "诗词", labelEn: "Poetry", color: "from-red-500/20 to-orange-500/20 text-orange-300" },
-  j: { labelZh: "网易云", labelEn: "Music", color: "from-red-600/20 to-rose-600/20 text-red-300" },
-  k: { labelZh: "哲学", labelEn: "Philosophy", color: "from-teal-500/20 to-emerald-500/20 text-teal-300" },
-  l: { labelZh: "抖机灵", labelEn: "Joke", color: "from-yellow-500/20 to-amber-500/20 text-yellow-300" },
+const CATEGORY_MAP: Record<string, { catKey: CatKey; color: string }> = {
+  a: { catKey: "catAnime", color: "from-pink-500/20 to-rose-500/20 text-rose-300" },
+  b: { catKey: "catComic", color: "from-purple-500/20 to-indigo-500/20 text-purple-300" },
+  c: { catKey: "catGame", color: "from-emerald-500/20 to-teal-500/20 text-emerald-300" },
+  d: { catKey: "catLiterature", color: "from-amber-500/20 to-yellow-500/20 text-amber-300" },
+  e: { catKey: "catOriginal", color: "from-cyan-500/20 to-blue-500/20 text-cyan-300" },
+  f: { catKey: "catNetwork", color: "from-blue-500/20 to-indigo-500/20 text-blue-300" },
+  g: { catKey: "catOther", color: "from-slate-500/20 to-zinc-500/20 text-slate-300" },
+  h: { catKey: "catTv", color: "from-violet-500/20 to-purple-500/20 text-violet-300" },
+  i: { catKey: "catPoetry", color: "from-red-500/20 to-orange-500/20 text-orange-300" },
+  j: { catKey: "catMusic", color: "from-red-600/20 to-rose-600/20 text-red-300" },
+  k: { catKey: "catPhilosophy", color: "from-teal-500/20 to-emerald-500/20 text-teal-300" },
+  l: { catKey: "catJoke", color: "from-yellow-500/20 to-amber-500/20 text-yellow-300" },
 };
 
 async function fetchHitokotoQuote(selectedCategories: string[]): Promise<QuoteItem> {
@@ -87,7 +90,6 @@ async function fetchHitokotoQuote(selectedCategories: string[]): Promise<QuoteIt
 function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
   const data = useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get);
   const t = getTranslations(api.settings.language).widgets.quote;
-  const isZh = api.settings.language !== "en";
 
   const mode = data.mode ?? "hitokoto";
   const categories = data.categories ?? [];
@@ -251,12 +253,12 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
               className={`inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-gradient-to-r ${catInfo.color} border border-white/10 backdrop-blur-sm`}
             >
               <Sparkles className="w-3 h-3 shrink-0" />
-              {isZh ? catInfo.labelZh : catInfo.labelEn}
+              {t[catInfo.catKey]}
             </span>
           ) : (
             <span className="inline-flex items-center gap-1 text-[11px] font-medium px-2 py-0.5 rounded-full bg-white/20 text-gray-700 dark:bg-gray-800/40 dark:text-gray-300 border border-white/10">
               <Sparkles className="w-3 h-3 shrink-0" />
-              {mode === "hitokoto" ? "Hitokoto" : mode === "preset" ? (isZh ? "预设" : "Preset") : (isZh ? "收藏" : "Favorites")}
+              {mode === "hitokoto" ? t.modes.hitokoto : mode === "preset" ? t.modes.preset : t.modes.favorites}
             </span>
           )}
         </div>
@@ -428,7 +430,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
                               : "border-white/5 bg-white/5 opacity-70 hover:opacity-100 dark:bg-gray-800/20"
                           }`}
                         >
-                          <span>{isZh ? cat.labelZh : cat.labelEn}</span>
+                          <span>{t[cat.catKey]}</span>
                           <span className="text-[9px] opacity-50 uppercase">{key}</span>
                         </button>
                       );

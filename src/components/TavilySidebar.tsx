@@ -135,16 +135,12 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
           // No API key: show in-panel prompt with direct web search action button
           setTavilyData({
             query: q,
-            answer: language === "zh"
-              ? `已为您生成 Tavily AI Web 搜索链接。为直接在本侧边栏查看完整的 JSON 抽取、AI 综合回答与参考图片，请在上方配置您的 Tavily API Key (tvly-...)。`
-              : `Generated Tavily AI Web search link for query. To view raw JSON extraction, AI synthesized answers, and reference cards in-place within this sidebar, please configure your Tavily API Key above.`,
+            answer: t.tavilyPromptAnswer,
             results: [
               {
                 title: `Tavily AI Search: "${q}"`,
                 url: `https://tavily.com/?q=${encodeURIComponent(q)}`,
-                content: language === "zh"
-                  ? `点击下方的外部链接直接在 Tavily AI Web 平台查看深度网页检索结果，或前往 https://tavily.com 免费获取 API Key 开启侧边栏嵌入抽取。`
-                  : `Click the link below to open deep search on Tavily AI web platform, or visit https://tavily.com to obtain a free API key.`,
+                content: t.tavilyPromptContent,
                 score: 1.0,
               },
             ],

@@ -1,6 +1,7 @@
 import { useEffect, useSyncExternalStore } from "react";
 import { Sun, CloudSun, CloudRain, Snowflake, CloudLightning, MapPin } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
+import { getTranslations } from "../../i18n";
 
 interface WeatherData {
   city: string;
@@ -12,6 +13,7 @@ interface WeatherData {
 function WeatherWidget({ api }: { api: PluginAPI<WeatherData> }) {
   const data = useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get);
   const { city, temp, condition, unit } = data;
+  const t = getTranslations(api.settings.language).widgets.weather;
 
   useEffect(() => {
     // Fetch live weather based on IP location via wttr.in API
@@ -48,10 +50,10 @@ function WeatherWidget({ api }: { api: PluginAPI<WeatherData> }) {
       <div className="text-2xl font-light tracking-tight mt-1 tabular-nums">
         {temp ? `${temp}${unitLabel}` : `--${unitLabel}`}
       </div>
-      <div className="text-sm opacity-70">{condition || "Sunny"}</div>
+      <div className="text-sm opacity-70">{condition || t.defaultCondition}</div>
       <div className="mt-1 text-xs opacity-60 flex items-center justify-center gap-1 font-medium">
         <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
-        <span>{city || "Local"}</span>
+        <span>{city || t.defaultCity}</span>
       </div>
     </div>
   );

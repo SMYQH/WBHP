@@ -414,7 +414,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
                   <div className="flex items-center justify-between mb-1.5">
                     <label className="font-medium opacity-80">{t.categories}</label>
                     <span className="text-[10px] opacity-60">
-                      {categories.length === 0 ? t.catAll : `${categories.length} selected`}
+                      {categories.length === 0 ? t.catAll : t.catSelectedCount.replace("{count}", String(categories.length))}
                     </span>
                   </div>
                   <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 max-h-36 overflow-y-auto pr-1">

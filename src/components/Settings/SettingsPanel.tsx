@@ -112,7 +112,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
           </button>
         </div>
 
-        <div className="flex border-b border-gray-200 px-6 dark:border-gray-800" role="tablist" aria-label="Settings sections">
+        <div className="flex border-b border-gray-200 px-6 dark:border-gray-800" role="tablist" aria-label={t.settings.tabsAria}>
           {tabs.map((tabItem) => (
             <button
               key={tabItem.id}
@@ -391,7 +391,7 @@ function BackgroundSettingsSection({
               type="url"
               value={customData.imageUrl}
               onChange={(e) => updateCustomData({ imageUrl: e.target.value })}
-              placeholder="https://example.com/wallpaper.jpg"
+              placeholder={t.settings.background.customUrlPlaceholder}
               className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
             />
           </div>
@@ -445,7 +445,7 @@ function BackgroundSettingsSection({
                     : "bg-white hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800"
                 }`}
               >
-                {st}
+                {t.settings.background.presetStyles?.[st] ?? st}
               </button>
             ))}
           </div>

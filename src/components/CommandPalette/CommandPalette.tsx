@@ -247,8 +247,8 @@ export default function CommandPalette({
         <div className="border-t border-gray-200 px-4 py-2 text-[11px] text-gray-400 dark:border-gray-800 flex items-center justify-between">
           <span>{t.commandPalette.shortcutHint}</span>
           <div className="flex gap-2">
-            <span>↑↓ Navigate</span>
-            <span>↵ Select</span>
+            <span>{t.commandPalette.navigate}</span>
+            <span>{t.commandPalette.select}</span>
           </div>
         </div>
       </div>

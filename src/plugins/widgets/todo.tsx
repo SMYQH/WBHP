@@ -146,7 +146,7 @@ function TodoWidget({ api }: { api: PluginAPI<TodoData> }) {
               <button
                 onClick={() => deleteItem(item.id)}
                 className="opacity-0 group-hover:opacity-100 p-1 text-xs text-rose-500 hover:text-rose-700 transition-opacity"
-                title="Delete item"
+                title={t.deleteTitle}
               >
                 <X className="w-3.5 h-3.5" />
               </button>

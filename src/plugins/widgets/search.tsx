@@ -159,7 +159,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
               type="button"
               onClick={() => setQuery("")}
               className="mr-2 rounded-md p-1.5 text-white/50 hover:text-white hover:bg-white/10 transition-colors font-mono text-xs"
-              title="Clear query (Esc)"
+              title={t.clearTooltip}
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -175,7 +175,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                 : "bg-white/10 text-white/40 cursor-not-allowed"
             }`}
           >
-            <span>{isSubmitting ? "EXEC..." : t.button}</span>
+            <span>{isSubmitting ? t.executing : t.button}</span>
             <span className="hidden sm:inline-block opacity-70">↵</span>
           </button>
         </div>
@@ -185,7 +185,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
       <div
         className="mt-3 flex flex-wrap items-center justify-center gap-1.5"
         role="group"
-        aria-label="Search engines"
+        aria-label={t.enginesAria}
       >
         {ENGINES.map((e) => {
           const isSelected = e.id === defaultEngine;

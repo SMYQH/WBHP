@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Camera } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
+import { getTranslations } from "../../i18n";
 
 export interface BingBackgroundData {
   blur?: number;
@@ -22,9 +23,10 @@ function BingBackground({ api }: { api: PluginAPI<BingBackgroundData> }) {
   const data = api.data.get();
   const blur = data?.blur ?? 0;
   const overlayOpacity = data?.overlayOpacity ?? 20;
+  const t = getTranslations(api.settings.language).backgrounds.bing;
 
   const [imageUrl, setImageUrl] = useState<string>(DEFAULT_BING_IMAGE);
-  const [copyright, setCopyright] = useState<string>("Bing Wallpaper of the Day");
+  const [copyright, setCopyright] = useState<string>("");
   const [isCached, setIsCached] = useState<boolean>(false);
 
   useEffect(() => {
@@ -53,7 +55,7 @@ function BingBackground({ api }: { api: PluginAPI<BingBackgroundData> }) {
       .then((resData) => {
         if (resData && resData.url) {
           const newUrl = resData.url;
-          const newCopyright = resData.copyright || "Bing Wallpaper of the Day";
+          const newCopyright = resData.copyright || "";
 
           setImageUrl(newUrl);
           setCopyright(newCopyright);
@@ -93,8 +95,8 @@ function BingBackground({ api }: { api: PluginAPI<BingBackgroundData> }) {
       )}
       <div className="pointer-events-auto absolute bottom-4 left-4 rounded-lg bg-black/40 px-3 py-1.5 text-xs text-white/80 backdrop-blur opacity-0 hover:opacity-100 transition-opacity flex items-center gap-1.5">
         <Camera className="w-3.5 h-3.5 opacity-80 shrink-0" />
-        <span>{copyright}</span>
-        {isCached && <span className="opacity-60 text-[10px] ml-1">(Cached)</span>}
+        <span>{copyright || t.copyrightDefault}</span>
+        {isCached && <span className="opacity-60 text-[10px] ml-1">{t.cached}</span>}
       </div>
     </div>
   );

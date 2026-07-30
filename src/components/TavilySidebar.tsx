@@ -187,7 +187,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
             <button
               onClick={onClose}
               className="rounded-lg p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
-              title="Close (Esc)"
+              title={t.tavilyCloseTooltip}
             >
               <X className="w-4 h-4" />
             </button>
@@ -306,7 +306,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                     onClick={() => setShowKeyInput(true)}
                     className="text-emerald-400 hover:underline font-mono"
                   >
-                    {apiKey ? t.tavilyEditKey : "Set API Key (tvly-...)"}
+                    {apiKey ? t.tavilyEditKey : t.tavilySetKey}
                   </button>
                 </div>
               )}
@@ -326,7 +326,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
               <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3.5 text-red-300 text-xs font-mono space-y-1">
                 <div className="font-bold flex items-center gap-1.5 text-red-400">
                   <AlertCircle className="w-4 h-4 shrink-0" />
-                  <span>Error:</span>
+                  <span>{t.tavilyErrorLabel}</span>
                 </div>
                 <div className="text-[11px] opacity-90">{error}</div>
               </div>

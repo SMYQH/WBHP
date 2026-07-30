@@ -22,6 +22,8 @@
     "placeholder": "输入指令或搜索挂件 (Ctrl+K)...",
     "noResults": "未找到匹配的命令或挂件",
     "shortcutHint": "提示：使用 Ctrl+K 或 / 随时打开面板",
+    "navigate": "↑↓ 选择",
+    "select": "↵ 确认",
     "categories": {
       "system": "系统",
       "mode": "模式",
@@ -66,6 +68,7 @@
       "background": "背景外观",
       "data": "数据管理"
     },
+    "tabsAria": "设置选项卡",
     "general": {
       "theme": "外观主题",
       "themeOptions": {
@@ -101,7 +104,15 @@
       "customUploadBtn": "选择本地图片",
       "blur": "高斯模糊",
       "overlay": "暗化遮罩",
-      "presetStyle": "图案风格"
+      "presetStyle": "图案风格",
+      "customUrlPlaceholder": "https://example.com/wallpaper.jpg",
+      "presetStyles": {
+        "aurora": "极光 Glow",
+        "cosmic": "深空 Cosmic",
+        "mesh": "渐变 Mesh",
+        "emerald": "翡翠 Emerald",
+        "sunset": "晚霞 Sunset"
+      }
     },
     "backup": {
       "enableWebdav": "启用 WebDAV 云备份",
@@ -189,7 +200,13 @@
       "tavilyCount": "结果数",
       "tavilyPromptAnswer": "已为您生成 Tavily AI Web 搜索链接。为直接在本侧边栏查看完整的 JSON 抽取、AI 综合回答与参考图片，请在上方配置您的 Tavily API Key (tvly-...)。",
       "tavilyPromptContent": "点击下方的外部链接直接在 Tavily AI Web 平台查看深度网页检索结果，或前往 https://tavily.com 免费获取 API Key 开启侧边栏嵌入抽取。",
-      "tavilyImageAlt": "Tavily 参考图片"
+      "tavilyImageAlt": "Tavily 参考图片",
+      "clearTooltip": "清空关键词 (Esc)",
+      "executing": "检索中...",
+      "enginesAria": "搜索引擎列表",
+      "tavilyCloseTooltip": "关闭 (Esc)",
+      "tavilySetKey": "设置 API Key (tvly-...)",
+      "tavilyErrorLabel": "错误："
     },
     "links": {
       "name": "快捷导航",
@@ -213,7 +230,9 @@
       "unitFahrenheit": "华氏度 (°F)",
       "city": "城市",
       "temp": "温度",
-      "condition": "天气状况"
+      "condition": "天气状况",
+      "defaultCity": "本地",
+      "defaultCondition": "晴朗"
     },
     "todo": {
       "name": "待办清单",
@@ -225,7 +244,8 @@
       "completed": "已完成",
       "clearCompleted": "清除已完成",
       "emptyState": "暂无待办事项，轻松一下吧！",
-      "itemsLeft": "项未完成"
+      "itemsLeft": "项未完成",
+      "deleteTitle": "删除此待办项"
     },
     "notes": {
       "name": "快捷便签",
@@ -281,7 +301,8 @@
       "tabQuote": "金句推荐",
       "tabFavorites": "我的收藏",
       "tabSettings": "挂件设置",
-      "deleteFav": "移除此收藏"
+      "deleteFav": "移除此收藏",
+      "catSelectedCount": "已选 {count} 项"
     },
     "worldclock": {
       "name": "世界时钟",
@@ -294,6 +315,6 @@
   "backgrounds": {
     "custom": { "name": "自定义壁纸", "desc": "支持上传本地图片或自定义图像 URL" },
     "preset": { "name": "艺术图腾", "desc": "无需网络的高清纯离线矢量绘表" },
-    "bing": { "name": "Bing 每日壁纸", "desc": "微软 Bing 官方每日高清精选风景摄影" }
+    "bing": { "name": "Bing 每日壁纸", "desc": "微软 Bing 官方每日高清精选风景摄影", "copyrightDefault": "Bing 每日壁纸", "cached": "(已缓存)" }
   }
 }

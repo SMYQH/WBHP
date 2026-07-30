@@ -5,14 +5,11 @@
 
 import { useState, useCallback, useSyncExternalStore, useMemo, type FormEvent, type KeyboardEvent } from "react";
 import {
-  Globe,
   Search,
   Bot,
   Brain,
   Sparkles,
   Code,
-  Zap,
-  BookOpen,
   Compass,
   ShieldCheck,
   X,
@@ -37,10 +34,7 @@ export const ENGINES: SearchEngine[] = [
   { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com/?q=", isAi: true, category: "ai", shortcutKey: "5" },
   { id: "claude", name: "Claude", url: "https://claude.ai/new?q=", isAi: true, category: "ai", shortcutKey: "6" },
   { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", isAi: true, category: "ai", shortcutKey: "7" },
-  { id: "perplexity", name: "Perplexity", url: "https://www.perplexity.ai/search?q=", isAi: true, category: "ai", shortcutKey: "8" },
   { id: "github", name: "GitHub", url: "https://github.com/search?q=", category: "dev", shortcutKey: "g" },
-  { id: "stackoverflow", name: "StackOverflow", url: "https://stackoverflow.com/search?q=", category: "dev", shortcutKey: "s" },
-  { id: "mdn", name: "MDN Web", url: "https://developer.mozilla.org/search?q=", category: "dev", shortcutKey: "m" },
 ];
 
 function EngineIcon({ id, className = "w-4 h-4" }: { id: string; className?: string }) {
@@ -59,14 +53,8 @@ function EngineIcon({ id, className = "w-4 h-4" }: { id: string; className?: str
       return <Brain className={className} />;
     case "gemini":
       return <Sparkles className={className} />;
-    case "perplexity":
-      return <Globe className={className} />;
     case "github":
       return <Code className={className} />;
-    case "stackoverflow":
-      return <Zap className={className} />;
-    case "mdn":
-      return <BookOpen className={className} />;
     default:
       return <Search className={className} />;
   }
@@ -76,24 +64,16 @@ interface SearchData {
   defaultEngine: string;
 }
 
-export type CategoryFilter = "all" | "web" | "ai" | "dev";
-
 function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
   const data = useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get);
   const { defaultEngine } = data;
   const [query, setQuery] = useState("");
-  const [activeCategory, setActiveCategory] = useState<CategoryFilter>("all");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const t = getTranslations(api.settings.language).widgets.search;
 
   const currentEngine = useMemo(() => {
     return ENGINES.find((e) => e.id === defaultEngine) ?? ENGINES[0];
   }, [defaultEngine]);
-
-  const filteredEngines = useMemo(() => {
-    if (activeCategory === "all") return ENGINES;
-    return ENGINES.filter((e) => e.category === activeCategory);
-  }, [activeCategory]);
 
   const search = useCallback(
     (e?: FormEvent) => {
@@ -138,57 +118,6 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 
   return (
     <div className="mx-auto w-full max-w-2xl px-2">
-      {/* Category Tabs Header */}
-      <div className="mb-2 flex items-center justify-between text-xs font-mono">
-        <div className="flex items-center gap-1.5 rounded-lg bg-black/20 p-1 backdrop-blur dark:bg-white/5 border border-white/10">
-          {(["all", "web", "ai", "dev"] as CategoryFilter[]).map((cat) => {
-            const labelMap = {
-              all: t.catAll,
-              web: t.catWeb,
-              ai: t.catAi,
-              dev: t.catDev,
-            };
-            const isActive = activeCategory === cat;
-            return (
-              <button
-                key={cat}
-                type="button"
-                onClick={() => setActiveCategory(cat)}
-                className={`rounded-md px-2.5 py-1 transition-all duration-150 flex items-center gap-1.5 font-mono uppercase tracking-wider ${
-                  isActive
-                    ? "bg-cyan-500/20 text-cyan-300 font-semibold shadow-sm border border-cyan-500/40"
-                    : "text-white/70 hover:text-white hover:bg-white/10"
-                }`}
-              >
-                {cat === "all" ? (
-                  <Globe className="w-3.5 h-3.5" />
-                ) : cat === "web" ? (
-                  <Search className="w-3.5 h-3.5" />
-                ) : cat === "ai" ? (
-                  <Sparkles className="w-3.5 h-3.5" />
-                ) : (
-                  <Code className="w-3.5 h-3.5" />
-                )}
-                <span>{labelMap[cat]}</span>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Dedicated Tavily AI Research Launcher */}
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => window.dispatchEvent(new CustomEvent("wbhp:open-tavily", { detail: { query } }))}
-            className="flex items-center gap-1.5 rounded-lg bg-emerald-500/20 px-2.5 py-1 font-mono font-bold text-xs text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 hover:border-emerald-400/60 transition-all shadow-sm active:scale-95"
-            title={t.tavilySidebarTitle}
-          >
-            <Globe className="w-3.5 h-3.5 text-emerald-400" />
-            <span>{t.tavilySidebarTitle}</span>
-          </button>
-        </div>
-      </div>
-
       {/* Main Terminal Input Console */}
       <form onSubmit={search} className="group relative flex items-center" role="search">
         <label className="sr-only" htmlFor="wbhp-search-input">
@@ -258,7 +187,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
         role="group"
         aria-label="Search engines"
       >
-        {filteredEngines.map((e) => {
+        {ENGINES.map((e) => {
           const isSelected = e.id === defaultEngine;
           return (
             <button

@@ -1,4 +1,16 @@
 import { useState, useEffect, useRef } from "react";
+import type React from "react";
+import {
+  Search,
+  Settings,
+  Sparkles,
+  Eye,
+  Sun,
+  Moon,
+  Monitor,
+  LayoutGrid,
+  Image,
+} from "lucide-react";
 import type { WBHPSettings } from "../../plugins/types";
 import { getWidgetPlugins, getBackgroundPlugins } from "../../plugins/registry";
 import { getTranslations } from "../../i18n";
@@ -7,7 +19,7 @@ interface ActionItem {
   id: string;
   label: string;
   category: string;
-  icon: string;
+  icon: React.ReactNode;
   perform: () => void;
 }
 
@@ -50,7 +62,7 @@ export default function CommandPalette({
       id: "action-settings",
       label: t.commandPalette.actions.openSettings,
       category: "System",
-      icon: "⚙️",
+      icon: <Settings className="w-4 h-4" />,
       perform: () => {
         onOpenSettings();
         onClose();
@@ -60,7 +72,7 @@ export default function CommandPalette({
       id: "action-update",
       label: t.updater.checkUpdateBtn,
       category: "System",
-      icon: "🚀",
+      icon: <Sparkles className="w-4 h-4" />,
       perform: () => {
         onOpenSettings();
         onClose();
@@ -70,7 +82,7 @@ export default function CommandPalette({
       id: "action-zen",
       label: isZenMode ? t.zenMode.exit : t.zenMode.enter,
       category: "Mode",
-      icon: "🧘",
+      icon: <Eye className="w-4 h-4" />,
       perform: () => {
         onToggleZen();
         onClose();
@@ -80,7 +92,7 @@ export default function CommandPalette({
       id: "theme-light",
       label: t.commandPalette.actions.themeLight,
       category: "Theme",
-      icon: "☀️",
+      icon: <Sun className="w-4 h-4" />,
       perform: () => {
         updateSettings({ theme: "light" });
         onClose();
@@ -90,7 +102,7 @@ export default function CommandPalette({
       id: "theme-dark",
       label: t.commandPalette.actions.themeDark,
       category: "Theme",
-      icon: "🌙",
+      icon: <Moon className="w-4 h-4" />,
       perform: () => {
         updateSettings({ theme: "dark" });
         onClose();
@@ -100,7 +112,7 @@ export default function CommandPalette({
       id: "theme-system",
       label: t.commandPalette.actions.themeSystem,
       category: "Theme",
-      icon: "💻",
+      icon: <Monitor className="w-4 h-4" />,
       perform: () => {
         updateSettings({ theme: "system" });
         onClose();
@@ -118,7 +130,7 @@ export default function CommandPalette({
       id: `widget-${p.id}`,
       label: `${active ? "Hide" : "Show"} Widget: ${p.name}`,
       category: "Widgets",
-      icon: "🧩",
+      icon: <LayoutGrid className="w-4 h-4" />,
       perform: () => {
         const base =
           settings.activeWidgets.length === 0
@@ -139,7 +151,7 @@ export default function CommandPalette({
       id: `bg-${p.id}`,
       label: `Set Background: ${p.name}`,
       category: "Backgrounds",
-      icon: "🖼️",
+      icon: <Image className="w-4 h-4" />,
       perform: () => {
         updateSettings({ activeBackground: p.id });
         onClose();
@@ -179,7 +191,7 @@ export default function CommandPalette({
         onKeyDown={handleKeyDown}
       >
         <div className="flex items-center border-b border-gray-200 px-4 py-3 dark:border-gray-800">
-          <span className="mr-3 text-lg opacity-60">🔍</span>
+          <Search className="w-4 h-4 text-gray-400 mr-3 shrink-0" />
           <input
             ref={inputRef}
             type="text"
@@ -216,7 +228,7 @@ export default function CommandPalette({
                   }`}
                 >
                   <div className="flex items-center gap-3">
-                    <span>{item.icon}</span>
+                    <span className="shrink-0">{item.icon}</span>
                     <span>{item.label}</span>
                   </div>
                   <span

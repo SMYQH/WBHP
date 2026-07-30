@@ -1,5 +1,6 @@
 import type { PluginConfig, LanguageMode } from "../../plugins/types";
 import { getTranslations } from "../../i18n";
+import { Check } from "lucide-react";
 
 interface PluginCardProps {
   plugin: PluginConfig;
@@ -40,7 +41,7 @@ export default function PluginCard({
             isActive ? "border-blue-500 bg-blue-500" : "border-gray-300 dark:border-gray-600"
           }`}
         >
-          {isActive && <span className="text-white text-xs">✓</span>}
+          {isActive && <Check className="w-3 h-3 text-white stroke-[3]" />}
         </div>
       </div>
     </div>

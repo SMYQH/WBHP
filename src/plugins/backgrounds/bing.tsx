@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import { Camera } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
 
 export interface BingBackgroundData {
@@ -90,8 +91,10 @@ function BingBackground({ api }: { api: PluginAPI<BingBackgroundData> }) {
           style={{ opacity: overlayOpacity / 100 }}
         />
       )}
-      <div className="pointer-events-auto absolute bottom-4 left-4 rounded-lg bg-black/40 px-3 py-1.5 text-xs text-white/80 backdrop-blur opacity-0 hover:opacity-100 transition-opacity">
-        🖼️ {copyright} {isCached && <span className="opacity-60 text-[10px] ml-1">(Cached)</span>}
+      <div className="pointer-events-auto absolute bottom-4 left-4 rounded-lg bg-black/40 px-3 py-1.5 text-xs text-white/80 backdrop-blur opacity-0 hover:opacity-100 transition-opacity flex items-center gap-1.5">
+        <Camera className="w-3.5 h-3.5 opacity-80 shrink-0" />
+        <span>{copyright}</span>
+        {isCached && <span className="opacity-60 text-[10px] ml-1">(Cached)</span>}
       </div>
     </div>
   );

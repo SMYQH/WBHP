@@ -1,4 +1,5 @@
 import { useState, useSyncExternalStore } from "react";
+import { CheckSquare, X, Sparkles } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
 import { getTranslations } from "../../i18n";
 
@@ -76,7 +77,8 @@ function TodoWidget({ api }: { api: PluginAPI<TodoData> }) {
     <div className="w-full rounded-2xl border border-white/20 bg-white/40 p-5 shadow-lg backdrop-blur-md transition-all dark:border-white/10 dark:bg-gray-900/40">
       <div className="mb-4 flex items-center justify-between border-b border-gray-200/40 pb-3 dark:border-gray-700/40">
         <h3 className="text-base font-semibold tracking-wide flex items-center gap-2">
-          <span>📌</span> {t.name}
+          <CheckSquare className="w-4 h-4 text-emerald-500 shrink-0" />
+          <span>{t.name}</span>
         </h3>
         <div className="flex gap-1 rounded-lg bg-gray-200/50 p-1 text-xs dark:bg-gray-800/50">
           {(["all", "active", "completed"] as const).map((f) => (
@@ -114,7 +116,10 @@ function TodoWidget({ api }: { api: PluginAPI<TodoData> }) {
 
       <ul className="max-h-60 space-y-2 overflow-y-auto pr-1">
         {filteredItems.length === 0 ? (
-          <li className="py-6 text-center text-xs opacity-60">{t.emptyState}</li>
+          <li className="py-6 text-center text-xs opacity-60 flex items-center justify-center gap-1.5">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span>{t.emptyState}</span>
+          </li>
         ) : (
           filteredItems.map((item) => (
             <li
@@ -143,7 +148,7 @@ function TodoWidget({ api }: { api: PluginAPI<TodoData> }) {
                 className="opacity-0 group-hover:opacity-100 p-1 text-xs text-rose-500 hover:text-rose-700 transition-opacity"
                 title="Delete item"
               >
-                ✕
+                <X className="w-3.5 h-3.5" />
               </button>
             </li>
           ))

@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from "react";
+import { X, Cloud, HardDrive, Sparkles, Zap, Check, ExternalLink } from "lucide-react";
 import type { WBHPSettings, ThemeMode, LanguageMode, FontFamily, WebDAVConfig } from "../../plugins/types";
 import { getBackgroundPlugins, getWidgetPlugins } from "../../plugins/registry";
 import { checkWebDAVConnection, backupToWebDAV, restoreFromWebDAV } from "../../services/webdav";
@@ -104,10 +105,10 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
             ref={closeBtnRef}
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800"
+            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
             aria-label={t.settings.close}
           >
-            ✕
+            <X className="w-4 h-4 opacity-70" />
           </button>
         </div>
 
@@ -269,7 +270,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
             <div className="space-y-6">
               <div className="space-y-3">
                 <h3 className="text-sm font-semibold flex items-center gap-1.5 border-b border-gray-200 pb-2 dark:border-gray-800">
-                  <span>☁️</span> {t.settings.backup.webdavTitle}
+                  <Cloud className="w-4 h-4 text-blue-500 shrink-0" /> {t.settings.backup.webdavTitle}
                 </h3>
                 <WebDAVSection
                   config={settings.webdav}
@@ -286,7 +287,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
               <div className="space-y-3 pt-2">
                 <h3 className="text-sm font-semibold flex items-center gap-1.5 border-b border-gray-200 pb-2 dark:border-gray-800">
-                  <span>💾</span> {settings.language === "en" ? "Local JSON Backup & Restore" : "本地 JSON 备份与恢复"}
+                  <HardDrive className="w-4 h-4 text-emerald-500 shrink-0" /> {settings.language === "en" ? "Local JSON Backup & Restore" : "本地 JSON 备份与恢复"}
                 </h3>
                 <DataSection language={settings.language} />
               </div>
@@ -732,7 +733,7 @@ function UpdateSection({
       <div className="flex items-center justify-between">
         <div>
           <h4 className="text-sm font-semibold flex items-center gap-2">
-            <span>🚀</span> WBHP v{currentVer}
+            <Sparkles className="w-4 h-4 text-purple-500" /> WBHP v{currentVer}
           </h4>
           <p className="text-xs opacity-60">Web Browser Home Page</p>
         </div>
@@ -778,14 +779,16 @@ function UpdateSection({
           {result.hasUpdate ? (
             <div className="space-y-2">
               <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-medium">
-                <span>🎉 {t.updateAvailable}: v{result.latestVersion}</span>
+                <span className="flex items-center gap-1.5">
+                  <Sparkles className="w-4 h-4" /> {t.updateAvailable}: v{result.latestVersion}
+                </span>
                 <a
                   href={result.releaseUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline hover:text-emerald-700 opacity-80 hover:opacity-100"
+                  className="underline hover:text-emerald-700 opacity-80 hover:opacity-100 flex items-center gap-1"
                 >
-                  {t.downloadUpdate} ↗
+                  {t.downloadUpdate} <ExternalLink className="w-3 h-3 inline" />
                 </a>
               </div>
               {(result.downloadZipUrl || result.downloadUrl) && (
@@ -794,7 +797,7 @@ function UpdateSection({
                   onClick={() => handleDownload(result.downloadZipUrl || result.downloadUrl)}
                   className="w-full rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 shadow-sm transition-all flex items-center justify-center gap-1.5"
                 >
-                  <span>⚡</span>
+                  <Zap className="w-3.5 h-3.5" />
                   <span>{t.autoDownloadBtn} (v{result.latestVersion})</span>
                 </button>
               )}
@@ -802,7 +805,10 @@ function UpdateSection({
           ) : result.error ? (
             <span className="text-rose-500">{t.failed}: {result.error}</span>
           ) : (
-            <span className="text-gray-500 dark:text-gray-400">✓ {t.upToDate} (v{currentVer})</span>
+            <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
+              <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+              {t.upToDate} (v{currentVer})
+            </span>
           )}
         </div>
       )}

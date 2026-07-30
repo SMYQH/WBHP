@@ -4,6 +4,19 @@
  */
 
 import { useState, useCallback, useSyncExternalStore, useMemo, type FormEvent, type KeyboardEvent } from "react";
+import {
+  Globe,
+  Search,
+  Bot,
+  Brain,
+  Sparkles,
+  Code,
+  Zap,
+  BookOpen,
+  Compass,
+  ShieldCheck,
+  X,
+} from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
 import { getTranslations } from "../../i18n";
 
@@ -11,25 +24,53 @@ export interface SearchEngine {
   id: string;
   name: string;
   url: string;
-  icon: string;
   category: "web" | "ai" | "dev";
   isAi?: boolean;
   shortcutKey?: string;
 }
 
 export const ENGINES: SearchEngine[] = [
-  { id: "google", name: "Google", url: "https://www.google.com/search?q=", icon: "🔍", category: "web", shortcutKey: "1" },
-  { id: "bing", name: "Bing", url: "https://www.bing.com/search?q=", icon: "🔎", category: "web", shortcutKey: "2" },
-  { id: "baidu", name: "Baidu", url: "https://www.baidu.com/s?wd=", icon: "🐾", category: "web", shortcutKey: "3" },
-  { id: "duckduckgo", name: "DuckDuckGo", url: "https://duckduckgo.com/?q=", icon: "🦆", category: "web", shortcutKey: "4" },
-  { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com/?q=", icon: "🤖", isAi: true, category: "ai", shortcutKey: "5" },
-  { id: "claude", name: "Claude", url: "https://claude.ai/new?q=", icon: "🧠", isAi: true, category: "ai", shortcutKey: "6" },
-  { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", icon: "✨", isAi: true, category: "ai", shortcutKey: "7" },
-  { id: "perplexity", name: "Perplexity", url: "https://www.perplexity.ai/search?q=", icon: "🔮", isAi: true, category: "ai", shortcutKey: "8" },
-  { id: "github", name: "GitHub", url: "https://github.com/search?q=", icon: "🐙", category: "dev", shortcutKey: "g" },
-  { id: "stackoverflow", name: "StackOverflow", url: "https://stackoverflow.com/search?q=", icon: "⚡", category: "dev", shortcutKey: "s" },
-  { id: "mdn", name: "MDN Web", url: "https://developer.mozilla.org/search?q=", icon: "📚", category: "dev", shortcutKey: "m" },
+  { id: "google", name: "Google", url: "https://www.google.com/search?q=", category: "web", shortcutKey: "1" },
+  { id: "bing", name: "Bing", url: "https://www.bing.com/search?q=", category: "web", shortcutKey: "2" },
+  { id: "baidu", name: "Baidu", url: "https://www.baidu.com/s?wd=", category: "web", shortcutKey: "3" },
+  { id: "duckduckgo", name: "DuckDuckGo", url: "https://duckduckgo.com/?q=", category: "web", shortcutKey: "4" },
+  { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com/?q=", isAi: true, category: "ai", shortcutKey: "5" },
+  { id: "claude", name: "Claude", url: "https://claude.ai/new?q=", isAi: true, category: "ai", shortcutKey: "6" },
+  { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", isAi: true, category: "ai", shortcutKey: "7" },
+  { id: "perplexity", name: "Perplexity", url: "https://www.perplexity.ai/search?q=", isAi: true, category: "ai", shortcutKey: "8" },
+  { id: "github", name: "GitHub", url: "https://github.com/search?q=", category: "dev", shortcutKey: "g" },
+  { id: "stackoverflow", name: "StackOverflow", url: "https://stackoverflow.com/search?q=", category: "dev", shortcutKey: "s" },
+  { id: "mdn", name: "MDN Web", url: "https://developer.mozilla.org/search?q=", category: "dev", shortcutKey: "m" },
 ];
+
+function EngineIcon({ id, className = "w-4 h-4" }: { id: string; className?: string }) {
+  switch (id) {
+    case "google":
+      return <Search className={className} />;
+    case "bing":
+      return <Search className={className} />;
+    case "baidu":
+      return <Compass className={className} />;
+    case "duckduckgo":
+      return <ShieldCheck className={className} />;
+    case "chatgpt":
+      return <Bot className={className} />;
+    case "claude":
+      return <Brain className={className} />;
+    case "gemini":
+      return <Sparkles className={className} />;
+    case "perplexity":
+      return <Globe className={className} />;
+    case "github":
+      return <Code className={className} />;
+    case "stackoverflow":
+      return <Zap className={className} />;
+    case "mdn":
+      return <BookOpen className={className} />;
+    default:
+      return <Search className={className} />;
+  }
+}
 
 interface SearchData {
   defaultEngine: string;
@@ -113,13 +154,21 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                 key={cat}
                 type="button"
                 onClick={() => setActiveCategory(cat)}
-                className={`rounded-md px-2.5 py-1 transition-all duration-150 flex items-center gap-1 font-mono uppercase tracking-wider ${
+                className={`rounded-md px-2.5 py-1 transition-all duration-150 flex items-center gap-1.5 font-mono uppercase tracking-wider ${
                   isActive
                     ? "bg-cyan-500/20 text-cyan-300 font-semibold shadow-sm border border-cyan-500/40"
                     : "text-white/70 hover:text-white hover:bg-white/10"
                 }`}
               >
-                <span>{cat === "all" ? "🌐" : cat === "web" ? "🔎" : cat === "ai" ? "⚡" : "💻"}</span>
+                {cat === "all" ? (
+                  <Globe className="w-3.5 h-3.5" />
+                ) : cat === "web" ? (
+                  <Search className="w-3.5 h-3.5" />
+                ) : cat === "ai" ? (
+                  <Sparkles className="w-3.5 h-3.5" />
+                ) : (
+                  <Code className="w-3.5 h-3.5" />
+                )}
                 <span>{labelMap[cat]}</span>
               </button>
             );
@@ -134,7 +183,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             className="flex items-center gap-1.5 rounded-lg bg-emerald-500/20 px-2.5 py-1 font-mono font-bold text-xs text-emerald-300 border border-emerald-500/40 hover:bg-emerald-500/30 hover:border-emerald-400/60 transition-all shadow-sm active:scale-95"
             title={t.tavilySidebarTitle}
           >
-            <span>🌐</span>
+            <Globe className="w-3.5 h-3.5 text-emerald-400" />
             <span>{t.tavilySidebarTitle}</span>
           </button>
         </div>
@@ -150,9 +199,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
         <div className="relative flex w-full items-center rounded-xl border border-white/20 bg-slate-950/40 backdrop-blur-xl transition-all duration-200 focus-within:border-cyan-400/70 focus-within:ring-2 focus-within:ring-cyan-500/30 dark:bg-slate-900/60 dark:border-white/15">
           {/* Active Engine Badge */}
           <div className="flex items-center gap-2 pl-3.5 pr-2 py-3 border-r border-white/10 select-none">
-            <span className="text-xl" role="img" aria-label={currentEngine.name}>
-              {currentEngine.icon}
-            </span>
+            <EngineIcon id={currentEngine.id} className="w-4 h-4 text-cyan-300 shrink-0" />
             <span className="hidden md:inline-block font-mono text-xs font-semibold text-cyan-300 uppercase tracking-wide">
               {currentEngine.name}
             </span>
@@ -185,7 +232,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
               className="mr-2 rounded-md p-1.5 text-white/50 hover:text-white hover:bg-white/10 transition-colors font-mono text-xs"
               title="Clear query (Esc)"
             >
-              ✕
+              <X className="w-3.5 h-3.5" />
             </button>
           )}
 
@@ -226,7 +273,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
               title={`${e.name} (${e.category.toUpperCase()})`}
               aria-pressed={isSelected}
             >
-              <span className="text-sm">{e.icon}</span>
+              <EngineIcon id={e.id} className="w-3.5 h-3.5 shrink-0" />
               <span>{e.name}</span>
               {e.isAi && (
                 <span className="ml-0.5 rounded bg-cyan-400/20 px-1 py-0.2 text-[9px] font-bold text-cyan-300 border border-cyan-400/30">

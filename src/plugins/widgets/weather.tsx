@@ -1,4 +1,5 @@
 import { useEffect, useSyncExternalStore } from "react";
+import { Sun, CloudSun, CloudRain, Snowflake, CloudLightning, MapPin } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
 
 interface WeatherData {
@@ -40,29 +41,40 @@ function WeatherWidget({ api }: { api: PluginAPI<WeatherData> }) {
   const unitLabel = unit === "fahrenheit" ? "°F" : "°C";
 
   return (
-    <div className="text-center select-none" aria-live="polite">
-      <div className="text-4xl" aria-hidden>
-        {getWeatherIcon(condition)}
+    <div className="text-center select-none flex flex-col items-center justify-center" aria-live="polite">
+      <div className="flex items-center justify-center" aria-hidden>
+        <WeatherIcon condition={condition} />
       </div>
-      <div className="text-2xl font-light tracking-tight mt-1">
+      <div className="text-2xl font-light tracking-tight mt-1 tabular-nums">
         {temp ? `${temp}${unitLabel}` : `--${unitLabel}`}
       </div>
       <div className="text-sm opacity-70">{condition || "Sunny"}</div>
       <div className="mt-1 text-xs opacity-60 flex items-center justify-center gap-1 font-medium">
-        <span>📍 {city || "Local"}</span>
+        <MapPin className="w-3 h-3 text-rose-400 shrink-0" />
+        <span>{city || "Local"}</span>
       </div>
     </div>
   );
 }
 
-function getWeatherIcon(cond: string): string {
-  const lower = (cond || "").toLowerCase();
-  if (lower.includes("sun") || lower.includes("clear") || lower.includes("晴")) return "☀️";
-  if (lower.includes("cloud") || lower.includes("overcast") || lower.includes("云") || lower.includes("阴")) return "⛅";
-  if (lower.includes("rain") || lower.includes("drizzle") || lower.includes("雨")) return "🌧️";
-  if (lower.includes("snow") || lower.includes("ice") || lower.includes("雪")) return "❄️";
-  if (lower.includes("thunder") || lower.includes("storm") || lower.includes("雷")) return "⛈️";
-  return "🌤️";
+function WeatherIcon({ condition }: { condition: string }) {
+  const lower = (condition || "").toLowerCase();
+  if (lower.includes("sun") || lower.includes("clear") || lower.includes("晴")) {
+    return <Sun className="w-8 h-8 text-amber-400 animate-pulse" />;
+  }
+  if (lower.includes("rain") || lower.includes("drizzle") || lower.includes("雨")) {
+    return <CloudRain className="w-8 h-8 text-blue-400" />;
+  }
+  if (lower.includes("snow") || lower.includes("ice") || lower.includes("雪")) {
+    return <Snowflake className="w-8 h-8 text-cyan-300" />;
+  }
+  if (lower.includes("thunder") || lower.includes("storm") || lower.includes("雷")) {
+    return <CloudLightning className="w-8 h-8 text-yellow-400" />;
+  }
+  if (lower.includes("cloud") || lower.includes("overcast") || lower.includes("云") || lower.includes("阴")) {
+    return <CloudSun className="w-8 h-8 text-slate-300" />;
+  }
+  return <Sun className="w-8 h-8 text-amber-400" />;
 }
 
 const config: PluginConfig<WeatherData> = {

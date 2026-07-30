@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useCallback, type FormEvent } from "react";
+import { Globe, X, Key, AlertCircle, Sparkles, Image as ImageIcon } from "lucide-react";
 import { getTranslations, type LanguageMode } from "../i18n";
 
 interface TavilyImage {
@@ -154,7 +155,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-slate-900/90">
             <div className="flex items-center gap-2.5">
-              <span className="text-xl">🌐</span>
+              <Globe className="w-5 h-5 text-emerald-400 shrink-0" />
               <div>
                 <h3 className="font-bold text-sm text-emerald-400 tracking-wide uppercase">
                   {t.tavilySidebarTitle}
@@ -167,7 +168,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
               className="rounded-lg p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               title="Close (Esc)"
             >
-              ✕
+              <X className="w-4 h-4" />
             </button>
           </div>
 
@@ -273,8 +274,8 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                 </div>
               ) : (
                 <div className="flex items-center justify-between text-slate-400 text-[10px]">
-                  <span className="flex items-center gap-1">
-                    <span>🔑</span>
+                  <span className="flex items-center gap-1.5">
+                    <Key className="w-3.5 h-3.5 opacity-70" />
                     <span className={apiKey ? "text-emerald-400" : "text-amber-400"}>
                       {apiKey ? t.tavilyKeySet : t.tavilyNoKeySet}
                     </span>
@@ -302,7 +303,10 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
 
             {error && (
               <div className="rounded-lg border border-red-500/40 bg-red-500/10 p-3.5 text-red-300 text-xs font-mono space-y-1">
-                <div className="font-bold">🚨 Error:</div>
+                <div className="font-bold flex items-center gap-1.5 text-red-400">
+                  <AlertCircle className="w-4 h-4 shrink-0" />
+                  <span>Error:</span>
+                </div>
                 <div className="text-[11px] opacity-90">{error}</div>
               </div>
             )}
@@ -321,7 +325,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                 {tavilyData.answer && (
                   <div className="rounded-xl border border-emerald-500/40 bg-emerald-950/20 p-4 space-y-2 backdrop-blur-sm">
                     <div className="flex items-center gap-1.5 text-xs font-bold text-emerald-400 font-mono uppercase tracking-wider">
-                      <span>✨</span>
+                      <Sparkles className="w-4 h-4" />
                       <span>{t.tavilyAiOverview}</span>
                     </div>
                     <p className="text-xs text-slate-200 leading-relaxed whitespace-pre-wrap font-sans">
@@ -333,8 +337,9 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                 {/* Image Gallery */}
                 {tavilyData.images && tavilyData.images.length > 0 && (
                   <div className="space-y-2">
-                    <div className="font-mono text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-                      🖼️ {t.tavilyImageReferences} ({tavilyData.images.length})
+                    <div className="font-mono text-[11px] font-semibold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                      <ImageIcon className="w-3.5 h-3.5" />
+                      <span>{t.tavilyImageReferences} ({tavilyData.images.length})</span>
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       {tavilyData.images.slice(0, 6).map((img, i) => (
@@ -407,8 +412,8 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
 
             {!isLoading && !tavilyData && !error && (
               <div className="flex flex-col items-center justify-center py-16 text-slate-500 text-center space-y-3 font-mono text-xs">
-                <div className="p-3 rounded-full bg-slate-900 border border-white/10 text-2xl">
-                  🌐
+                <div className="p-3 rounded-full bg-slate-900 border border-white/10 text-emerald-400">
+                  <Globe className="w-6 h-6" />
                 </div>
                 <span className="text-emerald-400 font-bold">TAVILY_RESEARCH_SHELL</span>
                 <span className="text-[11px] font-sans text-slate-400 max-w-xs leading-relaxed">

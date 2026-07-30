@@ -1,4 +1,5 @@
 import { useSyncExternalStore } from "react";
+import { RotateCw } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
 import { getTranslations } from "../../i18n";
 
@@ -36,9 +37,9 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
   };
 
   return (
-    <div className="relative group w-full rounded-2xl border border-white/20 bg-white/30 p-6 text-center shadow-lg backdrop-blur-md transition-all hover:bg-white/40 dark:border-white/10 dark:bg-gray-900/30 dark:hover:bg-gray-900/40">
+    <div className="relative group w-full rounded-2xl border border-white/20 bg-white/30 p-6 text-center shadow-lg backdrop-blur-md transition-all hover:bg-white/40 dark:border-white/10 dark:bg-gray-900/30 dark:hover:bg-gray-900/40 flex flex-col justify-center">
       <blockquote className="space-y-3">
-        <p className="text-lg font-light italic leading-relaxed text-gray-900 dark:text-gray-100">
+        <p className="text-lg font-light leading-relaxed text-gray-900 dark:text-gray-100 font-serif">
           “{currentQuote.text}”
         </p>
         <footer className="text-xs font-medium opacity-70">
@@ -51,7 +52,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
         className="absolute bottom-3 right-3 rounded-full bg-white/40 p-2 text-xs backdrop-blur opacity-0 group-hover:opacity-100 hover:bg-white/60 dark:bg-gray-800/40 dark:hover:bg-gray-800/60 transition-all"
         title={t.refreshBtn}
       >
-        🔄
+        <RotateCw className="w-3.5 h-3.5 text-gray-700 dark:text-gray-200 transition-transform duration-300 group-hover:rotate-180" />
       </button>
     </div>
   );

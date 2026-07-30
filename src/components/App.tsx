@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
+import { Search, Eye, EyeOff, Settings, Sparkles } from "lucide-react";
 import { getPlugin } from "../plugins/registry";
 import { useSettings } from "../hooks/useSettings";
 import { startAutoBackup, stopAutoBackup } from "../services/webdav";
@@ -174,9 +175,7 @@ export default function App() {
       {updateBanner && !isZenMode && (
         <div className="fixed bottom-4 left-1/2 z-50 w-[min(92vw,28rem)] -translate-x-1/2 rounded-2xl border border-emerald-400/40 bg-white/95 p-4 shadow-2xl backdrop-blur dark:border-emerald-500/30 dark:bg-gray-900/95">
           <div className="flex items-start gap-3">
-            <span className="text-xl" aria-hidden>
-              🚀
-            </span>
+            <Sparkles className="w-5 h-5 text-emerald-500 shrink-0 mt-0.5" aria-hidden />
             <div className="min-w-0 flex-1 space-y-2">
               <div>
                 <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">
@@ -191,7 +190,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={downloadFromBanner}
-                  className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700"
+                  className="rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-emerald-700 transition-colors"
                 >
                   {t.updater.bannerDownload}
                 </button>
@@ -199,14 +198,14 @@ export default function App() {
                   href={updateBanner.releaseUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                  className="rounded-lg bg-gray-100 px-3 py-1.5 text-xs font-medium hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700 transition-colors"
                 >
                   {t.updater.downloadUpdate}
                 </a>
                 <button
                   type="button"
                   onClick={dismissBanner}
-                  className="rounded-lg px-3 py-1.5 text-xs opacity-70 hover:opacity-100"
+                  className="rounded-lg px-3 py-1.5 text-xs opacity-70 hover:opacity-100 transition-opacity"
                 >
                   {t.updater.bannerLater}
                 </button>
@@ -221,35 +220,35 @@ export default function App() {
         <button
           type="button"
           onClick={() => setShowPalette(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-sm backdrop-blur transition-all hover:bg-white/30 hover:scale-105 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10"
           title="Command Palette (Ctrl+K or /)"
           aria-label="Open Command Palette"
         >
-          🔍
+          <Search className="w-4 h-4 opacity-80" />
         </button>
 
         <button
           type="button"
           onClick={toggleZen}
-          className={`flex h-10 w-10 items-center justify-center rounded-full text-sm backdrop-blur transition-all hover:scale-105 shadow-sm ${
+          className={`flex h-10 w-10 items-center justify-center rounded-full backdrop-blur transition-all duration-200 hover:-translate-y-0.5 shadow-sm border ${
             isZenMode
-              ? "bg-blue-500 text-white font-bold ring-2 ring-blue-300"
-              : "bg-white/20 hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20"
+              ? "bg-blue-500 text-white font-bold ring-2 ring-blue-300 border-blue-400"
+              : "bg-white/20 hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20 border-white/10"
           }`}
           title={isZenMode ? t.zenMode.exit : t.zenMode.enter}
           aria-label="Toggle Zen Mode"
         >
-          🧘
+          {isZenMode ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4 opacity-80" />}
         </button>
 
         <button
           type="button"
           onClick={openSettings}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-lg backdrop-blur transition-all hover:bg-white/30 hover:scale-105 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm"
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10"
           title="Settings (Ctrl+,)"
           aria-label="Open settings"
         >
-          ⚙
+          <Settings className="w-4 h-4 opacity-80" />
         </button>
       </div>
 

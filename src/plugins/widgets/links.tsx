@@ -1,4 +1,5 @@
 import { useState, useSyncExternalStore, type FormEvent } from "react";
+import { Star, X, Plus } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
 import { getTranslations } from "../../i18n";
 
@@ -56,7 +57,7 @@ function LinkAvatar({ title, url }: { title: string; url: string }) {
     );
   }
 
-  const label = (title.trim() || url.trim()).charAt(0).toUpperCase() || "★";
+  const label = (title.trim() || url.trim()).charAt(0).toUpperCase();
   const hash = stringHash(title + url);
   const gradient = GRADIENTS[hash % GRADIENTS.length];
 
@@ -64,7 +65,7 @@ function LinkAvatar({ title, url }: { title: string; url: string }) {
     <div
       className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-sm font-semibold text-white shadow-sm transition-transform group-hover:scale-105`}
     >
-      {label}
+      {label || <Star className="w-4 h-4 text-white" />}
     </div>
   );
 }
@@ -186,7 +187,7 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
               title={t.remove}
               aria-label={`${t.remove} ${link.title}`}
             >
-              ×
+              <X className="w-3 h-3" />
             </button>
           </a>
         ))}
@@ -198,7 +199,7 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
             className="flex flex-col items-center justify-center gap-1 rounded-xl border border-dashed border-white/30 p-2 text-xs opacity-70 transition-colors hover:bg-white/10 hover:opacity-100"
             aria-label={t.addBtn}
           >
-            <span className="text-lg">+</span>
+            <Plus className="w-5 h-5" />
             {t.addBtn}
           </button>
         )}

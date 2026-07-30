@@ -95,12 +95,6 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
     }
   };
 
-  const getModeLabel = () => {
-    if (currentEngine.isAi) return "AI_AGENT";
-    if (currentEngine.category === "dev") return "DEV_LOOKUP";
-    return "WEB_SEARCH";
-  };
-
   return (
     <div className="mx-auto w-full max-w-2xl px-2">
       {/* Category Tabs Header */}
@@ -132,7 +126,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           })}
         </div>
 
-        {/* Dedicated Tavily AI Research Launcher & Engine status indicator */}
+        {/* Dedicated Tavily AI Research Launcher */}
         <div className="flex items-center gap-2">
           <button
             type="button"
@@ -143,10 +137,6 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             <span>🌐</span>
             <span>{t.tavilySidebarTitle}</span>
           </button>
-
-          <div className="hidden sm:flex items-center gap-2 text-[10px] font-mono text-cyan-400/80 bg-black/30 dark:bg-white/5 px-2.5 py-1 rounded-md border border-cyan-500/20">
-            <span>{getModeLabel()}</span>
-          </div>
         </div>
       </div>
 

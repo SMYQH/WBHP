@@ -44,9 +44,10 @@ WBHP/
 │   │   ├── ErrorBoundary.tsx
 │   │   └── ui/              # Reusable UI components (e.g. PluginCard.tsx)
 │   ├── hooks/               # React hooks (useSettings.ts, usePluginData.ts)
-│   ├── i18n/                # Internationalization (zh & en translations)
-│   │   ├── index.ts
-│   │   └── translations.ts
+│   ├── i18n/                # Internationalization (JSON translation dictionaries)
+│   │   ├── locales/         # Language dictionaries (zh.json, en.json)
+│   │   ├── index.ts         # Language resolution & helper functions
+│   │   └── translations.ts  # Types & JSON imports
 │   ├── plugins/             # Pluggable plugin system
 │   │   ├── registry.ts      # Global plugin registration & lookup registry
 │   │   ├── types.ts         # Plugin API & Settings type definitions
@@ -119,7 +120,7 @@ WBHP/
 ## 🤖 Guidelines for AI Agents
 
 1. **Always Verify Types**: Run `npm run typecheck` or `npm run build:all` after adding or modifying components/plugins.
-2. **Preserve i18n**: Whenever introducing user-facing text, add corresponding key-value pairs in `src/i18n/translations.ts` for both `zh` and `en`.
+2. **Preserve i18n**: Whenever introducing user-facing text, add corresponding key-value pairs in `src/i18n/locales/zh.json` and `src/i18n/locales/en.json` (and maintain TypeScript types via `translations.ts`).
 3. **Keep Plugins Self-Contained**: Place new widget plugins in `src/plugins/widgets/` and backgrounds in `src/plugins/backgrounds/`, and register them in `index.ts`.
 4. **Event Bus Naming Standard**: Use `wbhp:<action>` naming convention for global `CustomEvent` communications.
 5. **Windows Shell Safety**: Use `pwsh -c` wrapper when executing shell commands if running under PowerShell restricted execution environments.

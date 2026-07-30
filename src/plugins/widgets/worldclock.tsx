@@ -47,6 +47,7 @@ function WorldClockWidget({ api }: { api: PluginAPI<WorldClockData> }) {
           let timeString = "--:--";
           let dateString = "";
           let isNight = false;
+          const localizedName = (t.cities as Record<string, string> | undefined)?.[city.name] ?? city.name;
           try {
             const timeFormatter = new Intl.DateTimeFormat("en-US", {
               timeZone: city.timezone,
@@ -72,15 +73,17 @@ function WorldClockWidget({ api }: { api: PluginAPI<WorldClockData> }) {
           return (
             <div
               key={city.id}
+              role="region"
+              aria-label={`${localizedName}: ${timeString}`}
               className="flex flex-col items-center justify-center rounded-xl bg-white/40 p-3 text-center backdrop-blur shadow-sm dark:bg-gray-800/40"
             >
               <div className="flex items-center gap-1.5 text-xs font-semibold opacity-80 mb-1">
                 {isNight ? (
-                  <Moon className="w-3.5 h-3.5 text-indigo-300 shrink-0" />
+                  <Moon className="w-3.5 h-3.5 text-indigo-300 shrink-0" aria-hidden />
                 ) : (
-                  <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+                  <Sun className="w-3.5 h-3.5 text-amber-400 shrink-0" aria-hidden />
                 )}
-                <span>{city.name}</span>
+                <span>{localizedName}</span>
               </div>
               <div className="text-xl font-bold tracking-tight tabular-nums">
                 {timeString}

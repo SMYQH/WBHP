@@ -206,7 +206,8 @@
       "enginesAria": "Search engines",
       "tavilyCloseTooltip": "Close (Esc)",
       "tavilySetKey": "Set API Key (tvly-...)",
-      "tavilyErrorLabel": "Error:"
+      "tavilyErrorLabel": "Error:",
+      "tavilyErrorSearchFailed": "Search request failed"
     },
     "links": {
       "name": "Quick Links",
@@ -245,7 +246,9 @@
       "clearCompleted": "Clear completed",
       "emptyState": "No tasks here! Take a break",
       "itemsLeft": "items left",
-      "deleteTitle": "Delete item"
+      "deleteTitle": "Delete item",
+      "defaultItem1": "Welcome to WBHP! Explore settings and widgets.",
+      "defaultItem2": "Press Ctrl+K or / to open Command Palette"
     },
     "notes": {
       "name": "Quick Notes",
@@ -302,14 +305,31 @@
       "tabFavorites": "Favorites",
       "tabSettings": "Settings",
       "deleteFav": "Delete favorite",
-      "catSelectedCount": "{count} selected"
+      "catSelectedCount": "{count} selected",
+      "close": "Close",
+      "presetQuotes": [
+        { "text": "The best way to predict the future is to create it.", "author": "Peter Drucker", "category": "k" },
+        { "text": "Simplicity is the soul of efficiency.", "author": "Austin Freeman", "category": "k" },
+        { "text": "Make it work, make it right, make it fast.", "author": "Kent Beck", "category": "k" },
+        { "text": "Stay hungry, stay foolish.", "author": "Steve Jobs", "category": "k" },
+        { "text": "Do not go where the path may lead, go instead where there is no path and leave a trail.", "author": "Ralph Waldo Emerson", "category": "d" },
+        { "text": "First, solve the problem. Then, write the code.", "author": "John Johnson", "category": "k" },
+        { "text": "Life is what happens when you're busy making other plans.", "author": "John Lennon", "category": "k" },
+        { "text": "Technology makes the impossible possible, design makes the possible elegant.", "author": "Anonymous", "category": "e" }
+      ]
     },
     "worldclock": {
       "name": "World Clock",
       "desc": "Multi-timezone cards for global teams",
       "addCity": "Add City",
       "cityPlaceholder": "City or timezone name",
-      "selectTimezone": "Select timezone"
+      "selectTimezone": "Select timezone",
+      "cities": {
+        "Beijing": "Beijing",
+        "London": "London",
+        "New York": "New York",
+        "Tokyo": "Tokyo"
+      }
     }
   },
   "backgrounds": {

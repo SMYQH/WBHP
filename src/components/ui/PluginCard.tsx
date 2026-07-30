@@ -24,12 +24,22 @@ export default function PluginCard({
 
   return (
     <div
-      className={`p-4 rounded-xl border transition-colors cursor-pointer ${
+      role="button"
+      tabIndex={0}
+      aria-pressed={isActive}
+      aria-label={`${displayName}: ${displayDesc}`}
+      className={`p-4 rounded-xl border transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500/50 ${
         isActive
           ? "border-blue-500/80 bg-blue-500/10 dark:border-blue-400"
           : "border-gray-200 bg-gray-50/50 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-800/40 dark:hover:bg-gray-800"
       }`}
       onClick={onToggle}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onToggle();
+        }
+      }}
     >
       <div className="flex items-center justify-between">
         <div>
@@ -40,6 +50,7 @@ export default function PluginCard({
           className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
             isActive ? "border-blue-500 bg-blue-500" : "border-gray-300 dark:border-gray-600"
           }`}
+          aria-hidden
         >
           {isActive && <Check className="w-3 h-3 text-white stroke-[3]" />}
         </div>

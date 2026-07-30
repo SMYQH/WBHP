@@ -216,6 +216,7 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder={t.titlePlaceholder}
+              aria-label={t.titlePlaceholder}
               className="flex-1 rounded-lg bg-white/20 px-3 py-2 text-sm backdrop-blur dark:bg-white/10"
               autoFocus
             />
@@ -224,6 +225,7 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
               value={url}
               onChange={(e) => setUrl(e.target.value)}
               placeholder={t.urlPlaceholder}
+              aria-label={t.urlPlaceholder}
               className="flex-[2] rounded-lg bg-white/20 px-3 py-2 text-sm backdrop-blur dark:bg-white/10"
             />
             <input
@@ -231,6 +233,7 @@ function LinksWidget({ api }: { api: PluginAPI<LinksData> }) {
               value={category}
               onChange={(e) => setCategory(e.target.value)}
               placeholder={t.categoryPlaceholder}
+              aria-label={t.categoryPlaceholder}
               className="flex-1 rounded-lg bg-white/20 px-3 py-2 text-sm backdrop-blur dark:bg-white/10"
             />
           </div>

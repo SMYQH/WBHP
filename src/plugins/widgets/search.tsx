@@ -160,6 +160,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
               onClick={() => setQuery("")}
               className="mr-2 rounded-md p-1.5 text-white/50 hover:text-white hover:bg-white/10 transition-colors font-mono text-xs"
               title={t.clearTooltip}
+              aria-label={t.clearTooltip}
             >
               <X className="w-3.5 h-3.5" />
             </button>

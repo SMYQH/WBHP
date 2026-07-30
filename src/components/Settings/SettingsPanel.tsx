@@ -378,6 +378,7 @@ function BackgroundSettingsSection({
             <input
               type="file"
               accept="image/*"
+              aria-label={t.settings.background.customUpload}
               onChange={handleFileUpload}
               className="w-full text-xs text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-500 file:px-3 file:py-2 file:text-xs file:font-medium file:text-white hover:file:bg-blue-600 cursor-pointer"
             />
@@ -390,6 +391,7 @@ function BackgroundSettingsSection({
             <input
               type="url"
               value={customData.imageUrl}
+              aria-label={t.settings.background.customUrl}
               onChange={(e) => updateCustomData({ imageUrl: e.target.value })}
               placeholder={t.settings.background.customUrlPlaceholder}
               className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
@@ -406,6 +408,7 @@ function BackgroundSettingsSection({
               min={0}
               max={20}
               value={customData.blur}
+              aria-label={t.settings.background.blur}
               onChange={(e) => updateCustomData({ blur: parseInt(e.target.value, 10) || 0 })}
               className="w-full accent-blue-500"
             />
@@ -421,6 +424,7 @@ function BackgroundSettingsSection({
               min={0}
               max={80}
               value={customData.overlayOpacity}
+              aria-label={t.settings.background.overlay}
               onChange={(e) =>
                 updateCustomData({ overlayOpacity: parseInt(e.target.value, 10) || 0 })
               }
@@ -540,6 +544,7 @@ function WebDAVSection({
           <input
             type="url"
             value={config.url}
+            aria-label={t.urlPlaceholder}
             onChange={(e) => updateConfig({ url: e.target.value })}
             placeholder={t.urlPlaceholder}
             className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
@@ -548,6 +553,7 @@ function WebDAVSection({
           <input
             type="text"
             value={config.username}
+            aria-label={t.usernamePlaceholder}
             onChange={(e) => updateConfig({ username: e.target.value })}
             placeholder={t.usernamePlaceholder}
             className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
@@ -556,6 +562,7 @@ function WebDAVSection({
           <input
             type="password"
             value={config.password}
+            aria-label={t.passwordPlaceholder}
             onChange={(e) => updateConfig({ password: e.target.value })}
             placeholder={t.passwordPlaceholder}
             className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
@@ -570,6 +577,7 @@ function WebDAVSection({
               type="number"
               min={0}
               value={config.autoBackupInterval}
+              aria-label={t.autoInterval}
               onChange={(e) =>
                 updateConfig({ autoBackupInterval: Math.max(0, parseInt(e.target.value, 10) || 0) })
               }
@@ -752,6 +760,7 @@ function UpdateSection({
           type="checkbox"
           className="mt-0.5"
           checked={autoCheck}
+          aria-label={t.autoCheck}
           onChange={(e) => onChange({ autoCheck: e.target.checked })}
         />
         <span>
@@ -766,6 +775,7 @@ function UpdateSection({
           className="mt-0.5"
           checked={autoDownload}
           disabled={!autoCheck}
+          aria-label={t.autoDownload}
           onChange={(e) => onChange({ autoDownload: e.target.checked })}
         />
         <span>

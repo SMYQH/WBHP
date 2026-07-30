@@ -162,7 +162,7 @@ export default function App() {
     <div className="relative min-h-screen text-gray-900 dark:text-gray-100">
       {/* Background layer */}
       {bgPlugin && bgPlugin.type === "background" && (
-        <ErrorBoundary fallbackLabel={`${t.app.bgFallbackPrefix}${bgPlugin.name}`}>
+        <ErrorBoundary fallbackLabel={`${t.app.bgFallbackPrefix}${(t.backgrounds as Record<string, { name: string }>)[bgPlugin.id]?.name ?? bgPlugin.name}`}>
           <PluginHost
             plugin={bgPlugin}
             settings={settings}

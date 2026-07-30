@@ -206,7 +206,8 @@
       "enginesAria": "搜索引擎列表",
       "tavilyCloseTooltip": "关闭 (Esc)",
       "tavilySetKey": "设置 API Key (tvly-...)",
-      "tavilyErrorLabel": "错误："
+      "tavilyErrorLabel": "错误：",
+      "tavilyErrorSearchFailed": "搜索请求失败"
     },
     "links": {
       "name": "快捷导航",
@@ -245,7 +246,9 @@
       "clearCompleted": "清除已完成",
       "emptyState": "暂无待办事项，轻松一下吧！",
       "itemsLeft": "项未完成",
-      "deleteTitle": "删除此待办项"
+      "deleteTitle": "删除此待办项",
+      "defaultItem1": "欢迎使用 WBHP！探索设置与各种挂件功能。",
+      "defaultItem2": "按 Ctrl+K 或 / 打开快捷命令面板"
     },
     "notes": {
       "name": "快捷便签",
@@ -302,14 +305,31 @@
       "tabFavorites": "我的收藏",
       "tabSettings": "挂件设置",
       "deleteFav": "移除此收藏",
-      "catSelectedCount": "已选 {count} 项"
+      "catSelectedCount": "已选 {count} 项",
+      "close": "关闭",
+      "presetQuotes": [
+        { "text": "技术使不可能成为可能，而设计让可能变得优雅。", "author": "匿名", "category": "e" },
+        { "text": "日拱一卒无有尽，功不唐捐终有成。", "author": "古训", "category": "i" },
+        { "text": "海内存知己，天涯若比邻。", "author": "王勃", "source": "送杜少府之任蜀州", "category": "i" },
+        { "text": "长风破浪会有时，直挂云帆济沧海。", "author": "李白", "source": "行路难", "category": "i" },
+        { "text": "人生如逆旅，我亦是行人。", "author": "苏轼", "source": "临江仙", "category": "i" },
+        { "text": "预测未来的最好方式就是创造它。", "author": "彼得·德鲁克", "category": "k" },
+        { "text": "简单是效率的灵魂。", "author": "奥斯丁·弗里曼", "category": "k" },
+        { "text": "保持饥渴，保持愚蠢。", "author": "史蒂夫·乔布斯", "category": "k" }
+      ]
     },
     "worldclock": {
       "name": "世界时钟",
       "desc": "多时区跨国协作城市时间卡片",
       "addCity": "添加城市",
       "cityPlaceholder": "输入城市或时区名称",
-      "selectTimezone": "选择时区"
+      "selectTimezone": "选择时区",
+      "cities": {
+        "Beijing": "北京",
+        "London": "伦敦",
+        "New York": "纽约",
+        "Tokyo": "东京"
+      }
     }
   },
   "backgrounds": {

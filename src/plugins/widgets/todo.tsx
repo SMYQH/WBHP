@@ -31,6 +31,16 @@ function TodoWidget({ api }: { api: PluginAPI<TodoData> }) {
   const items = data.items || [];
   const filter = data.filter || "all";
 
+  const getItemText = (item: TodoItem) => {
+    if (item.id === "1" && (item.text === "Welcome to WBHP! Explore settings and widgets." || item.text === "欢迎使用 WBHP！探索设置与各种挂件功能。")) {
+      return t.defaultItem1;
+    }
+    if (item.id === "2" && (item.text === "Press Ctrl+K or / to open Command Palette" || item.text === "按 Ctrl+K 或 / 打开快捷命令面板")) {
+      return t.defaultItem2;
+    }
+    return item.text;
+  };
+
   const addItem = (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputText.trim()) return;
@@ -103,6 +113,7 @@ function TodoWidget({ api }: { api: PluginAPI<TodoData> }) {
           value={inputText}
           onChange={(e) => setInputText(e.target.value)}
           placeholder={t.placeholder}
+          aria-label={t.placeholder}
           className="flex-1 rounded-xl border border-gray-200/50 bg-white/60 px-4 py-2 text-sm shadow-inner backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700/50 dark:bg-gray-800/60 dark:text-white"
         />
         <button
@@ -131,6 +142,7 @@ function TodoWidget({ api }: { api: PluginAPI<TodoData> }) {
                   type="checkbox"
                   checked={item.completed}
                   onChange={() => toggleItem(item.id)}
+                  aria-label={getItemText(item)}
                   className="h-4 w-4 rounded border-gray-300 text-blue-500 focus:ring-blue-500 accent-blue-500 cursor-pointer"
                 />
                 <span
@@ -140,13 +152,14 @@ function TodoWidget({ api }: { api: PluginAPI<TodoData> }) {
                       : "text-gray-800 dark:text-gray-200"
                   }`}
                 >
-                  {item.text}
+                  {getItemText(item)}
                 </span>
               </label>
               <button
                 onClick={() => deleteItem(item.id)}
                 className="opacity-0 group-hover:opacity-100 p-1 text-xs text-rose-500 hover:text-rose-700 transition-opacity"
                 title={t.deleteTitle}
+                aria-label={t.deleteTitle}
               >
                 <X className="w-3.5 h-3.5" />
               </button>

@@ -96,7 +96,8 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
   const favorites = data.favorites ?? [];
   const customQuotes = data.customQuotes ?? [];
   const autoRefreshInterval = data.autoRefreshInterval ?? 0;
-  const currentQuote = data.currentQuote || PRESET_QUOTES[0];
+  const presetList = (t.presetQuotes as QuoteItem[] | undefined) ?? PRESET_QUOTES;
+  const currentQuote = data.currentQuote || presetList[0];
 
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -109,10 +110,11 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
   const [newSource, setNewSource] = useState("");
 
   const getRandomPreset = useCallback(() => {
-    const allPresets = [...PRESET_QUOTES, ...customQuotes];
+    const pList = (t.presetQuotes as QuoteItem[] | undefined) ?? PRESET_QUOTES;
+    const allPresets = [...pList, ...customQuotes];
     const randomIndex = Math.floor(Math.random() * allPresets.length);
     return allPresets[randomIndex];
-  }, [customQuotes]);
+  }, [t.presetQuotes, customQuotes]);
 
   const loadNextQuote = useCallback(async () => {
     setLoading(true);
@@ -269,6 +271,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
             onClick={handleCopy}
             className="rounded-full p-1.5 text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-gray-800/60 transition-all"
             title={copied ? t.copied : t.copyBtn}
+            aria-label={copied ? t.copied : t.copyBtn}
           >
             {copied ? <Check className="w-3.5 h-3.5 text-emerald-500" /> : <Copy className="w-3.5 h-3.5" />}
           </button>
@@ -280,6 +283,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
                 : "text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-gray-800/60"
             }`}
             title={isFavorited ? t.unfavBtn : t.favBtn}
+            aria-label={isFavorited ? t.unfavBtn : t.favBtn}
           >
             <Heart className={`w-3.5 h-3.5 ${isFavorited ? "fill-rose-500" : ""}`} />
           </button>
@@ -288,6 +292,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
             disabled={loading}
             className="rounded-full p-1.5 text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-gray-800/60 transition-all disabled:opacity-50"
             title={t.refreshBtn}
+            aria-label={t.refreshBtn}
           >
             <RotateCw className={`w-3.5 h-3.5 ${loading ? "animate-spin text-amber-500" : ""}`} />
           </button>
@@ -299,6 +304,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
                 : "text-gray-700 dark:text-gray-200 hover:bg-white/40 dark:hover:bg-gray-800/60"
             }`}
             title={t.settingsTitle}
+            aria-label={t.settingsTitle}
           >
             <Settings className="w-3.5 h-3.5" />
           </button>
@@ -363,6 +369,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
             <button
               onClick={() => setShowSettings(false)}
               className="p-1 text-xs opacity-60 hover:opacity-100 rounded-full hover:bg-white/20 dark:hover:bg-gray-800/50"
+              aria-label={t.close}
             >
               <X className="w-3.5 h-3.5" />
             </button>
@@ -510,6 +517,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
                   value={newText}
                   onChange={(e) => setNewText(e.target.value)}
                   placeholder={t.customTextPlaceholder}
+                  aria-label={t.customTextPlaceholder}
                   className="w-full px-3 py-1.5 rounded-lg border border-white/20 bg-white/20 dark:bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-gray-100"
                 />
               </div>
@@ -519,6 +527,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
                   value={newAuthor}
                   onChange={(e) => setNewAuthor(e.target.value)}
                   placeholder={t.customAuthorPlaceholder}
+                  aria-label={t.customAuthorPlaceholder}
                   className="w-full px-3 py-1.5 rounded-lg border border-white/20 bg-white/20 dark:bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-gray-100"
                 />
                 <input
@@ -526,6 +535,7 @@ function QuoteWidget({ api }: { api: PluginAPI<QuoteData> }) {
                   value={newSource}
                   onChange={(e) => setNewSource(e.target.value)}
                   placeholder={t.customSourcePlaceholder}
+                  aria-label={t.customSourcePlaceholder}
                   className="w-full px-3 py-1.5 rounded-lg border border-white/20 bg-white/20 dark:bg-gray-800/50 focus:outline-none focus:ring-2 focus:ring-blue-500/50 text-gray-900 dark:text-gray-100"
                 />
               </div>

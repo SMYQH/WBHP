@@ -28,10 +28,10 @@ interface TavilyResponse {
   response_time?: number;
 }
 
-function TavilyImageCard({ img }: { img: TavilyImage | string }) {
+function TavilyImageCard({ img, altFallback = "Tavily reference image" }: { img: TavilyImage | string; altFallback?: string }) {
   const [hasError, setHasError] = useState(false);
   const url = typeof img === "string" ? img : img?.url || "";
-  const alt = typeof img === "string" ? "Tavily reference image" : img?.description || "Tavily reference image";
+  const alt = typeof img === "string" ? altFallback : img?.description || altFallback;
 
   if (!url || hasError) return null;
 
@@ -147,7 +147,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
           });
         }
       } catch (err: any) {
-        setError(err.message || "Search request failed");
+        setError(err.message || t.tavilyErrorSearchFailed);
       } finally {
         setIsLoading(false);
       }
@@ -168,11 +168,17 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
       <div
         className="absolute inset-0 bg-black/60 backdrop-blur-sm transition-opacity"
         onClick={onClose}
+        aria-hidden
       />
 
       {/* Slide-over Drawer Panel */}
       <div className="absolute inset-y-0 right-0 flex max-w-full pl-6 sm:pl-10">
-        <div className="w-screen max-w-lg bg-slate-950 text-slate-100 border-l border-emerald-500/30 shadow-2xl flex flex-col font-mono">
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={t.tavilySidebarTitle}
+          className="w-screen max-w-lg bg-slate-950 text-slate-100 border-l border-emerald-500/30 shadow-2xl flex flex-col font-mono"
+        >
           {/* Header */}
           <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-slate-900/90">
             <div className="flex items-center gap-2.5">
@@ -188,6 +194,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
               onClick={onClose}
               className="rounded-lg p-1.5 text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
               title={t.tavilyCloseTooltip}
+              aria-label={t.tavilyCloseTooltip}
             >
               <X className="w-4 h-4" />
             </button>
@@ -202,6 +209,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                   value={query}
                   onChange={(e) => setQuery(e.target.value)}
                   placeholder={t.tavilyQueryPlaceholder}
+                  aria-label={t.tavilyQueryPlaceholder}
                   className="w-full rounded-lg border border-emerald-500/40 bg-slate-900 px-3.5 py-2.5 text-xs font-sans text-white placeholder-slate-500 focus:border-emerald-400 focus:outline-none focus:ring-1 focus:ring-emerald-400 shadow-inner"
                   autoFocus
                 />
@@ -364,7 +372,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       {tavilyData.images.slice(0, 6).map((img, i) => (
-                        <TavilyImageCard key={i} img={img} />
+                        <TavilyImageCard key={i} img={img} altFallback={t.tavilyImageAlt} />
                       ))}
                     </div>
                   </div>

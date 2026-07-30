@@ -39,6 +39,7 @@ function NotesWidget({ api }: { api: PluginAPI<NotesData> }) {
           <button
             onClick={handleClear}
             className="text-xs text-gray-500 hover:text-rose-500 transition-colors"
+            aria-label={t.clearBtn}
           >
             {t.clearBtn}
           </button>
@@ -49,6 +50,7 @@ function NotesWidget({ api }: { api: PluginAPI<NotesData> }) {
         value={content}
         onChange={handleChange}
         placeholder={t.placeholder}
+        aria-label={t.placeholder}
         rows={4}
         className="w-full resize-none rounded-xl border border-gray-200/50 bg-white/50 p-3 text-sm text-gray-800 backdrop-blur focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700/50 dark:bg-gray-800/50 dark:text-gray-200"
       />

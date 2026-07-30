@@ -126,9 +126,10 @@ export default function CommandPalette({
       settings.activeWidgets.length === 0
         ? true
         : settings.activeWidgets.includes(p.id);
+    const widgetName = (t.widgets as Record<string, { name: string }>)[p.id]?.name ?? p.name;
     actions.push({
       id: `widget-${p.id}`,
-      label: `${active ? t.commandPalette.actions.hideWidget : t.commandPalette.actions.showWidget}: ${p.name}`,
+      label: `${active ? t.commandPalette.actions.hideWidget : t.commandPalette.actions.showWidget}: ${widgetName}`,
       category: t.commandPalette.categories.widgets,
       icon: <LayoutGrid className="w-4 h-4" />,
       perform: () => {
@@ -147,9 +148,10 @@ export default function CommandPalette({
 
   // Add Background toggles
   getBackgroundPlugins().forEach((p) => {
+    const bgName = (t.backgrounds as Record<string, { name: string }>)[p.id]?.name ?? p.name;
     actions.push({
       id: `bg-${p.id}`,
-      label: `${t.commandPalette.actions.setBackground}: ${p.name}`,
+      label: `${t.commandPalette.actions.setBackground}: ${bgName}`,
       category: t.commandPalette.categories.backgrounds,
       icon: <Image className="w-4 h-4" />,
       perform: () => {
@@ -186,6 +188,9 @@ export default function CommandPalette({
       onClick={onClose}
     >
       <div
+        role="dialog"
+        aria-modal="true"
+        aria-label={t.commandPalette.title}
         className="w-full max-w-xl overflow-hidden rounded-2xl bg-white shadow-2xl animate-scale-in dark:bg-gray-900 border border-gray-200 dark:border-gray-800"
         onClick={(e) => e.stopPropagation()}
         onKeyDown={handleKeyDown}
@@ -201,6 +206,7 @@ export default function CommandPalette({
               setSelectedIndex(0);
             }}
             placeholder={t.commandPalette.placeholder}
+            aria-label={t.commandPalette.placeholder}
             className="flex-1 bg-transparent text-base focus:outline-none dark:text-white"
           />
           <kbd className="rounded bg-gray-100 px-2 py-0.5 text-xs text-gray-500 dark:bg-gray-800 dark:text-gray-400">

@@ -43,7 +43,11 @@ function WeatherWidget({ api }: { api: PluginAPI<WeatherData> }) {
   const unitLabel = unit === "fahrenheit" ? "°F" : "°C";
 
   return (
-    <div className="text-center select-none flex flex-col items-center justify-center" aria-live="polite">
+    <div
+      className="text-center select-none flex flex-col items-center justify-center"
+      aria-live="polite"
+      aria-label={`${city || t.defaultCity}: ${temp ? `${temp}${unitLabel}` : ""}, ${condition || t.defaultCondition}`}
+    >
       <div className="flex items-center justify-center" aria-hidden>
         <WeatherIcon condition={condition} />
       </div>

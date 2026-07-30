@@ -112,7 +112,7 @@ WBHP/
 | `npm run release:patch` | Same as `npm run release` (auto patch version increment) |
 | `npm run release:minor` | Minor version bump and release |
 
-> **Windows Shell Tip**: If running on Windows PowerShell where script execution policy is restricted, execute npm commands via `cmd /c` (e.g. `cmd /c "npm run build:all"` or `cmd /c "npm run release"`).
+> **Windows Shell Tip**: If running on Windows PowerShell where script execution policy is restricted, execute npm commands via `pwsh -c` or `cmd /c` (e.g. `pwsh -c "npm run build:all"` or `cmd /c "npm run release"`).
 
 ---
 
@@ -122,6 +122,6 @@ WBHP/
 2. **Preserve i18n**: Whenever introducing user-facing text, add corresponding key-value pairs in `src/i18n/translations.ts` for both `zh` and `en`.
 3. **Keep Plugins Self-Contained**: Place new widget plugins in `src/plugins/widgets/` and backgrounds in `src/plugins/backgrounds/`, and register them in `index.ts`.
 4. **Event Bus Naming Standard**: Use `wbhp:<action>` naming convention for global `CustomEvent` communications.
-5. **Windows Shell Safety**: Use `cmd /c` wrapper when executing shell commands if running under PowerShell restricted execution environments.
-6. **Build Verification**: Before declaring success, execute `cmd /c "npm run build:all"` to ensure zero compilation or bundling errors.
-7. **Release Workflow**: After completing optimization tasks, run `cmd /c "npm run release"` to auto-increment the patch version (e.g., v0.5.1 -> v0.5.2), sync manifests and update files, run full build, commit, tag, and push to GitHub to trigger the `cd.yml` CD release workflow.
+5. **Windows Shell Safety**: Use `pwsh -c` or `cmd /c` wrapper when executing shell commands if running under PowerShell restricted execution environments.
+6. **Build Verification**: Before declaring success, execute `pwsh -c "npm run build:all"` or `cmd /c "npm run build:all"` to ensure zero compilation or bundling errors.
+7. **Release Workflow**: After completing optimization tasks, run `pwsh -c "npm run release"` or `cmd /c "npm run release"` to auto-increment the patch version (e.g., v0.5.1 -> v0.5.2), sync manifests and update files, run full build, commit, tag, and push to GitHub to trigger the `cd.yml` CD release workflow.

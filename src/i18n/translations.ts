@@ -215,6 +215,44 @@ export interface Translations {
       name: string;
       desc: string;
       refreshBtn: string;
+      copyBtn: string;
+      copied: string;
+      favBtn: string;
+      unfavBtn: string;
+      settingsTitle: string;
+      sourceMode: string;
+      modeHitokoto: string;
+      modePreset: string;
+      modeFavorites: string;
+      categories: string;
+      catAll: string;
+      catAnime: string;
+      catComic: string;
+      catGame: string;
+      catLiterature: string;
+      catOriginal: string;
+      catNetwork: string;
+      catOther: string;
+      catTv: string;
+      catPoetry: string;
+      catMusic: string;
+      catPhilosophy: string;
+      catJoke: string;
+      autoRefresh: string;
+      autoRefreshOff: string;
+      autoRefresh5m: string;
+      autoRefresh30m: string;
+      autoRefresh1h: string;
+      addCustom: string;
+      customTextPlaceholder: string;
+      customAuthorPlaceholder: string;
+      customSourcePlaceholder: string;
+      addBtn: string;
+      noFavorites: string;
+      tabQuote: string;
+      tabFavorites: string;
+      tabSettings: string;
+      deleteFav: string;
     };
     worldclock: {
       name: string;
@@ -442,9 +480,47 @@ export const zhTranslations: Translations = {
       chars: "字符",
     },
     quote: {
-      name: "每日名言",
-      desc: "发人深省与激发灵感的金句名言",
+      name: "一言金句",
+      desc: "海量 ACG、文学、诗词与哲学灵感金句",
       refreshBtn: "换一句",
+      copyBtn: "复制金句",
+      copied: "已复制",
+      favBtn: "收藏金句",
+      unfavBtn: "取消收藏",
+      settingsTitle: "一言设置",
+      sourceMode: "金句来源模式",
+      modeHitokoto: "一言 Core API (在线)",
+      modePreset: "离线预设金句",
+      modeFavorites: "我的收藏金句",
+      categories: "一言分类筛选",
+      catAll: "全部分类",
+      catAnime: "动画 (a)",
+      catComic: "漫画 (b)",
+      catGame: "游戏 (c)",
+      catLiterature: "文学 (d)",
+      catOriginal: "原创 (e)",
+      catNetwork: "来自网络 (f)",
+      catOther: "其他 (g)",
+      catTv: "影视 (h)",
+      catPoetry: "诗词 (i)",
+      catMusic: "网易云 (j)",
+      catPhilosophy: "哲学 (k)",
+      catJoke: "抖机灵 (l)",
+      autoRefresh: "自动更新周期",
+      autoRefreshOff: "手动刷新",
+      autoRefresh5m: "每 5 分钟",
+      autoRefresh30m: "每 30 分钟",
+      autoRefresh1h: "每 1 小时",
+      addCustom: "添加自定义金句",
+      customTextPlaceholder: "输入名言/金句正文...",
+      customAuthorPlaceholder: "作者 (可选)...",
+      customSourcePlaceholder: "出处/作品名 (可选)...",
+      addBtn: "添加金句",
+      noFavorites: "暂无收藏的金句，点击名言卡片右下角 ❤️ 保存喜欢的金句！",
+      tabQuote: "金句推荐",
+      tabFavorites: "我的收藏",
+      tabSettings: "挂件设置",
+      deleteFav: "移除此收藏",
     },
     worldclock: {
       name: "世界时钟",
@@ -672,9 +748,47 @@ export const enTranslations: Translations = {
       chars: "chars",
     },
     quote: {
-      name: "Daily Quote",
-      desc: "Inspirational & thought-provoking quotes",
-      refreshBtn: "New Quote",
+      name: "Hitokoto Quotes",
+      desc: "Anime, literature, poetry & philosophy quotes from Hitokoto API",
+      refreshBtn: "Next Quote",
+      copyBtn: "Copy Quote",
+      copied: "Copied",
+      favBtn: "Bookmark Quote",
+      unfavBtn: "Remove Bookmark",
+      settingsTitle: "Hitokoto Settings",
+      sourceMode: "Quote Source Mode",
+      modeHitokoto: "Hitokoto Core API (Online)",
+      modePreset: "Offline Preset Quotes",
+      modeFavorites: "My Saved Favorites",
+      categories: "Hitokoto Categories",
+      catAll: "All Categories",
+      catAnime: "Anime (a)",
+      catComic: "Comic (b)",
+      catGame: "Game (c)",
+      catLiterature: "Literature (d)",
+      catOriginal: "Original (e)",
+      catNetwork: "Network (f)",
+      catOther: "Other (g)",
+      catTv: "Movie & TV (h)",
+      catPoetry: "Poetry (i)",
+      catMusic: "Netease Music (j)",
+      catPhilosophy: "Philosophy (k)",
+      catJoke: "Joke (l)",
+      autoRefresh: "Auto Refresh Interval",
+      autoRefreshOff: "Manual Only",
+      autoRefresh5m: "Every 5 mins",
+      autoRefresh30m: "Every 30 mins",
+      autoRefresh1h: "Every 1 hour",
+      addCustom: "Add Custom Quote",
+      customTextPlaceholder: "Enter quote text...",
+      customAuthorPlaceholder: "Author (optional)...",
+      customSourcePlaceholder: "Source (optional)...",
+      addBtn: "Add Quote",
+      noFavorites: "No saved quotes yet. Click ❤️ on any quote to bookmark!",
+      tabQuote: "Quote Card",
+      tabFavorites: "Favorites",
+      tabSettings: "Settings",
+      deleteFav: "Delete favorite",
     },
     worldclock: {
       name: "World Clock",

@@ -23,9 +23,34 @@ interface TavilySearchResult {
 interface TavilyResponse {
   query: string;
   answer?: string;
-  images?: TavilyImage[];
+  images?: (TavilyImage | string)[];
   results: TavilySearchResult[];
   response_time?: number;
+}
+
+function TavilyImageCard({ img }: { img: TavilyImage | string }) {
+  const [hasError, setHasError] = useState(false);
+  const url = typeof img === "string" ? img : img?.url || "";
+  const alt = typeof img === "string" ? "Tavily reference image" : img?.description || "Tavily reference image";
+
+  if (!url || hasError) return null;
+
+  return (
+    <a
+      href={url}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="group relative aspect-video overflow-hidden rounded-lg border border-white/10 bg-slate-900 hover:border-emerald-400 transition-all"
+    >
+      <img
+        src={url}
+        alt={alt}
+        referrerPolicy="no-referrer"
+        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+        onError={() => setHasError(true)}
+      />
+    </a>
+  );
 }
 
 interface TavilySidebarProps {
@@ -343,22 +368,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                     </div>
                     <div className="grid grid-cols-3 gap-2">
                       {tavilyData.images.slice(0, 6).map((img, i) => (
-                        <a
-                          key={i}
-                          href={img.url}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="group relative aspect-video overflow-hidden rounded-lg border border-white/10 bg-slate-900 hover:border-emerald-400 transition-all"
-                        >
-                          <img
-                            src={img.url}
-                            alt={img.description || "Tavily image"}
-                            className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                            onError={(e) => {
-                              (e.target as HTMLElement).style.display = "none";
-                            }}
-                          />
-                        </a>
+                        <TavilyImageCard key={i} img={img} />
                       ))}
                     </div>
                   </div>

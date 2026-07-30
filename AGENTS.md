@@ -8,20 +8,20 @@ Welcome to **WBHP (Web Browser Home Page)**! This document serves as the authori
 
 WBHP is a modern, pluggable **new tab** browser extension built with **React 19**, **Vite 8**, **TypeScript**, and **Tailwind CSS 4**. It supports both **Chrome (Manifest V3)** and **Firefox (Manifest V3)**.
 
-* **Repository Root**: `E:\GitHub\WBHP`
-* **Architecture**: Pluggable Plugin System (Widgets & Backgrounds) + Event-Driven Communication
-* **Storage**: `localStorage` + `useSyncExternalStore` reactive store, with fallback mirroring to `chrome.storage.local`
-* **Cloud Sync & Updater**: WebDAV sync + Local JSON Backup/Restore + Auto Update Check Service (`updater.ts`)
+- **Repository Root**: `E:\GitHub\WBHP`
+- **Architecture**: Pluggable Plugin System (Widgets & Backgrounds) + Event-Driven Communication
+- **Storage**: `localStorage` + `useSyncExternalStore` reactive store, with fallback mirroring to `chrome.storage.local`
+- **Cloud Sync & Updater**: WebDAV sync + Local JSON Backup/Restore + Auto Update Check Service (`updater.ts`)
 
 ---
 
 ## 🛠️ Tech Stack & Key Dependencies
 
-* **Framework**: React 19 (`react`, `react-dom`)
-* **Build Tool**: Vite 8 (`vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`)
-* **Styling**: Tailwind CSS 4
-* **Language**: TypeScript (`tsc -b` for type checking)
-* **Packaging & Utilities**: `crx3` for `.crx` bundling, `sharp` for SVG-to-PNG icon rasterization
+- **Framework**: React 19 (`react`, `react-dom`)
+- **Build Tool**: Vite 8 (`vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`)
+- **Styling**: Tailwind CSS 4
+- **Language**: TypeScript (`tsc -b` for type checking)
+- **Packaging & Utilities**: `crx3` for `.crx` bundling, `sharp` for SVG-to-PNG icon rasterization
 
 ---
 
@@ -90,27 +90,27 @@ WBHP/
 
 ## ⌨️ Key Features & Shortcuts
 
-* **Command Palette**: `Ctrl + K` / `Cmd + K` or `/` anywhere on the page
-* **Zen / Focus Mode**: `Z` key toggle or floating toolbar button 🧘
-* **Settings Dialog**: `Ctrl + ,` or floating toolbar button ⚙️
-* **AI Search & Deep Research**: Switch search engines to ChatGPT, Gemini, or Perplexity + Tavily AI Deep Research sidebar
-* **Favicon & Category Filtering**: Quick links widget supports custom tags and Google Favicon fetching
+- **Command Palette**: `Ctrl + K` / `Cmd + K` or `/` anywhere on the page
+- **Zen / Focus Mode**: `Z` key toggle or floating toolbar button 🧘
+- **Settings Dialog**: `Ctrl + ,` or floating toolbar button ⚙️
+- **AI Search & Deep Research**: Switch search engines to ChatGPT, Gemini, or Perplexity + Tavily AI Deep Research sidebar
+- **Favicon & Category Filtering**: Quick links widget supports custom tags and Google Favicon fetching
 
 ---
 
 ## 🧪 Development Workflow & Commands
 
-| Command | Action |
-| :--- | :--- |
-| `npm run dev` | Launch Vite development server (Chrome target) |
-| `npm run dev:firefox` | Launch Vite dev server with `BROWSER=firefox` |
-| `npm run typecheck` | Run TypeScript strict type check (`tsc -b`) |
-| `npm run build` | Build Chrome extension into `dist-chrome/` |
-| `npm run build:firefox` | Build Firefox extension into `dist-firefox/` |
-| `npm run build:all` | Run TypeScript check and build both `.crx` bundles |
-| `npm run release` | Auto-bump patch version, update manifests, build, commit, tag vX.Y.Z, and push to GitHub |
-| `npm run release:patch` | Same as `npm run release` (auto patch version increment) |
-| `npm run release:minor` | Minor version bump and release |
+| Command                 | Action                                                                                   |
+| :---------------------- | :--------------------------------------------------------------------------------------- |
+| `npm run dev`           | Launch Vite development server (Chrome target)                                           |
+| `npm run dev:firefox`   | Launch Vite dev server with `BROWSER=firefox`                                            |
+| `npm run typecheck`     | Run TypeScript strict type check (`tsc -b`)                                              |
+| `npm run build`         | Build Chrome extension into `dist-chrome/`                                               |
+| `npm run build:firefox` | Build Firefox extension into `dist-firefox/`                                             |
+| `npm run build:all`     | Run TypeScript check and build both `.crx` bundles                                       |
+| `npm run release`       | Auto-bump patch version, update manifests, build, commit, tag vX.Y.Z, and push to GitHub |
+| `npm run release:patch` | Same as `npm run release` (auto patch version increment)                                 |
+| `npm run release:minor` | Minor version bump and release                                                           |
 
 > **Windows Shell Tip**: If running on Windows PowerShell where script execution policy is restricted, execute npm commands via `pwsh -c` (e.g. `pwsh -c "npm run build:all"` or `pwsh -c "npm run release"`).
 
@@ -125,3 +125,4 @@ WBHP/
 5. **Windows Shell Safety**: Use `pwsh -c` wrapper when executing shell commands if running under PowerShell restricted execution environments.
 6. **Build Verification**: Before declaring success, execute `pwsh -c "npm run build:all"` to ensure zero compilation or bundling errors.
 7. **Release & CD Monitoring Workflow**: After completing optimization tasks that involve source code changes (e.g. `src/`, plugins, UI components, core logic), run `pwsh -c "npm run release"` to auto-increment the patch version (e.g., v0.5.1 -> v0.5.2), sync manifests and update files, run full build, commit, tag, and push to GitHub. The script automatically waits 30 seconds for GitHub Actions to trigger, then streams and monitors the CD workflow logs via `gh CLI` (`gh run watch` / `gh run view`) until release completion. **Note**: If a task does NOT involve source code changes (e.g., pure documentation updates like `AGENTS.md` or `README.md`), skip the release process and commit directly without bumping version or triggering CD.
+8. **Language**: All responses, comments, and commit messages should be in Chinese Simplified.

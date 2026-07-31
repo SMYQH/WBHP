@@ -590,7 +590,9 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 
       {/* Tactile Pill Engine Selector Badges Grid */}
       <div
-        className="mt-3.5 flex flex-wrap items-center justify-center gap-2"
+        className={`mt-3.5 flex flex-wrap items-center justify-center gap-2 transition-all duration-200 ${
+          isEnginePickerOpen ? "opacity-0 pointer-events-none" : "opacity-100"
+        }`}
         role="group"
         aria-label={t.enginesAria}
       >

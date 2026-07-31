@@ -46,7 +46,7 @@ function TavilyImageCard({ img, altFallback = "Tavily reference image" }: { img:
         src={url}
         alt={alt}
         referrerPolicy="no-referrer"
-        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+        className="h-full w-full object-cover"
         onError={() => setHasError(true)}
       />
     </a>
@@ -272,7 +272,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                 <button
                   type="submit"
                   disabled={isLoading || !query.trim()}
-                  className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-md text-xs transition-all shadow-md shadow-emerald-500/20 active:scale-95 disabled:opacity-40"
+                  className="px-3.5 py-1.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold rounded-md text-xs transition-all shadow-md shadow-emerald-500/20 disabled:opacity-40"
                 >
                   {isLoading ? t.tavilySearching : t.tavilySearchBtn}
                 </button>
@@ -413,7 +413,7 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
                           <span className="truncate max-w-[240px] text-slate-400 group-hover:text-emerald-400">
                             {new URL(res.url).hostname}
                           </span>
-                          <span className="text-emerald-400/80 group-hover:translate-x-0.5 transition-transform">
+                          <span className="text-emerald-400/80">
                             {t.tavilyOpenLink}
                           </span>
                         </div>

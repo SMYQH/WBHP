@@ -46,7 +46,7 @@ function LinkAvatar({ title, url }: { title: string; url: string }) {
 
   if (!imgError && domain) {
     return (
-      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/60 p-2 shadow-sm backdrop-blur transition-transform group-hover:scale-105 dark:bg-gray-800/60">
+      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/60 p-2 shadow-sm backdrop-blur transition-colors dark:bg-gray-800/60">
         <img
           src={faviconUrl}
           alt={title}
@@ -63,7 +63,7 @@ function LinkAvatar({ title, url }: { title: string; url: string }) {
 
   return (
     <div
-      className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-sm font-semibold text-white shadow-sm transition-transform group-hover:scale-105`}
+      className={`flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${gradient} text-sm font-semibold text-white shadow-sm transition-colors`}
     >
       {label || <Star className="w-4 h-4 text-white" />}
     </div>

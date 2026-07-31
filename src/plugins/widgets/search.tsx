@@ -497,7 +497,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                 setIsDropdownOpen(true);
                 inputRef.current?.focus();
               }}
-              className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-slate-100 hover:bg-white/10 active:scale-95 transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
+              className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-slate-100 hover:bg-white/10 transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
               title={t.clearTooltip}
               aria-label={t.clearTooltip}
             >
@@ -511,7 +511,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             disabled={!query.trim() || isSubmitting}
             className={`mr-2 flex h-10 items-center gap-1.5 rounded-xl px-4 font-mono text-xs font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
               query.trim() && !isSubmitting
-                ? "bg-gradient-to-r from-cyan-400 to-cyan-500 text-slate-950 hover:brightness-110 active:scale-95 shadow-lg shadow-cyan-500/25"
+                ? "bg-gradient-to-r from-cyan-400 to-cyan-500 text-slate-950 hover:brightness-110 shadow-lg shadow-cyan-500/25"
                 : "bg-white/10 text-white/40 cursor-not-allowed"
             }`}
           >

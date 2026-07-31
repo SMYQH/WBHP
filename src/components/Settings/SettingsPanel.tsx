@@ -112,7 +112,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
             ref={closeBtnRef}
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
             aria-label={t.settings.close}
           >
             <X className="w-4 h-4" />

@@ -12,6 +12,7 @@ import {
   Code,
   Compass,
   ShieldCheck,
+  Globe,
   X,
 } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
@@ -31,9 +32,10 @@ export const ENGINES: SearchEngine[] = [
   { id: "bing", name: "Bing", url: "https://www.bing.com/search?q=", category: "web", shortcutKey: "2" },
   { id: "baidu", name: "Baidu", url: "https://www.baidu.com/s?wd=", category: "web", shortcutKey: "3" },
   { id: "duckduckgo", name: "DuckDuckGo", url: "https://duckduckgo.com/?q=", category: "web", shortcutKey: "4" },
-  { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com/?q=", isAi: true, category: "ai", shortcutKey: "5" },
-  { id: "claude", name: "Claude", url: "https://claude.ai/new?q=", isAi: true, category: "ai", shortcutKey: "6" },
-  { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", isAi: true, category: "ai", shortcutKey: "7" },
+  { id: "tavily", name: "Tavily AI", url: "https://tavily.com/?q=", isAi: true, category: "ai", shortcutKey: "5" },
+  { id: "chatgpt", name: "ChatGPT", url: "https://chatgpt.com/?q=", isAi: true, category: "ai", shortcutKey: "6" },
+  { id: "claude", name: "Claude", url: "https://claude.ai/new?q=", isAi: true, category: "ai", shortcutKey: "7" },
+  { id: "gemini", name: "Gemini", url: "https://gemini.google.com/app?q=", isAi: true, category: "ai", shortcutKey: "8" },
   { id: "github", name: "GitHub", url: "https://github.com/search?q=", category: "dev", shortcutKey: "g" },
 ];
 
@@ -47,6 +49,8 @@ function EngineIcon({ id, className = "w-4 h-4" }: { id: string; className?: str
       return <Compass className={className} />;
     case "duckduckgo":
       return <ShieldCheck className={className} />;
+    case "tavily":
+      return <Globe className={className} />;
     case "chatgpt":
       return <Bot className={className} />;
     case "claude":

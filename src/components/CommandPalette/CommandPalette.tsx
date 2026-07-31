@@ -10,6 +10,7 @@ import {
   Monitor,
   LayoutGrid,
   Image,
+  Globe,
 } from "lucide-react";
 import type { WBHPSettings } from "../../plugins/types";
 import { getWidgetPlugins, getBackgroundPlugins } from "../../plugins/registry";
@@ -58,6 +59,16 @@ export default function CommandPalette({
   if (!isOpen) return null;
 
   const actions: ActionItem[] = [
+    {
+      id: "action-tavily",
+      label: t.commandPalette.actions.openTavily,
+      category: t.commandPalette.categories.system,
+      icon: <Globe className="w-4 h-4 text-emerald-400" />,
+      perform: () => {
+        window.dispatchEvent(new CustomEvent("wbhp:open-tavily", { detail: { query: "" } }));
+        onClose();
+      },
+    },
     {
       id: "action-settings",
       label: t.commandPalette.actions.openSettings,

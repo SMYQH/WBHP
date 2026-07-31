@@ -2,6 +2,8 @@
   "app": {
     "commandPaletteTooltip": "快捷命令面板 (Ctrl+K 或 /)",
     "commandPaletteAria": "打开快捷命令面板",
+    "tavilyTooltip": "Tavily AI 深度搜索",
+    "tavilyAria": "打开 Tavily AI 深度搜索",
     "zenModeTooltip": "切换专注模式",
     "zenModeAria": "切换专注模式",
     "settingsTooltip": "设置 (Ctrl+,)",
@@ -32,6 +34,7 @@
       "backgrounds": "背景"
     },
     "actions": {
+      "openTavily": "打开 Tavily AI 深度搜索",
       "openSettings": "打开设置面板",
       "toggleZen": "切换专注模式 / 禅模式",
       "themeLight": "切换至浅色外观",
@@ -91,6 +94,8 @@
       },
       "userName": "您的称呼",
       "userNamePlaceholder": "请输入您的名字...",
+      "tavilyApiKeyTitle": "Tavily API Key",
+      "tavilyApiKeyHelp": "配置个人 API Key (tvly-...)，解锁深层网页 JSON 结构抽取与 AI 摘要生成。",
       "activeWidgets": "启用挂件",
       "activeWidgetsHelp": "未选择任何挂件时默认全选。点击挂件卡片可自由切换显示/隐藏。"
     },

@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Search, Eye, EyeOff, Settings, Sparkles } from "lucide-react";
+import { Search, Eye, EyeOff, Settings, Sparkles, Globe } from "lucide-react";
 import { getPlugin } from "../plugins/registry";
 import { useSettings } from "../hooks/useSettings";
 import { startAutoBackup, stopAutoBackup } from "../services/webdav";
@@ -115,6 +115,7 @@ export default function App() {
         if (showSettings) setShowSettings(false);
         if (showPalette) setShowPalette(false);
         if (isZenMode) setIsZenMode(false);
+        if (showTavily) setShowTavily(false);
         return;
       }
 
@@ -141,7 +142,7 @@ export default function App() {
 
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
-  }, [showSettings, showPalette, isZenMode]);
+  }, [showSettings, showPalette, isZenMode, showTavily]);
 
   const bgPlugin = getPlugin(settings.activeBackground) || getPlugin("preset");
 
@@ -225,6 +226,19 @@ export default function App() {
           aria-label={t.app.commandPaletteAria}
         >
           <Search className="w-4 h-4 opacity-80" />
+        </button>
+
+        <button
+          type="button"
+          onClick={() => {
+            setTavilyQuery("");
+            setShowTavily(true);
+          }}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10"
+          title={t.app.tavilyTooltip}
+          aria-label={t.app.tavilyAria}
+        >
+          <Globe className="w-4 h-4 text-emerald-400 opacity-90" />
         </button>
 
         <button

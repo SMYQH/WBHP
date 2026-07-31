@@ -2,6 +2,8 @@
   "app": {
     "commandPaletteTooltip": "Command Palette (Ctrl+K or /)",
     "commandPaletteAria": "Open Command Palette",
+    "tavilyTooltip": "Tavily AI Deep Search",
+    "tavilyAria": "Open Tavily AI Deep Search",
     "zenModeTooltip": "Toggle Zen Mode",
     "zenModeAria": "Toggle Zen Mode",
     "settingsTooltip": "Settings (Ctrl+,)",
@@ -32,6 +34,7 @@
       "backgrounds": "Backgrounds"
     },
     "actions": {
+      "openTavily": "Open Tavily AI Deep Search",
       "openSettings": "Open Settings Panel",
       "toggleZen": "Toggle Zen / Focus Mode",
       "themeLight": "Switch to Light Theme",
@@ -91,6 +94,8 @@
       },
       "userName": "Your Name",
       "userNamePlaceholder": "Enter your name...",
+      "tavilyApiKeyTitle": "Tavily API Key",
+      "tavilyApiKeyHelp": "Set personal API Key (tvly-...) to unlock raw web JSON extractions and AI syntheses.",
       "activeWidgets": "Active Widgets",
       "activeWidgetsHelp": "Selecting none displays all widgets by default. Click to toggle."
     },

@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from "react";
-import { X, Cloud, HardDrive, Sparkles, Zap, Check, ExternalLink } from "lucide-react";
+import { X, Cloud, HardDrive, Sparkles, Zap, Check, ExternalLink, Globe } from "lucide-react";
 import type { WBHPSettings, ThemeMode, LanguageMode, FontFamily, WebDAVConfig } from "../../plugins/types";
 import { getBackgroundPlugins, getWidgetPlugins } from "../../plugins/registry";
 import { checkWebDAVConnection, backupToWebDAV, restoreFromWebDAV } from "../../services/webdav";
@@ -23,6 +23,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
   const [tab, setTab] = useState<Tab>("general");
   const [webdavStatus, setWebdavStatus] = useState<string | null>(null);
   const [backupMsg, setBackupMsg] = useState<string | null>(null);
+  const [tavilyKey, setTavilyKey] = useState(() => localStorage.getItem("wbhp_tavily_key") || "");
   const titleId = useId();
   const panelRef = useRef<HTMLDivElement>(null);
   const closeBtnRef = useRef<HTMLButtonElement>(null);
@@ -210,6 +211,31 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                   className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
                   autoComplete="nickname"
                 />
+              </div>
+
+              <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-2 dark:border-gray-800 dark:bg-gray-800/40">
+                <div className="flex items-center justify-between">
+                  <label htmlFor="wbhp-tavily-key" className="text-sm font-semibold flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-emerald-500" /> {t.settings.general.tavilyApiKeyTitle}
+                  </label>
+                </div>
+                <p className="text-xs opacity-60">
+                  {t.settings.general.tavilyApiKeyHelp}
+                </p>
+                <div className="flex gap-2 pt-1">
+                  <input
+                    id="wbhp-tavily-key"
+                    type="password"
+                    value={tavilyKey}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setTavilyKey(val);
+                      localStorage.setItem("wbhp_tavily_key", val.trim());
+                    }}
+                    placeholder="tvly-..."
+                    className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 font-mono text-emerald-600 dark:text-emerald-400"
+                  />
+                </div>
               </div>
 
               <div>

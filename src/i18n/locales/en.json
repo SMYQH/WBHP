@@ -212,7 +212,12 @@
       "tavilyCloseTooltip": "Close (Esc)",
       "tavilySetKey": "Set API Key (tvly-...)",
       "tavilyErrorLabel": "Error:",
-      "tavilyErrorSearchFailed": "Search request failed"
+      "tavilyErrorSearchFailed": "Search request failed",
+      "historyTitle": "Search History",
+      "clearHistory": "Clear History",
+      "deleteHistoryItem": "Delete",
+      "suggestionsTitle": "Suggestions",
+      "deleteHistoryTooltip": "Remove this item"
     },
     "links": {
       "name": "Quick Links",

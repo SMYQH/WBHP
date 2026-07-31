@@ -3,7 +3,16 @@
  * contrast: pass (46–50)
  */
 
-import { useState, useCallback, useSyncExternalStore, useMemo, type FormEvent, type KeyboardEvent } from "react";
+import {
+  useState,
+  useCallback,
+  useSyncExternalStore,
+  useMemo,
+  useEffect,
+  useRef,
+  type FormEvent,
+  type KeyboardEvent,
+} from "react";
 import {
   Search,
   Bot,
@@ -14,6 +23,7 @@ import {
   ShieldCheck,
   Globe,
   X,
+  History,
 } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
 import { getTranslations } from "../../i18n";
@@ -64,55 +74,222 @@ function EngineIcon({ id, className = "w-4 h-4" }: { id: string; className?: str
   }
 }
 
+function HighlightedText({ text, query }: { text: string; query: string }) {
+  if (!query.trim()) return <span>{text}</span>;
+  const index = text.toLowerCase().indexOf(query.trim().toLowerCase());
+  if (index === -1) return <span>{text}</span>;
+
+  const before = text.slice(0, index);
+  const match = text.slice(index, index + query.trim().length);
+  const after = text.slice(index + query.trim().length);
+
+  return (
+    <span>
+      {before}
+      <span className="text-white font-normal">{match}</span>
+      <span className="font-bold text-cyan-300">{after}</span>
+    </span>
+  );
+}
+
 interface SearchData {
   defaultEngine: string;
+  history?: string[];
 }
 
 function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
   const data = useSyncExternalStore(api.data.subscribe, api.data.get, api.data.get);
-  const { defaultEngine } = data;
+  const { defaultEngine, history = [] } = data;
   const [query, setQuery] = useState("");
+  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const containerRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const t = getTranslations(api.settings.language).widgets.search;
 
   const currentEngine = useMemo(() => {
     return ENGINES.find((e) => e.id === defaultEngine) ?? ENGINES[0];
   }, [defaultEngine]);
 
-  const search = useCallback(
-    (e?: FormEvent) => {
-      e?.preventDefault();
-      const q = query.trim();
+  // Debounced search suggestion fetcher
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      setSuggestions([]);
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const url = `https://suggestion.baidu.com/su?action=opensearch&wd=${encodeURIComponent(trimmed)}`;
+        const res = await fetch(url, { signal: controller.signal });
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json) && Array.isArray(json[1])) {
+            setSuggestions(json[1].slice(0, 8));
+            return;
+          }
+        }
+      } catch {
+        // Fallback to Google suggestion API if Baidu fails
+      }
+
+      try {
+        const url = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(trimmed)}`;
+        const res = await fetch(url, { signal: controller.signal });
+        if (res.ok) {
+          const json = await res.json();
+          if (Array.isArray(json) && Array.isArray(json[1])) {
+            setSuggestions(json[1].slice(0, 8));
+          }
+        }
+      } catch {
+        // Ignore network errors
+      }
+    }, 150);
+
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [query]);
+
+  // Handle outside click to dismiss dropdown
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
+        setIsDropdownOpen(false);
+        setSelectedIndex(-1);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Compute matched items (local history + online suggestions)
+  const combinedItems = useMemo(() => {
+    const q = query.trim().toLowerCase();
+    if (!q) {
+      return history.slice(0, 10).map((h) => ({ type: "history" as const, text: h }));
+    }
+
+    const matchedHistories = history
+      .filter((h) => h.toLowerCase().includes(q))
+      .slice(0, 5)
+      .map((h) => ({ type: "history" as const, text: h }));
+
+    const matchedSet = new Set(matchedHistories.map((h) => h.text.toLowerCase()));
+
+    const filteredSuggestions = suggestions
+      .filter((s) => !matchedSet.has(s.toLowerCase()))
+      .slice(0, 8 - matchedHistories.length)
+      .map((s) => ({ type: "suggestion" as const, text: s }));
+
+    return [...matchedHistories, ...filteredSuggestions];
+  }, [query, history, suggestions]);
+
+  const executeSearch = useCallback(
+    (targetQuery: string) => {
+      const q = targetQuery.trim();
+      if (!q) return;
+
+      // Save search term to history (max 20)
+      const currentData = api.data.get();
+      const existingHistory = currentData?.history || [];
+      const updatedHistory = [q, ...existingHistory.filter((item) => item !== q)].slice(0, 20);
+      api.data.set({ ...currentData, history: updatedHistory });
 
       if (currentEngine.id === "tavily") {
         window.dispatchEvent(new CustomEvent("wbhp:open-tavily", { detail: { query: q } }));
+        setIsDropdownOpen(false);
+        setSelectedIndex(-1);
         return;
       }
 
-      if (!q) return;
       setIsSubmitting(true);
+      setIsDropdownOpen(false);
+      setSelectedIndex(-1);
       setTimeout(() => {
         window.location.assign(currentEngine.url + encodeURIComponent(q));
       }, 100);
     },
-    [query, currentEngine],
+    [currentEngine, api.data]
+  );
+
+  const handleSubmit = useCallback(
+    (e?: FormEvent) => {
+      e?.preventDefault();
+      if (selectedIndex >= 0 && selectedIndex < combinedItems.length) {
+        const itemText = combinedItems[selectedIndex].text;
+        setQuery(itemText);
+        executeSearch(itemText);
+      } else {
+        executeSearch(query);
+      }
+    },
+    [query, selectedIndex, combinedItems, executeSearch]
+  );
+
+  const removeHistoryItem = useCallback(
+    (e: React.MouseEvent, itemText: string) => {
+      e.stopPropagation();
+      const currentData = api.data.get();
+      const existingHistory = currentData?.history || [];
+      const updatedHistory = existingHistory.filter((h) => h !== itemText);
+      api.data.set({ ...currentData, history: updatedHistory });
+    },
+    [api.data]
+  );
+
+  const clearAllHistory = useCallback(
+    (e: React.MouseEvent) => {
+      e.stopPropagation();
+      const currentData = api.data.get();
+      api.data.set({ ...currentData, history: [] });
+    },
+    [api.data]
   );
 
   const cycleEngine = useCallback(
     (direction: 1 | -1) => {
       const currentIndex = ENGINES.findIndex((e) => e.id === currentEngine.id);
       const nextIndex = (currentIndex + direction + ENGINES.length) % ENGINES.length;
-      api.data.set({ defaultEngine: ENGINES[nextIndex].id });
+      api.data.set({ ...api.data.get(), defaultEngine: ENGINES[nextIndex].id });
     },
-    [currentEngine.id, api.data],
+    [currentEngine.id, api.data]
   );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape" && query) {
+    if (e.key === "ArrowDown") {
+      if (!isDropdownOpen) {
+        setIsDropdownOpen(true);
+        return;
+      }
       e.preventDefault();
-      setQuery("");
+      if (combinedItems.length > 0) {
+        setSelectedIndex((prev) => (prev + 1) % combinedItems.length);
+      }
+    } else if (e.key === "ArrowUp") {
+      if (!isDropdownOpen) return;
+      e.preventDefault();
+      if (combinedItems.length > 0) {
+        setSelectedIndex((prev) => (prev - 1 + combinedItems.length) % combinedItems.length);
+      }
+    } else if (e.key === "Escape") {
+      if (isDropdownOpen) {
+        e.preventDefault();
+        setIsDropdownOpen(false);
+        setSelectedIndex(-1);
+      } else if (query) {
+        e.preventDefault();
+        setQuery("");
+      }
     } else if (e.key === "Tab" && !e.shiftKey && !e.ctrlKey) {
-      // Cycle engine forward on Tab when input is empty or modifier pressed
       if (!query) {
         e.preventDefault();
         cycleEngine(1);
@@ -121,9 +298,9 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
   };
 
   return (
-    <div className="mx-auto w-full max-w-2xl px-2">
+    <div ref={containerRef} className="relative mx-auto w-full max-w-2xl px-2">
       {/* Main Terminal Input Console */}
-      <form onSubmit={search} className="group relative flex items-center" role="search">
+      <form onSubmit={handleSubmit} className="group relative flex items-center" role="search">
         <label className="sr-only" htmlFor="wbhp-search-input">
           {t.placeholder}
         </label>
@@ -140,10 +317,16 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 
           {/* Text Input */}
           <input
+            ref={inputRef}
             id="wbhp-search-input"
             type="search"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setIsDropdownOpen(true);
+              setSelectedIndex(-1);
+            }}
+            onFocus={() => setIsDropdownOpen(true)}
             onKeyDown={handleKeyDown}
             placeholder={
               currentEngine.isAi
@@ -161,7 +344,11 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           {query && (
             <button
               type="button"
-              onClick={() => setQuery("")}
+              onClick={() => {
+                setQuery("");
+                setSelectedIndex(-1);
+                setIsDropdownOpen(true);
+              }}
               className="mr-2 flex min-h-[36px] min-w-[36px] items-center justify-center rounded-md p-1.5 text-white/50 hover:text-white hover:bg-white/10 active:scale-95 transition-all font-mono text-xs focus-visible:ring-2 focus-visible:ring-cyan-400"
               title={t.clearTooltip}
               aria-label={t.clearTooltip}
@@ -186,6 +373,69 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
         </div>
       </form>
 
+      {/* Floating Suggestions & History Dropdown */}
+      {isDropdownOpen && combinedItems.length > 0 && (
+        <div className="absolute left-2 right-2 top-full mt-2 z-50 overflow-hidden rounded-xl border border-white/20 bg-slate-950/90 backdrop-blur-2xl shadow-2xl transition-all dark:bg-slate-900/95 dark:border-white/15">
+          <div className="max-h-80 overflow-y-auto py-1">
+            {combinedItems.map((item, index) => {
+              const isSelected = index === selectedIndex;
+              const isHistory = item.type === "history";
+              return (
+                <div
+                  key={`${item.type}-${item.text}-${index}`}
+                  onClick={() => {
+                    setQuery(item.text);
+                    executeSearch(item.text);
+                  }}
+                  onMouseEnter={() => setSelectedIndex(index)}
+                  className={`group relative flex items-center justify-between px-4 py-2.5 cursor-pointer text-sm transition-colors ${
+                    isSelected
+                      ? "bg-cyan-500/20 text-cyan-200"
+                      : "text-slate-200 hover:bg-white/10 dark:text-slate-200"
+                  }`}
+                >
+                  <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
+                    {isHistory ? (
+                      <History className="w-4 h-4 text-purple-400 shrink-0" />
+                    ) : (
+                      <Search className="w-4 h-4 text-slate-400 shrink-0" />
+                    )}
+                    <span className="truncate font-sans">
+                      {isHistory ? item.text : <HighlightedText text={item.text} query={query} />}
+                    </span>
+                  </div>
+
+                  {isHistory && (
+                    <button
+                      type="button"
+                      onClick={(e) => removeHistoryItem(e, item.text)}
+                      className="text-xs text-purple-300/70 hover:text-purple-200 hover:bg-purple-500/20 px-2 py-1 rounded transition-all shrink-0"
+                      title={t.deleteHistoryTooltip || "删除此条历史"}
+                    >
+                      {t.deleteHistoryItem || "删除"}
+                    </button>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Footer bar when displaying empty query search history */}
+          {!query.trim() && history.length > 0 && (
+            <div className="border-t border-white/10 px-4 py-2 flex items-center justify-between bg-black/30 select-none">
+              <span className="text-xs font-mono text-slate-400">{t.historyTitle}</span>
+              <button
+                type="button"
+                onClick={clearAllHistory}
+                className="text-xs text-rose-400 hover:text-rose-300 hover:underline transition-all"
+              >
+                {t.clearHistory}
+              </button>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Engine Selection Badges Grid */}
       <div
         className="mt-3 flex flex-wrap items-center justify-center gap-2"
@@ -198,7 +448,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             <button
               key={e.id}
               type="button"
-              onClick={() => api.data.set({ defaultEngine: e.id })}
+              onClick={() => api.data.set({ ...api.data.get(), defaultEngine: e.id })}
               className={`group/btn relative min-h-[36px] rounded-lg px-3 py-1.5 text-xs font-mono transition-all duration-150 flex items-center gap-1.5 border active:scale-95 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                 isSelected
                   ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-200 font-semibold shadow-sm scale-105"
@@ -225,9 +475,9 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 const config: PluginConfig<SearchData> = {
   id: "search",
   name: "Search Console",
-  description: "Technical multi-engine search terminal with AI & developer engine switching.",
+  description: "Technical multi-engine search terminal with AI & developer engine switching, history & real-time suggestions.",
   type: "widget",
-  defaultData: { defaultEngine: "google" },
+  defaultData: { defaultEngine: "google", history: [] },
   defaultSize: { width: 4, height: 1 },
   component: SearchWidget,
 };

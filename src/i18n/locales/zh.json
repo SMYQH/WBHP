@@ -212,7 +212,12 @@
       "tavilyCloseTooltip": "关闭 (Esc)",
       "tavilySetKey": "设置 API Key (tvly-...)",
       "tavilyErrorLabel": "错误：",
-      "tavilyErrorSearchFailed": "搜索请求失败"
+      "tavilyErrorSearchFailed": "搜索请求失败",
+      "historyTitle": "搜索历史",
+      "clearHistory": "清空历史记录",
+      "deleteHistoryItem": "删除",
+      "suggestionsTitle": "搜索建议",
+      "deleteHistoryTooltip": "删除此条历史"
     },
     "links": {
       "name": "快捷导航",

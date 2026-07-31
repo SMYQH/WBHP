@@ -1,5 +1,5 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent } from "react";
-import { X, Cloud, HardDrive, Sparkles, Zap, Check, ExternalLink, Globe } from "lucide-react";
+import { X, Cloud, HardDrive, Sparkles, Zap, Check, ExternalLink, Globe, Sliders, Palette, Database } from "lucide-react";
 import type { WBHPSettings, ThemeMode, LanguageMode, FontFamily, WebDAVConfig } from "../../plugins/types";
 import { getBackgroundPlugins, getWidgetPlugins } from "../../plugins/registry";
 import { checkWebDAVConnection, backupToWebDAV, restoreFromWebDAV } from "../../services/webdav";
@@ -30,10 +30,10 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
   const t = getTranslations(settings.language);
 
-  const tabs: { id: Tab; label: string }[] = [
-    { id: "general", label: t.settings.tabs.general },
-    { id: "background", label: t.settings.tabs.background },
-    { id: "data", label: t.settings.tabs.data },
+  const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
+    { id: "general", label: t.settings.tabs.general, icon: <Sliders className="w-4 h-4" /> },
+    { id: "background", label: t.settings.tabs.background, icon: <Palette className="w-4 h-4" /> },
+    { id: "data", label: t.settings.tabs.data, icon: <Database className="w-4 h-4" /> },
   ];
 
   const themeOptions: { value: ThemeMode; label: string }[] = [
@@ -86,7 +86,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm animate-fade-in"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-md animate-fade-in p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -96,57 +96,74 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="m-4 flex max-h-[85vh] w-full max-w-lg flex-col rounded-2xl bg-white shadow-2xl animate-scale-in dark:bg-gray-900"
+        className="relative flex max-h-[88vh] w-full max-w-xl flex-col rounded-2xl border border-cyan-500/30 bg-slate-950/85 backdrop-blur-2xl text-slate-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] animate-scale-in dark:bg-slate-950/90 dark:border-cyan-500/40"
       >
-        <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-800">
-          <h2 id={titleId} className="text-lg font-semibold">
-            {t.settings.title}
-          </h2>
+        {/* Modal Header */}
+        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+          <div className="flex items-center gap-2.5">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300">
+              <Sliders className="w-4 h-4" />
+            </div>
+            <h2 id={titleId} className="text-lg font-bold text-slate-100 tracking-wide">
+              {t.settings.title}
+            </h2>
+          </div>
           <button
             ref={closeBtnRef}
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg hover:bg-gray-200 dark:hover:bg-gray-800 transition-colors"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 active:scale-95 transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
             aria-label={t.settings.close}
           >
-            <X className="w-4 h-4 opacity-70" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
-        <div className="flex border-b border-gray-200 px-6 dark:border-gray-800" role="tablist" aria-label={t.settings.tabsAria}>
-          {tabs.map((tabItem) => (
-            <button
-              key={tabItem.id}
-              type="button"
-              role="tab"
-              aria-selected={tab === tabItem.id}
-              onClick={() => setTab(tabItem.id)}
-              className={`border-b-2 px-4 py-2.5 text-sm font-medium transition-colors ${
-                tab === tabItem.id
-                  ? "border-blue-500 text-blue-500"
-                  : "border-transparent text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
-              }`}
-            >
-              {tabItem.label}
-            </button>
-          ))}
+        {/* Glass Segmented Tabs */}
+        <div className="px-6 pt-4">
+          <div className="flex rounded-xl bg-slate-900/60 p-1 border border-white/10" role="tablist" aria-label={t.settings.tabsAria}>
+            {tabs.map((tabItem) => {
+              const isSelected = tab === tabItem.id;
+              return (
+                <button
+                  key={tabItem.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isSelected}
+                  onClick={() => setTab(tabItem.id)}
+                  className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+                    isSelected
+                      ? "bg-cyan-500/25 border border-cyan-400/50 text-cyan-200 shadow-[0_0_12px_rgba(6,182,212,0.25)]"
+                      : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                  }`}
+                >
+                  <span className={isSelected ? "text-cyan-300" : "text-slate-400"}>{tabItem.icon}</span>
+                  <span>{tabItem.label}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
-        <div className="flex-1 space-y-5 overflow-y-auto px-6 py-5" role="tabpanel">
+        {/* Tab Panel Body */}
+        <div className="flex-1 space-y-6 overflow-y-auto px-6 py-5" role="tabpanel">
           {tab === "general" && (
             <>
+              {/* Theme Selector */}
               <div>
-                <label className="mb-2 block text-sm font-medium">{t.settings.general.theme}</label>
+                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
+                  {t.settings.general.theme}
+                </label>
                 <div className="flex gap-2" role="group" aria-label={t.settings.general.theme}>
                   {themeOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => updateSettings({ theme: opt.value })}
-                      className={`flex-1 rounded-lg px-3 py-2 text-sm transition-colors ${
+                      className={`flex-1 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-150 border focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                         settings.theme === opt.value
-                          ? "bg-blue-500 font-medium text-white shadow-sm"
-                          : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                          ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                          : "bg-slate-900/60 border-white/10 text-slate-300 hover:border-white/20 hover:text-white"
                       }`}
                       aria-pressed={settings.theme === opt.value}
                     >
@@ -156,18 +173,21 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                 </div>
               </div>
 
+              {/* Language Selector */}
               <div>
-                <label className="mb-2 block text-sm font-medium">{t.settings.general.language}</label>
+                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
+                  {t.settings.general.language}
+                </label>
                 <div className="flex gap-2" role="group" aria-label={t.settings.general.language}>
                   {languageOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => updateSettings({ language: opt.value })}
-                      className={`flex-1 rounded-lg px-3 py-2 text-sm transition-colors ${
+                      className={`flex-1 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-150 border focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                         settings.language === opt.value
-                          ? "bg-blue-500 font-medium text-white shadow-sm"
-                          : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                          ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                          : "bg-slate-900/60 border-white/10 text-slate-300 hover:border-white/20 hover:text-white"
                       }`}
                       aria-pressed={settings.language === opt.value}
                     >
@@ -177,18 +197,21 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                 </div>
               </div>
 
+              {/* Font Selector */}
               <div>
-                <label className="mb-2 block text-sm font-medium">{t.settings.general.font}</label>
+                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
+                  {t.settings.general.font}
+                </label>
                 <div className="grid grid-cols-2 gap-2" role="group" aria-label={t.settings.general.font}>
                   {fontOptions.map((opt) => (
                     <button
                       key={opt.value}
                       type="button"
                       onClick={() => updateSettings({ fontFamily: opt.value })}
-                      className={`rounded-lg px-3 py-2 text-sm text-left transition-colors ${
+                      className={`rounded-xl px-3 py-2.5 text-xs text-left transition-all duration-150 border focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                         settings.fontFamily === opt.value
-                          ? "bg-blue-500 font-medium text-white shadow-sm"
-                          : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-800 dark:hover:bg-gray-700"
+                          ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                          : "bg-slate-900/60 border-white/10 text-slate-300 hover:border-white/20 hover:text-white"
                       }`}
                       aria-pressed={settings.fontFamily === opt.value}
                     >
@@ -198,8 +221,9 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                 </div>
               </div>
 
+              {/* User Name Input */}
               <div>
-                <label htmlFor="wbhp-user-name" className="mb-1.5 block text-sm font-medium">
+                <label htmlFor="wbhp-user-name" className="mb-1.5 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
                   {t.settings.general.userName}
                 </label>
                 <input
@@ -208,18 +232,19 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                   value={settings.userName}
                   onChange={(e) => updateSettings({ userName: e.target.value })}
                   placeholder={t.settings.general.userNamePlaceholder}
-                  className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-800"
+                  className="w-full rounded-xl border border-white/10 bg-slate-900/70 px-3.5 py-2.5 text-xs text-slate-100 placeholder-slate-500 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 transition-all"
                   autoComplete="nickname"
                 />
               </div>
 
-              <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-2 dark:border-gray-800 dark:bg-gray-800/40">
+              {/* Tavily API Key Section */}
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-950/20 p-4 space-y-2">
                 <div className="flex items-center justify-between">
-                  <label htmlFor="wbhp-tavily-key" className="text-sm font-semibold flex items-center gap-2">
-                    <Globe className="w-4 h-4 text-emerald-500" /> {t.settings.general.tavilyApiKeyTitle}
+                  <label htmlFor="wbhp-tavily-key" className="text-xs font-bold text-emerald-300 flex items-center gap-2">
+                    <Globe className="w-4 h-4 text-emerald-400" /> {t.settings.general.tavilyApiKeyTitle}
                   </label>
                 </div>
-                <p className="text-xs opacity-60">
+                <p className="text-xs text-slate-400">
                   {t.settings.general.tavilyApiKeyHelp}
                 </p>
                 <div className="flex gap-2 pt-1">
@@ -233,14 +258,17 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                       localStorage.setItem("wbhp_tavily_key", val.trim());
                     }}
                     placeholder="tvly-..."
-                    className="flex-1 rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 dark:border-gray-700 dark:bg-gray-900 font-mono text-emerald-600 dark:text-emerald-400"
+                    className="flex-1 rounded-xl border border-emerald-500/30 bg-slate-900/90 px-3.5 py-2 text-xs font-mono text-emerald-300 placeholder-emerald-700 focus:border-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500/30 transition-all"
                   />
                 </div>
               </div>
 
+              {/* Active Widgets */}
               <div>
-                <label className="mb-1 block text-sm font-medium">{t.settings.general.activeWidgets}</label>
-                <p className="mb-2.5 text-xs opacity-60">
+                <label className="mb-1 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
+                  {t.settings.general.activeWidgets}
+                </label>
+                <p className="mb-2.5 text-xs text-slate-400">
                   {t.settings.general.activeWidgetsHelp}
                 </p>
                 <div className="space-y-2">
@@ -271,6 +299,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                 </div>
               </div>
 
+              {/* Auto Update Section */}
               <UpdateSection
                 language={settings.language}
                 autoCheck={settings.update?.autoCheck !== false}
@@ -295,8 +324,8 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
           {tab === "data" && (
             <div className="space-y-6">
               <div className="space-y-3">
-                <h3 className="text-sm font-semibold flex items-center gap-1.5 border-b border-gray-200 pb-2 dark:border-gray-800">
-                  <Cloud className="w-4 h-4 text-blue-500 shrink-0" /> {t.settings.backup.webdavTitle}
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300 flex items-center gap-1.5 border-b border-white/10 pb-2">
+                  <Cloud className="w-4 h-4 text-cyan-400 shrink-0" /> {t.settings.backup.webdavTitle}
                 </h3>
                 <WebDAVSection
                   config={settings.webdav}
@@ -312,8 +341,8 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
               </div>
 
               <div className="space-y-3 pt-2">
-                <h3 className="text-sm font-semibold flex items-center gap-1.5 border-b border-gray-200 pb-2 dark:border-gray-800">
-                  <HardDrive className="w-4 h-4 text-emerald-500 shrink-0" /> {t.settings.data.localBackupTitle}
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-emerald-300 flex items-center gap-1.5 border-b border-white/10 pb-2">
+                  <HardDrive className="w-4 h-4 text-emerald-400 shrink-0" /> {t.settings.data.localBackupTitle}
                 </h3>
                 <DataSection language={settings.language} />
               </div>
@@ -380,7 +409,9 @@ function BackgroundSettingsSection({
 
   return (
     <div className="space-y-4">
-      <label className="mb-2 block text-sm font-medium">{t.settings.background.title}</label>
+      <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
+        {t.settings.background.title}
+      </label>
       <div className="space-y-2">
         {getBackgroundPlugins().map((p) => (
           <PluginCard
@@ -394,11 +425,11 @@ function BackgroundSettingsSection({
       </div>
 
       {activeBg === "custom" && (
-        <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-4 dark:border-gray-800 dark:bg-gray-800/40">
-          <h4 className="text-sm font-semibold">{t.settings.background.custom}</h4>
+        <div className="mt-4 rounded-xl border border-cyan-500/30 bg-slate-900/60 p-4 space-y-4">
+          <h4 className="text-xs font-bold text-cyan-300 uppercase tracking-wider">{t.settings.background.custom}</h4>
           
           <div>
-            <label className="mb-1 block text-xs font-medium opacity-80">
+            <label className="mb-1 block text-xs text-slate-400">
               {t.settings.background.customUpload}
             </label>
             <input
@@ -406,12 +437,12 @@ function BackgroundSettingsSection({
               accept="image/*"
               aria-label={t.settings.background.customUpload}
               onChange={handleFileUpload}
-              className="w-full text-xs text-gray-500 file:mr-3 file:rounded-lg file:border-0 file:bg-blue-500 file:px-3 file:py-2 file:text-xs file:font-medium file:text-white hover:file:bg-blue-600 cursor-pointer"
+              className="w-full text-xs text-slate-400 file:mr-3 file:rounded-lg file:border-0 file:bg-cyan-500/20 file:px-3 file:py-1.5 file:text-xs file:font-semibold file:text-cyan-300 hover:file:bg-cyan-500/30 cursor-pointer transition-all"
             />
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-medium opacity-80">
+            <label className="mb-1 block text-xs text-slate-400">
               {t.settings.background.customUrl}
             </label>
             <input
@@ -420,14 +451,14 @@ function BackgroundSettingsSection({
               aria-label={t.settings.background.customUrl}
               onChange={(e) => updateCustomData({ imageUrl: e.target.value })}
               placeholder={t.settings.background.customUrlPlaceholder}
-              className="w-full rounded-lg border border-gray-200 bg-white px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500 dark:border-gray-700 dark:bg-gray-900"
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-xs text-slate-100 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
             />
           </div>
 
           <div>
-            <div className="flex justify-between text-xs mb-1">
+            <div className="flex justify-between text-xs text-slate-400 mb-1">
               <span>{t.settings.background.blur}</span>
-              <span>{customData.blur}px</span>
+              <span className="font-mono text-cyan-300">{customData.blur}px</span>
             </div>
             <input
               type="range"
@@ -436,14 +467,14 @@ function BackgroundSettingsSection({
               value={customData.blur}
               aria-label={t.settings.background.blur}
               onChange={(e) => updateCustomData({ blur: parseInt(e.target.value, 10) || 0 })}
-              className="w-full accent-blue-500"
+              className="w-full accent-cyan-400 cursor-pointer"
             />
           </div>
 
           <div>
-            <div className="flex justify-between text-xs mb-1">
+            <div className="flex justify-between text-xs text-slate-400 mb-1">
               <span>{t.settings.background.overlay}</span>
-              <span>{customData.overlayOpacity}%</span>
+              <span className="font-mono text-cyan-300">{customData.overlayOpacity}%</span>
             </div>
             <input
               type="range"
@@ -454,25 +485,25 @@ function BackgroundSettingsSection({
               onChange={(e) =>
                 updateCustomData({ overlayOpacity: parseInt(e.target.value, 10) || 0 })
               }
-              className="w-full accent-blue-500"
+              className="w-full accent-cyan-400 cursor-pointer"
             />
           </div>
         </div>
       )}
 
       {activeBg === "preset" && (
-        <div className="mt-4 rounded-xl border border-gray-200 bg-gray-50/50 p-4 space-y-3 dark:border-gray-800 dark:bg-gray-800/40">
-          <h4 className="text-sm font-semibold">{t.settings.background.presetStyle}</h4>
+        <div className="mt-4 rounded-xl border border-cyan-500/30 bg-slate-900/60 p-4 space-y-3">
+          <h4 className="text-xs font-bold text-cyan-300 uppercase tracking-wider">{t.settings.background.presetStyle}</h4>
           <div className="grid grid-cols-2 gap-2">
             {(["aurora", "cosmic", "mesh", "emerald", "sunset"] as PresetStyle[]).map((st) => (
               <button
                 key={st}
                 type="button"
                 onClick={() => updatePresetData(st)}
-                className={`rounded-lg px-3 py-2 text-xs capitalize transition-colors ${
+                className={`rounded-xl px-3 py-2 text-xs capitalize transition-all border focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                   presetData.style === st
-                    ? "bg-blue-500 font-medium text-white shadow-sm"
-                    : "bg-white hover:bg-gray-100 dark:bg-gray-900 dark:hover:bg-gray-800"
+                    ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                    : "bg-slate-950 border-white/10 text-slate-300 hover:border-white/20 hover:text-white"
                 }`}
               >
                 {t.settings.background.presetStyles?.[st] ?? st}
@@ -484,8 +515,6 @@ function BackgroundSettingsSection({
     </div>
   );
 }
-
-
 
 function WebDAVSection({
   config,
@@ -543,8 +572,8 @@ function WebDAVSection({
 
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <label className="text-sm font-medium" htmlFor="wbhp-webdav-toggle">
+      <div className="flex items-center justify-between rounded-xl bg-slate-900/60 p-3.5 border border-white/10">
+        <label className="text-xs font-semibold text-slate-200" htmlFor="wbhp-webdav-toggle">
           {t.enableWebdav}
         </label>
         <button
@@ -553,27 +582,27 @@ function WebDAVSection({
           role="switch"
           aria-checked={config.enabled}
           onClick={() => updateConfig({ enabled: !config.enabled })}
-          className={`h-6 w-10 rounded-full transition-colors ${
-            config.enabled ? "bg-blue-500" : "bg-gray-300 dark:bg-gray-600"
+          className={`h-6 w-11 rounded-full transition-all duration-200 border ${
+            config.enabled ? "bg-cyan-400 border-cyan-300 shadow-[0_0_10px_rgba(34,211,238,0.4)]" : "bg-slate-800 border-slate-700"
           }`}
         >
           <div
-            className={`m-1 h-4 w-4 rounded-full bg-white transition-transform ${
-              config.enabled ? "translate-x-4" : ""
+            className={`m-0.5 h-4 w-4 rounded-full bg-slate-950 transition-transform ${
+              config.enabled ? "translate-x-5" : ""
             }`}
           />
         </button>
       </div>
 
       {config.enabled && (
-        <>
+        <div className="space-y-3 rounded-xl border border-cyan-500/20 bg-slate-900/40 p-4">
           <input
             type="url"
             value={config.url}
             aria-label={t.urlPlaceholder}
             onChange={(e) => updateConfig({ url: e.target.value })}
             placeholder={t.urlPlaceholder}
-            className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
+            className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-xs text-slate-100 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
             autoComplete="url"
           />
           <input
@@ -582,7 +611,7 @@ function WebDAVSection({
             aria-label={t.usernamePlaceholder}
             onChange={(e) => updateConfig({ username: e.target.value })}
             placeholder={t.usernamePlaceholder}
-            className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
+            className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-xs text-slate-100 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
             autoComplete="username"
           />
           <input
@@ -591,11 +620,11 @@ function WebDAVSection({
             aria-label={t.passwordPlaceholder}
             onChange={(e) => updateConfig({ password: e.target.value })}
             placeholder={t.passwordPlaceholder}
-            className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
+            className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-xs text-slate-100 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30"
             autoComplete="current-password"
           />
           <div>
-            <label className="mb-1 block text-xs font-medium" htmlFor="wbhp-autobackup">
+            <label className="mb-1 block text-xs text-slate-400" htmlFor="wbhp-autobackup">
               {t.autoInterval}
             </label>
             <input
@@ -607,16 +636,16 @@ function WebDAVSection({
               onChange={(e) =>
                 updateConfig({ autoBackupInterval: Math.max(0, parseInt(e.target.value, 10) || 0) })
               }
-              className="w-full rounded-lg border border-gray-200 bg-gray-100 px-3 py-2 text-sm dark:border-gray-700 dark:bg-gray-800"
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-3.5 py-2 text-xs text-slate-100 focus:border-cyan-400 focus:outline-none focus:ring-2 focus:ring-cyan-500/30 font-mono"
             />
           </div>
 
-          <div className="flex flex-wrap gap-2 pt-1">
+          <div className="flex flex-wrap gap-2 pt-2">
             <button
               type="button"
               disabled={busy}
               onClick={testConnection}
-              className="rounded-lg bg-gray-200 px-4 py-2 text-sm font-medium hover:bg-gray-300 disabled:opacity-50 dark:bg-gray-800 dark:hover:bg-gray-700"
+              className="rounded-xl border border-white/10 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-200 hover:bg-slate-700 disabled:opacity-50 transition-all"
             >
               {t.testBtn}
             </button>
@@ -624,7 +653,7 @@ function WebDAVSection({
               type="button"
               disabled={busy}
               onClick={doBackup}
-              className="rounded-lg bg-blue-500 px-4 py-2 text-sm font-medium text-white hover:bg-blue-600 disabled:opacity-50"
+              className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-4 py-2 text-xs font-bold text-slate-950 hover:brightness-110 disabled:opacity-50 shadow-md shadow-cyan-500/20 transition-all"
             >
               {t.backupBtn}
             </button>
@@ -632,17 +661,17 @@ function WebDAVSection({
               type="button"
               disabled={busy}
               onClick={doRestore}
-              className="rounded-lg bg-amber-500 px-4 py-2 text-sm font-medium text-white hover:bg-amber-600 disabled:opacity-50"
+              className="rounded-xl border border-amber-500/40 bg-amber-500/20 px-4 py-2 text-xs font-semibold text-amber-300 hover:bg-amber-500/30 disabled:opacity-50 transition-all"
             >
               {t.restoreBtn}
             </button>
           </div>
-          {status && <p className="text-sm font-medium" role="status">{status}</p>}
-          {backupMsg && <p className="text-sm font-medium" role="status">{backupMsg}</p>}
-          <p className="text-xs opacity-60">
+          {status && <p className="text-xs font-semibold text-cyan-300" role="status">{status}</p>}
+          {backupMsg && <p className="text-xs font-semibold text-cyan-300" role="status">{backupMsg}</p>}
+          <p className="text-[11px] text-slate-400">
             {t.notice}
           </p>
-        </>
+        </div>
       )}
     </div>
   );
@@ -702,26 +731,26 @@ function DataSection({ language }: { language: LanguageMode }) {
       <button
         type="button"
         onClick={handleExport}
-        className="w-full rounded-lg bg-blue-500 px-4 py-2.5 text-sm font-medium text-white hover:bg-blue-600 shadow-sm"
+        className="w-full rounded-xl border border-cyan-400/40 bg-cyan-500/15 px-4 py-2.5 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/25 shadow-sm transition-all"
       >
         {t.exportBtn}
       </button>
       <button
         type="button"
         onClick={handleImport}
-        className="w-full rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-emerald-700 shadow-sm"
+        className="w-full rounded-xl border border-emerald-400/40 bg-emerald-500/15 px-4 py-2.5 text-xs font-semibold text-emerald-300 hover:bg-emerald-500/25 shadow-sm transition-all"
       >
         {t.importBtn}
       </button>
       <button
         type="button"
         onClick={handleClear}
-        className="w-full rounded-lg bg-rose-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-rose-700 shadow-sm"
+        className="w-full rounded-xl border border-rose-400/40 bg-rose-500/15 px-4 py-2.5 text-xs font-semibold text-rose-300 hover:bg-rose-500/25 shadow-sm transition-all"
       >
         {t.clearBtn}
       </button>
       {msg && (
-        <p className="text-center text-sm font-medium" role="status">
+        <p className="text-center text-xs font-semibold text-cyan-300" role="status">
           {msg}
         </p>
       )}
@@ -763,66 +792,66 @@ function UpdateSection({
   };
 
   return (
-    <div className="rounded-xl border border-gray-200 bg-gray-50/50 p-4 dark:border-gray-800 dark:bg-gray-800/40 space-y-3">
+    <div className="rounded-xl border border-cyan-500/30 bg-slate-900/60 p-4 space-y-3">
       <div className="flex items-center justify-between">
         <div>
-          <h4 className="text-sm font-semibold flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-purple-500" /> WBHP v{currentVer}
+          <h4 className="text-xs font-bold text-cyan-300 flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-cyan-400" /> WBHP v{currentVer}
           </h4>
-          <p className="text-xs opacity-60">Web Browser Home Page</p>
+          <p className="text-[11px] text-slate-400">Web Browser Home Page</p>
         </div>
         <button
           type="button"
           disabled={checking}
           onClick={handleCheck}
-          className="rounded-lg bg-blue-500 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-600 disabled:opacity-50 transition-colors"
+          className="rounded-xl bg-gradient-to-r from-cyan-500 to-blue-600 px-3.5 py-1.5 text-xs font-bold text-slate-950 hover:brightness-110 disabled:opacity-50 transition-all shadow-md shadow-cyan-500/20"
         >
           {checking ? t.checking : t.checkUpdateBtn}
         </button>
       </div>
 
-      <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-white/70 p-3 dark:bg-gray-900/40">
+      <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-slate-950/60 p-3 border border-white/5 hover:border-white/10 transition-all">
         <input
           type="checkbox"
-          className="mt-0.5"
+          className="mt-0.5 accent-cyan-400"
           checked={autoCheck}
           aria-label={t.autoCheck}
           onChange={(e) => onChange({ autoCheck: e.target.checked })}
         />
         <span>
-          <span className="block text-sm font-medium">{t.autoCheck}</span>
-          <span className="block text-xs opacity-60">{t.autoCheckHelp}</span>
+          <span className="block text-xs font-semibold text-slate-200">{t.autoCheck}</span>
+          <span className="block text-[11px] text-slate-400">{t.autoCheckHelp}</span>
         </span>
       </label>
 
-      <label className="flex cursor-pointer items-start gap-3 rounded-lg bg-white/70 p-3 dark:bg-gray-900/40">
+      <label className="flex cursor-pointer items-start gap-3 rounded-xl bg-slate-950/60 p-3 border border-white/5 hover:border-white/10 transition-all">
         <input
           type="checkbox"
-          className="mt-0.5"
+          className="mt-0.5 accent-cyan-400"
           checked={autoDownload}
           disabled={!autoCheck}
           aria-label={t.autoDownload}
           onChange={(e) => onChange({ autoDownload: e.target.checked })}
         />
         <span>
-          <span className="block text-sm font-medium">{t.autoDownload}</span>
-          <span className="block text-xs opacity-60">{t.autoDownloadHelp}</span>
+          <span className="block text-xs font-semibold text-slate-200">{t.autoDownload}</span>
+          <span className="block text-[11px] text-slate-400">{t.autoDownloadHelp}</span>
         </span>
       </label>
 
       {result && (
-        <div className="pt-2 border-t border-gray-200/50 text-xs dark:border-gray-700/50">
+        <div className="pt-2 border-t border-white/10 text-xs">
           {result.hasUpdate ? (
             <div className="space-y-2">
-              <div className="flex items-center justify-between text-emerald-600 dark:text-emerald-400 font-medium">
+              <div className="flex items-center justify-between text-emerald-300 font-semibold">
                 <span className="flex items-center gap-1.5">
-                  <Sparkles className="w-4 h-4" /> {t.updateAvailable}: v{result.latestVersion}
+                  <Sparkles className="w-4 h-4 text-emerald-400" /> {t.updateAvailable}: v{result.latestVersion}
                 </span>
                 <a
                   href={result.releaseUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="underline hover:text-emerald-700 opacity-80 hover:opacity-100 flex items-center gap-1"
+                  className="underline hover:text-emerald-200 flex items-center gap-1"
                 >
                   {t.downloadUpdate} <ExternalLink className="w-3 h-3 inline" />
                 </a>
@@ -831,7 +860,7 @@ function UpdateSection({
                 <button
                   type="button"
                   onClick={() => handleDownload(result.downloadZipUrl || result.downloadUrl)}
-                  className="w-full rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white hover:bg-emerald-700 shadow-sm transition-all flex items-center justify-center gap-1.5"
+                  className="w-full rounded-xl bg-emerald-500 px-3 py-2 text-xs font-bold text-slate-950 hover:bg-emerald-400 shadow-md shadow-emerald-500/20 transition-all flex items-center justify-center gap-1.5"
                 >
                   <Zap className="w-3.5 h-3.5" />
                   <span>{t.autoDownloadBtn} (v{result.latestVersion})</span>
@@ -839,10 +868,10 @@ function UpdateSection({
               )}
             </div>
           ) : result.error ? (
-            <span className="text-rose-500">{t.failed}: {result.error}</span>
+            <span className="text-rose-400">{t.failed}: {result.error}</span>
           ) : (
-            <span className="text-gray-500 dark:text-gray-400 flex items-center gap-1.5">
-              <Check className="w-4 h-4 text-emerald-500 shrink-0" />
+            <span className="text-slate-400 flex items-center gap-1.5">
+              <Check className="w-4 h-4 text-emerald-400 shrink-0" />
               {t.upToDate} (v{currentVer})
             </span>
           )}
@@ -851,4 +880,3 @@ function UpdateSection({
     </div>
   );
 }
-

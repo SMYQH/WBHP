@@ -24,6 +24,8 @@ import {
   Globe,
   X,
   History,
+  ChevronDown,
+  CornerDownLeft,
 } from "lucide-react";
 import type { PluginConfig, PluginAPI } from "../types";
 import { getTranslations } from "../../i18n";
@@ -186,6 +188,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
   const [query, setQuery] = useState("");
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const [isEnginePickerOpen, setIsEnginePickerOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -197,6 +200,15 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
   const currentEngine = useMemo(() => {
     return ENGINES.find((e) => e.id === defaultEngine) ?? ENGINES[0];
   }, [defaultEngine]);
+
+  // Group engines by category for popover menu
+  const engineCategories = useMemo(() => {
+    return [
+      { id: "web", label: "Web Search", items: ENGINES.filter((e) => e.category === "web") },
+      { id: "ai", label: "AI Research", items: ENGINES.filter((e) => e.category === "ai") },
+      { id: "dev", label: "Developer", items: ENGINES.filter((e) => e.category === "dev") },
+    ];
+  }, []);
 
   // Real-time suggestions fetching with JSONP & Google fallback
   useEffect(() => {
@@ -228,11 +240,12 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
     };
   }, [query]);
 
-  // Handle outside click to dismiss dropdown
+  // Handle outside click to dismiss dropdown & engine popover
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setIsDropdownOpen(false);
+        setIsEnginePickerOpen(false);
         setSelectedIndex(-1);
       }
     };
@@ -350,7 +363,10 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
         setSelectedIndex((prev) => (prev - 1 + combinedItems.length) % combinedItems.length);
       }
     } else if (e.key === "Escape") {
-      if (isDropdownOpen) {
+      if (isEnginePickerOpen) {
+        e.preventDefault();
+        setIsEnginePickerOpen(false);
+      } else if (isDropdownOpen) {
         e.preventDefault();
         setIsDropdownOpen(false);
         setSelectedIndex(-1);
@@ -368,23 +384,74 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 
   return (
     <div ref={containerRef} className="relative mx-auto w-full max-w-2xl px-2">
-      {/* Main Terminal Input Console */}
+      {/* Search Input Floating Capsule Container */}
       <form onSubmit={handleSubmit} className="group relative flex items-center" role="search">
         <label className="sr-only" htmlFor="wbhp-search-input">
           {t.placeholder}
         </label>
 
-        {/* Console Box Container (Cyan glow & Hallmark UI design) */}
-        <div className="relative flex w-full items-center rounded-xl border border-cyan-400/40 bg-slate-950/60 backdrop-blur-xl transition-all duration-200 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/30 dark:bg-slate-900/80 dark:border-cyan-500/30">
-          {/* Active Engine Badge */}
-          <div className="flex items-center gap-2 pl-3.5 pr-3 py-3 border-r border-white/10 select-none">
-            <EngineIcon id={currentEngine.id} className="w-4 h-4 text-cyan-300 shrink-0" />
-            <span className="hidden md:inline-block font-mono text-xs font-semibold text-cyan-300 uppercase tracking-wide">
-              {currentEngine.name}
-            </span>
+        {/* Console Box Container (Hallmark Dark Glass & Cyan Ambient Glow) */}
+        <div className="relative flex w-full items-center rounded-2xl border border-cyan-500/35 bg-slate-950/70 backdrop-blur-2xl shadow-[0_10px_35px_-5px_rgba(0,0,0,0.6)] transition-all duration-300 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-500/20 hover:border-cyan-400/60 dark:bg-slate-950/80">
+          
+          {/* Active Engine Selector Trigger Button */}
+          <div className="relative pl-2.5">
+            <button
+              type="button"
+              onClick={() => setIsEnginePickerOpen((prev) => !prev)}
+              className="flex items-center gap-2 rounded-xl bg-cyan-500/10 border border-cyan-400/30 px-3 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400/60 transition-all select-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+              title="切换搜索引擎 (Tab)"
+            >
+              <EngineIcon id={currentEngine.id} className="w-4 h-4 shrink-0 text-cyan-300" />
+              <span className="hidden sm:inline-block font-mono uppercase tracking-wider">{currentEngine.name}</span>
+              <ChevronDown className={`w-3.5 h-3.5 opacity-70 transition-transform duration-200 ${isEnginePickerOpen ? "rotate-180 text-cyan-200" : ""}`} />
+            </button>
+
+            {/* Interactive Engine Quick Picker Popover */}
+            {isEnginePickerOpen && (
+              <div className="absolute left-0 top-full mt-2.5 z-50 w-64 rounded-2xl border border-cyan-500/30 bg-slate-950/95 backdrop-blur-2xl p-2 shadow-2xl animate-scale-in">
+                {engineCategories.map((cat) => (
+                  <div key={cat.id} className="mb-2 last:mb-0">
+                    <div className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400/80">
+                      {cat.label}
+                    </div>
+                    <div className="space-y-0.5">
+                      {cat.items.map((eng) => {
+                        const isSelected = eng.id === currentEngine.id;
+                        return (
+                          <button
+                            key={eng.id}
+                            type="button"
+                            onClick={() => {
+                              api.data.set({ ...api.data.get(), defaultEngine: eng.id });
+                              setIsEnginePickerOpen(false);
+                              inputRef.current?.focus();
+                            }}
+                            className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all ${
+                              isSelected
+                                ? "bg-cyan-500/20 text-cyan-200 font-bold border border-cyan-400/40"
+                                : "text-slate-300 hover:bg-white/10 hover:text-white"
+                            }`}
+                          >
+                            <div className="flex items-center gap-2.5">
+                              <EngineIcon id={eng.id} className={`w-4 h-4 ${isSelected ? "text-cyan-300" : "text-slate-400"}`} />
+                              <span>{eng.name}</span>
+                            </div>
+                            {eng.isAi && (
+                              <span className="rounded bg-cyan-400/20 px-1.5 py-0.5 text-[9px] font-mono font-bold text-cyan-300 border border-cyan-400/30">
+                                AI
+                              </span>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Text Input (type="text" with role="searchbox" prevents browser native duplicate X button & satisfies tests) */}
+          {/* Text Input (role="searchbox" prevents native clear icon overlap) */}
           <input
             ref={inputRef}
             id="wbhp-search-input"
@@ -403,14 +470,14 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                 ? t.aiPlaceholder
                 : `${t.placeholder} (${currentEngine.name})`
             }
-            className="flex-1 bg-transparent px-4 py-3.5 text-base font-sans text-white placeholder-white/40 focus:outline-none dark:text-slate-100"
+            className="flex-1 bg-transparent px-4 py-3.5 text-base font-sans text-slate-100 placeholder-slate-400 focus:outline-none"
             autoFocus
             autoComplete="off"
             spellCheck={false}
             disabled={isSubmitting}
           />
 
-          {/* Quick Clear Button (Custom single X button) */}
+          {/* Quick Clear Button */}
           {query && (
             <button
               type="button"
@@ -418,8 +485,9 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                 setQuery("");
                 setSelectedIndex(-1);
                 setIsDropdownOpen(true);
+                inputRef.current?.focus();
               }}
-              className="mr-2 flex min-h-[36px] min-w-[36px] items-center justify-center rounded-md p-1.5 text-white/50 hover:text-white hover:bg-white/10 active:scale-95 transition-all font-mono text-xs focus-visible:ring-2 focus-visible:ring-cyan-400"
+              className="mr-2 flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-slate-100 hover:bg-white/10 active:scale-95 transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
               title={t.clearTooltip}
               aria-label={t.clearTooltip}
             >
@@ -431,22 +499,22 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           <button
             type="submit"
             disabled={!query.trim() || isSubmitting}
-            className={`mr-2.5 flex min-h-[38px] items-center gap-1.5 rounded-lg px-4 py-2 font-mono text-xs font-bold transition-all duration-150 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+            className={`mr-2 flex h-10 items-center gap-1.5 rounded-xl px-4 font-mono text-xs font-bold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
               query.trim() && !isSubmitting
-                ? "bg-cyan-400 text-slate-950 hover:bg-cyan-300 active:scale-95 shadow-md shadow-cyan-500/20"
+                ? "bg-gradient-to-r from-cyan-400 to-cyan-500 text-slate-950 hover:brightness-110 active:scale-95 shadow-lg shadow-cyan-500/25"
                 : "bg-white/10 text-white/40 cursor-not-allowed"
             }`}
           >
             <span>{isSubmitting ? t.executing : t.button}</span>
-            <span className="hidden sm:inline-block opacity-70">↵</span>
+            <CornerDownLeft className="w-3.5 h-3.5 opacity-80 hidden sm:inline-block" />
           </button>
         </div>
       </form>
 
-      {/* Floating Suggestions & History Dropdown */}
+      {/* Floating Suggestions & Search History Dropdown */}
       {isDropdownOpen && combinedItems.length > 0 && (
-        <div className="absolute left-2 right-2 top-full mt-2 z-50 overflow-hidden rounded-xl border border-cyan-500/30 bg-slate-950/95 backdrop-blur-2xl shadow-2xl transition-all dark:bg-slate-900/95">
-          <div className="max-h-80 overflow-y-auto py-1.5">
+        <div className="absolute left-2 right-2 top-full mt-2.5 z-50 overflow-hidden rounded-2xl border border-cyan-500/30 bg-slate-950/95 backdrop-blur-2xl shadow-2xl transition-all">
+          <div className="max-h-80 overflow-y-auto py-2">
             {combinedItems.map((item, index) => {
               const isSelected = index === selectedIndex;
               const isHistory = item.type === "history";
@@ -458,15 +526,15 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                     executeSearch(item.text);
                   }}
                   onMouseEnter={() => setSelectedIndex(index)}
-                  className={`group relative flex items-center justify-between px-4 py-2.5 cursor-pointer text-sm transition-colors ${
+                  className={`group relative flex items-center justify-between px-4 py-2.5 cursor-pointer text-sm transition-all ${
                     isSelected
-                      ? "bg-cyan-500/20 text-cyan-200"
-                      : "text-slate-200 hover:bg-white/10 dark:text-slate-200"
+                      ? "bg-cyan-500/20 text-cyan-200 border-l-2 border-cyan-400 pl-3.5"
+                      : "text-slate-200 hover:bg-white/10"
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0 flex-1 pr-2">
                     {isHistory ? (
-                      <History className="w-4 h-4 text-purple-400 shrink-0" />
+                      <History className="w-4 h-4 text-cyan-400 shrink-0" />
                     ) : (
                       <Search className="w-4 h-4 text-slate-400 shrink-0" />
                     )}
@@ -479,7 +547,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                     <button
                       type="button"
                       onClick={(e) => removeHistoryItem(e, item.text)}
-                      className="text-xs text-purple-300/80 hover:text-purple-100 hover:bg-purple-500/20 px-2 py-0.5 rounded transition-all shrink-0 font-sans"
+                      className="text-xs text-cyan-300/80 hover:text-cyan-100 hover:bg-cyan-500/20 px-2 py-0.5 rounded-lg transition-all shrink-0 font-sans opacity-0 group-hover:opacity-100"
                       title={t.deleteHistoryTooltip || "删除此条历史"}
                     >
                       {t.deleteHistoryItem || "删除"}
@@ -490,25 +558,30 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             })}
           </div>
 
-          {/* Footer bar when displaying empty query search history */}
-          {!query.trim() && history.length > 0 && (
-            <div className="border-t border-white/10 px-4 py-2 flex items-center justify-between bg-black/40 text-xs select-none">
-              <span className="font-mono text-slate-400">{t.historyTitle}</span>
+          {/* Footer Bar with Navigation Hints & History Clear */}
+          <div className="border-t border-white/10 px-4 py-2 flex items-center justify-between bg-black/40 text-[11px] select-none">
+            <div className="flex items-center gap-3 text-slate-400 font-mono">
+              <span><kbd className="px-1 py-0.5 rounded bg-white/10 text-slate-300">↑↓</kbd> 移动</span>
+              <span><kbd className="px-1 py-0.5 rounded bg-white/10 text-slate-300">↵</kbd> 搜索</span>
+              <span><kbd className="px-1 py-0.5 rounded bg-white/10 text-slate-300">Esc</kbd> 关闭</span>
+            </div>
+
+            {!query.trim() && history.length > 0 && (
               <button
                 type="button"
                 onClick={clearAllHistory}
-                className="text-rose-400 hover:text-rose-300 hover:underline transition-all"
+                className="text-rose-400 hover:text-rose-300 font-medium hover:underline transition-all"
               >
                 {t.clearHistory}
               </button>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       )}
 
-      {/* Engine Selection Badges Grid */}
+      {/* Tactile Pill Engine Selector Badges Grid */}
       <div
-        className="mt-3 flex flex-wrap items-center justify-center gap-2"
+        className="mt-3.5 flex flex-wrap items-center justify-center gap-2"
         role="group"
         aria-label={t.enginesAria}
       >
@@ -519,18 +592,18 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
               key={e.id}
               type="button"
               onClick={() => api.data.set({ ...api.data.get(), defaultEngine: e.id })}
-              className={`group/btn relative min-h-[36px] rounded-lg px-3 py-1.5 text-xs font-mono transition-all duration-150 flex items-center gap-1.5 border active:scale-95 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+              className={`group/btn relative min-h-[34px] rounded-full px-3.5 py-1 text-xs font-mono transition-all duration-200 flex items-center gap-1.5 border active:scale-95 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                 isSelected
-                  ? "bg-cyan-500/25 border-cyan-400/80 text-cyan-200 font-semibold shadow-[0_0_12px_rgba(6,182,212,0.25)] scale-105"
-                  : "bg-black/30 border-white/10 text-white/70 hover:text-white hover:bg-white/15 hover:border-white/20 dark:bg-white/5"
+                  ? "bg-cyan-500/20 border-cyan-400/80 text-cyan-200 font-semibold shadow-[0_0_12px_rgba(6,182,212,0.3)] scale-105"
+                  : "bg-slate-900/50 border-white/10 text-slate-300 hover:text-white hover:bg-slate-800/80 hover:border-cyan-500/40"
               }`}
               title={`${e.name} (${e.category.toUpperCase()})`}
               aria-pressed={isSelected}
             >
-              <EngineIcon id={e.id} className="w-3.5 h-3.5 shrink-0" />
+              <EngineIcon id={e.id} className={`w-3.5 h-3.5 shrink-0 transition-colors ${isSelected ? "text-cyan-300" : "text-slate-400 group-hover/btn:text-slate-200"}`} />
               <span>{e.name}</span>
               {e.isAi && (
-                <span className="ml-0.5 rounded bg-cyan-400/20 px-1 py-0.5 text-[9px] font-bold text-cyan-300 border border-cyan-400/30">
+                <span className="ml-0.5 rounded-full bg-cyan-400/20 px-1.5 py-0.2 text-[9px] font-bold text-cyan-300 border border-cyan-400/30">
                   AI
                 </span>
               )}

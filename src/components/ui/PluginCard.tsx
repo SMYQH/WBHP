@@ -28,10 +28,10 @@ export default function PluginCard({
       tabIndex={0}
       aria-pressed={isActive}
       aria-label={`${displayName}: ${displayDesc}`}
-      className={`p-4 rounded-xl border transition-colors cursor-pointer outline-none focus:ring-2 focus:ring-blue-500/50 ${
+      className={`p-3.5 rounded-xl border transition-all duration-200 cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 ${
         isActive
-          ? "border-blue-500/80 bg-blue-500/10 dark:border-blue-400"
-          : "border-gray-200 bg-gray-50/50 hover:bg-gray-100 dark:border-gray-800 dark:bg-gray-800/40 dark:hover:bg-gray-800"
+          ? "border-cyan-400/70 bg-cyan-500/15 text-slate-100 shadow-[0_0_15px_rgba(6,182,212,0.15)] dark:border-cyan-400/80 dark:bg-cyan-500/20"
+          : "border-white/10 bg-slate-900/40 text-slate-300 hover:bg-slate-800/50 hover:border-white/20 dark:bg-slate-900/60 dark:hover:bg-slate-800/80"
       }`}
       onClick={onToggle}
       onKeyDown={(e) => {
@@ -41,20 +41,25 @@ export default function PluginCard({
         }
       }}
     >
-      <div className="flex items-center justify-between">
-        <div>
-          <h3 className="font-medium">{displayName}</h3>
-          <p className="text-sm opacity-60">{displayDesc}</p>
+      <div className="flex items-center justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <h3 className={`font-semibold text-sm transition-colors ${isActive ? "text-cyan-300" : "text-slate-200"}`}>
+            {displayName}
+          </h3>
+          <p className="text-xs text-slate-400 truncate mt-0.5">{displayDesc}</p>
         </div>
         <div
-          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${
-            isActive ? "border-blue-500 bg-blue-500" : "border-gray-300 dark:border-gray-600"
+          className={`w-5 h-5 rounded-full border-2 flex items-center justify-center transition-all shrink-0 ${
+            isActive
+              ? "border-cyan-400 bg-cyan-400 text-slate-950 shadow-[0_0_10px_rgba(34,211,238,0.5)]"
+              : "border-slate-600 bg-slate-800/50"
           }`}
           aria-hidden
         >
-          {isActive && <Check className="w-3 h-3 text-white stroke-[3]" />}
+          {isActive && <Check className="w-3 h-3 stroke-[3]" />}
         </div>
       </div>
     </div>
   );
 }
+

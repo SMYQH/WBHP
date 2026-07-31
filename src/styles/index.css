@@ -122,6 +122,14 @@ html[data-font="system"], html[data-font="system"] body { font-family: var(--fon
   outline-offset: 2px;
 }
 
+input:focus-visible,
+input:focus,
+textarea:focus-visible,
+textarea:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;

@@ -479,7 +479,8 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                 ? t.aiPlaceholder
                 : `${t.placeholder} (${currentEngine.name})`
             }
-            className="flex-1 bg-transparent px-4 py-3.5 text-base font-sans text-slate-100 placeholder-slate-400 focus:outline-none"
+            className="flex-1 bg-transparent px-4 py-3.5 text-base font-sans text-slate-100 placeholder-slate-400 outline-none focus:outline-none focus-visible:outline-none focus:ring-0 focus-visible:ring-0"
+            style={{ outline: "none" }}
             autoFocus
             autoComplete="off"
             spellCheck={false}

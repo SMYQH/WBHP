@@ -221,7 +221,7 @@ export default function App() {
         <button
           type="button"
           onClick={() => setShowPalette(true)}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 active:scale-95 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10 focus-visible:ring-2 focus-visible:ring-emerald-400"
           title={t.app.commandPaletteTooltip}
           aria-label={t.app.commandPaletteAria}
         >
@@ -234,7 +234,7 @@ export default function App() {
             setTavilyQuery("");
             setShowTavily(true);
           }}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 active:scale-95 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10 focus-visible:ring-2 focus-visible:ring-emerald-400"
           title={t.app.tavilyTooltip}
           aria-label={t.app.tavilyAria}
         >
@@ -244,7 +244,7 @@ export default function App() {
         <button
           type="button"
           onClick={toggleZen}
-          className={`flex h-10 w-10 items-center justify-center rounded-full backdrop-blur transition-all duration-200 hover:-translate-y-0.5 shadow-sm border ${
+          className={`flex h-11 w-11 items-center justify-center rounded-full backdrop-blur transition-all duration-200 hover:-translate-y-0.5 active:scale-95 shadow-sm border focus-visible:ring-2 focus-visible:ring-emerald-400 ${
             isZenMode
               ? "bg-blue-500 text-white font-bold ring-2 ring-blue-300 border-blue-400"
               : "bg-white/20 hover:bg-white/30 dark:bg-white/10 dark:hover:bg-white/20 border-white/10"
@@ -258,7 +258,7 @@ export default function App() {
         <button
           type="button"
           onClick={openSettings}
-          className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/20 backdrop-blur transition-all duration-200 hover:bg-white/30 hover:-translate-y-0.5 active:scale-95 dark:bg-white/10 dark:hover:bg-white/20 shadow-sm border border-white/10 focus-visible:ring-2 focus-visible:ring-emerald-400"
           title={t.app.settingsTooltip}
           aria-label={t.app.settingsAria}
         >

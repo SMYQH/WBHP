@@ -162,11 +162,11 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             <button
               type="button"
               onClick={() => setQuery("")}
-              className="mr-2 rounded-md p-1.5 text-white/50 hover:text-white hover:bg-white/10 transition-colors font-mono text-xs"
+              className="mr-2 flex min-h-[36px] min-w-[36px] items-center justify-center rounded-md p-1.5 text-white/50 hover:text-white hover:bg-white/10 active:scale-95 transition-all font-mono text-xs focus-visible:ring-2 focus-visible:ring-cyan-400"
               title={t.clearTooltip}
               aria-label={t.clearTooltip}
             >
-              <X className="w-3.5 h-3.5" />
+              <X className="w-4 h-4" />
             </button>
           )}
 
@@ -174,7 +174,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           <button
             type="submit"
             disabled={!query.trim() || isSubmitting}
-            className={`mr-2 flex items-center gap-2 rounded-lg px-4 py-2 font-mono text-xs font-bold transition-all duration-150 ${
+            className={`mr-2 flex min-h-[38px] items-center gap-2 rounded-lg px-4 py-2 font-mono text-xs font-bold transition-all duration-150 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
               query.trim() && !isSubmitting
                 ? "bg-cyan-500 text-slate-950 hover:bg-cyan-400 active:scale-95 shadow-md shadow-cyan-500/20"
                 : "bg-white/10 text-white/40 cursor-not-allowed"
@@ -188,7 +188,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 
       {/* Engine Selection Badges Grid */}
       <div
-        className="mt-3 flex flex-wrap items-center justify-center gap-1.5"
+        className="mt-3 flex flex-wrap items-center justify-center gap-2"
         role="group"
         aria-label={t.enginesAria}
       >
@@ -199,7 +199,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
               key={e.id}
               type="button"
               onClick={() => api.data.set({ defaultEngine: e.id })}
-              className={`group/btn relative rounded-lg px-3 py-1.5 text-xs font-mono transition-all duration-150 flex items-center gap-1.5 border ${
+              className={`group/btn relative min-h-[36px] rounded-lg px-3 py-1.5 text-xs font-mono transition-all duration-150 flex items-center gap-1.5 border active:scale-95 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                 isSelected
                   ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-200 font-semibold shadow-sm scale-105"
                   : "bg-black/20 border-white/10 text-white/70 hover:text-white hover:bg-white/15 hover:border-white/20 dark:bg-white/5"
@@ -210,7 +210,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
               <EngineIcon id={e.id} className="w-3.5 h-3.5 shrink-0" />
               <span>{e.name}</span>
               {e.isAi && (
-                <span className="ml-0.5 rounded bg-cyan-400/20 px-1 py-0.2 text-[9px] font-bold text-cyan-300 border border-cyan-400/30">
+                <span className="ml-0.5 rounded bg-cyan-400/20 px-1 py-0.5 text-[9px] font-bold text-cyan-300 border border-cyan-400/30">
                   AI
                 </span>
               )}

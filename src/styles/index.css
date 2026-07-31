@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-/* ── Base & Fonts ─────────────────────────────────────────────────── */
+/* ── Design Tokens & Base Setup ────────────────────────────────────── */
 :root {
   --font-misans: "MiSans", system-ui, -apple-system, sans-serif;
   --font-serif: "Source Han Serif", "Source Han Serif CN", serif;
@@ -9,6 +9,21 @@
   font-family: var(--font-misans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+
+  /* Motion & Easing Tokens */
+  --ease-spring: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Elevation & Glass Surface Tokens */
+  --glass-bg-light: rgba(255, 255, 255, 0.25);
+  --glass-bg-dark: rgba(15, 23, 42, 0.65);
+  --glass-border-light: rgba(255, 255, 255, 0.2);
+  --glass-border-dark: rgba(255, 255, 255, 0.12);
+}
+
+/* Global Mobile Overflow Protection */
+html, body {
+  overflow-x: clip;
 }
 
 html[data-font="misans"], html[data-font="misans"] body { font-family: var(--font-misans); }
@@ -28,16 +43,17 @@ html[data-font="system"], html[data-font="system"] body { font-family: var(--fon
 }
 
 .animate-fade-in {
-  animation: fade-in 0.3s ease-out;
+  animation: fade-in 0.25s var(--ease-spring);
 }
 
 .animate-scale-in {
-  animation: scale-in 0.25s ease-out;
+  animation: scale-in 0.25s var(--ease-spring);
 }
 
 /* ── Scrollbar ────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 6px;
+  height: 6px;
 }
 
 ::-webkit-scrollbar-track {
@@ -46,14 +62,19 @@ html[data-font="system"], html[data-font="system"] body { font-family: var(--fon
 
 ::-webkit-scrollbar-thumb {
   background: rgba(128, 128, 128, 0.3);
-  border-radius: 3px;
+  border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(128, 128, 128, 0.5);
 }
 
-/* ── A11y ─────────────────────────────────────────────────────────── */
+/* ── Focus Ring & A11y ─────────────────────────────────────────────── */
+:focus-visible {
+  outline: 2px solid #38bdf8;
+  outline-offset: 2px;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
@@ -65,3 +86,4 @@ html[data-font="system"], html[data-font="system"] body { font-family: var(--fon
   white-space: nowrap;
   border-width: 0;
 }
+

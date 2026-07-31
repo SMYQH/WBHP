@@ -1,6 +1,6 @@
 {
   "name": "wbhp",
-  "version": "0.5.27",
+  "version": "0.5.28",
   "private": true,
   "type": "module",
   "description": "WBHP - Web Browser Home Page. A modern, pluggable browser new tab extension.",

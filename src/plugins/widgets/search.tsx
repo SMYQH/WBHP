@@ -390,8 +390,8 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           {t.placeholder}
         </label>
 
-        {/* Console Box Container (Hallmark Dark Glass & Cyan Ambient Glow) */}
-        <div className="relative flex w-full items-center rounded-2xl border border-cyan-500/35 bg-slate-950/70 backdrop-blur-2xl shadow-[0_10px_35px_-5px_rgba(0,0,0,0.6)] transition-all duration-300 focus-within:border-cyan-400 focus-within:ring-4 focus-within:ring-cyan-500/20 hover:border-cyan-400/60 dark:bg-slate-950/80">
+        {/* Console Box Container (Hallmark Dark Glass & Clean Border) */}
+        <div className="relative flex w-full items-center rounded-2xl border border-cyan-500/30 bg-slate-950/70 backdrop-blur-2xl shadow-[0_10px_35px_-5px_rgba(0,0,0,0.6)] transition-all duration-300 hover:border-cyan-400/50 outline-none focus-within:outline-none focus-within:ring-0 dark:bg-slate-950/80">
           
           {/* Active Engine Selector Trigger Button */}
           <div className="relative pl-2.5">

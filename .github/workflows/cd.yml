@@ -123,35 +123,38 @@ jobs:
           fi
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ inputs.tag_name || github.ref_name }}
-          name: "WBHP ${{ inputs.tag_name || github.ref_name }}"
-          body: |
-            ## 🚀 WBHP ${{ inputs.tag_name || github.ref_name }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ inputs.tag_name || github.ref_name }}
+        run: |
+          NOTES_CONTENT=$(cat << 'EOF'
+          ## 🚀 WBHP RELEASE
 
-            ### 📦 安装
+          ### 📦 安装
 
-            **Chrome / Edge（推荐使用 ZIP 内的 CRX，支持自动更新）:**
-            1. 下载 `wbhp-chrome.zip` 并解压，解压后目录中包含 `wbhp-chrome.crx` 安装包及解压扩展源码
-            2. 拖拽解压出的 `wbhp-chrome.crx` 到 `chrome://extensions` 页面（需开启开发者模式）
-            3. 或在 `chrome://extensions` 点击「加载已解压的扩展程序」选择解压目录
-            4. 通过 CRX 安装后，浏览器会按 `update_url` 自动检查并安装后续更新
+          **Chrome / Edge（推荐使用 ZIP 内的 CRX，支持自动更新）:**
+          1. 下载 `wbhp-chrome.zip` 并解压，解压后目录中包含 `wbhp-chrome.crx` 安装包及解压扩展源码
+          2. 拖拽解压出的 `wbhp-chrome.crx` 到 `chrome://extensions` 页面（需开启开发者模式）
+          3. 或在 `chrome://extensions` 点击「加载已解压的扩展程序」选择解压目录
+          4. 通过 CRX 安装后，浏览器会按 `update_url` 自动检查并安装后续更新
 
-            **Firefox:**
-            1. 下载 `wbhp-firefox.zip` 并解压
-            2. 打开 `about:debugging` → 「临时载入附加组件」
-            3. 选择解压后文件夹中的 `manifest.json`
-            4. 正式分发可用 `about:addons` 从文件安装 zip（依赖 `update_url` 自动更新）
+          **Firefox:**
+          1. 下载 `wbhp-firefox.zip` 并解压
+          2. 打开 `about:debugging` → 「临时载入附加组件」
+          3. 选择解压后文件夹中的 `manifest.json`
+          4. 正式分发可用 `about:addons` 从文件安装 zip（依赖 `update_url` 自动更新）
 
-            ### 🔑 验证
-            - CRX3 签名格式，兼容 Chrome 64+ / Firefox 109+
-            - 使用固定密钥签名，扩展 ID 保持一致，支持浏览器原生自动更新
-          files: |
-            release_assets/wbhp-chrome.crx
-            release_assets/wbhp-chrome.zip
-            release_assets/wbhp-firefox.crx
+          ### 🔑 验证
+          - CRX3 签名格式，兼容 Chrome 64+ / Firefox 109+
+          - 使用固定密钥签名，扩展 ID 保持一致，支持浏览器原生自动更新
+          EOF
+          )
+          gh release create "$TAG" \
+            --title "WBHP $TAG" \
+            --notes "$NOTES_CONTENT" \
+            --generate-notes \
+            release_assets/wbhp-chrome.crx \
+            release_assets/wbhp-chrome.zip \
+            release_assets/wbhp-firefox.crx \
             release_assets/wbhp-firefox.zip
-          draft: false
-          prerelease: ${{ contains(inputs.tag_name || github.ref_name, '-') }}
-          generate_release_notes: true
+

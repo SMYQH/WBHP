@@ -397,7 +397,12 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           <div className="relative pl-2.5">
             <button
               type="button"
-              onClick={() => setIsEnginePickerOpen((prev) => !prev)}
+              onClick={() => {
+                setIsEnginePickerOpen((prev) => {
+                  if (!prev) setIsDropdownOpen(false);
+                  return !prev;
+                });
+              }}
               className="flex items-center gap-2 rounded-xl bg-cyan-500/10 border border-cyan-400/30 px-3 py-2 text-xs font-semibold text-cyan-300 hover:bg-cyan-500/20 hover:border-cyan-400/60 transition-all select-none focus-visible:ring-2 focus-visible:ring-cyan-400"
               title="切换搜索引擎 (Tab)"
             >
@@ -408,7 +413,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 
             {/* Interactive Engine Quick Picker Popover */}
             {isEnginePickerOpen && (
-              <div className="absolute left-0 top-full mt-2.5 z-50 w-64 rounded-2xl border border-cyan-500/30 bg-slate-950/95 backdrop-blur-2xl p-2 shadow-2xl animate-scale-in">
+              <div className="absolute left-0 top-full mt-2.5 z-50 w-64 rounded-2xl border border-cyan-500/40 bg-slate-950 p-2 shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-2xl animate-scale-in">
                 {engineCategories.map((cat) => (
                   <div key={cat.id} className="mb-2 last:mb-0">
                     <div className="px-2.5 py-1 text-[10px] font-mono font-bold uppercase tracking-widest text-cyan-400/80">
@@ -428,8 +433,8 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                             }}
                             className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-all ${
                               isSelected
-                                ? "bg-cyan-500/20 text-cyan-200 font-bold border border-cyan-400/40"
-                                : "text-slate-300 hover:bg-white/10 hover:text-white"
+                                ? "bg-cyan-500/25 text-cyan-200 font-bold border border-cyan-400/40 shadow-[0_0_10px_rgba(6,182,212,0.2)]"
+                                : "text-slate-300 hover:bg-slate-900 hover:text-white"
                             }`}
                           >
                             <div className="flex items-center gap-2.5">
@@ -460,10 +465,14 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
+              setIsEnginePickerOpen(false);
               setIsDropdownOpen(true);
               setSelectedIndex(-1);
             }}
-            onFocus={() => setIsDropdownOpen(true)}
+            onFocus={() => {
+              setIsEnginePickerOpen(false);
+              setIsDropdownOpen(true);
+            }}
             onKeyDown={handleKeyDown}
             placeholder={
               currentEngine.isAi
@@ -512,8 +521,8 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
       </form>
 
       {/* Floating Suggestions & Search History Dropdown */}
-      {isDropdownOpen && combinedItems.length > 0 && (
-        <div className="absolute left-2 right-2 top-full mt-2.5 z-50 overflow-hidden rounded-2xl border border-cyan-500/30 bg-slate-950/95 backdrop-blur-2xl shadow-2xl transition-all">
+      {!isEnginePickerOpen && isDropdownOpen && combinedItems.length > 0 && (
+        <div className="absolute left-2 right-2 top-full mt-2.5 z-50 overflow-hidden rounded-2xl border border-cyan-500/40 bg-slate-950 shadow-[0_25px_60px_rgba(0,0,0,0.95)] backdrop-blur-2xl transition-all">
           <div className="max-h-80 overflow-y-auto py-2">
             {combinedItems.map((item, index) => {
               const isSelected = index === selectedIndex;

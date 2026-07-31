@@ -35,7 +35,7 @@ export default function Dashboard({ isZenMode = false }: DashboardProps) {
             settings={settings}
             updateSettings={updateSettings}
             as="section"
-            className="w-full max-w-3xl"
+            className={`w-full max-w-3xl ${plugin.id === "search" ? "relative z-30" : "relative z-10"}`}
           />
         </ErrorBoundary>
       ))}

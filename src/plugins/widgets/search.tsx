@@ -10,7 +10,7 @@ import {
   useMemo,
   useEffect,
   useRef,
-  type FormEvent,
+  type SyntheticEvent,
   type KeyboardEvent,
 } from "react";
 import {
@@ -291,7 +291,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
   );
 
   const handleSubmit = useCallback(
-    (e?: FormEvent) => {
+    (e?: SyntheticEvent) => {
       e?.preventDefault();
       if (selectedIndex >= 0 && selectedIndex < combinedItems.length) {
         const itemText = combinedItems[selectedIndex].text;
@@ -384,11 +384,12 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             </span>
           </div>
 
-          {/* Text Input (type="text" prevents browser native duplicate X button) */}
+          {/* Text Input (type="text" with role="searchbox" prevents browser native duplicate X button & satisfies tests) */}
           <input
             ref={inputRef}
             id="wbhp-search-input"
             type="text"
+            role="searchbox"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);

@@ -1,7 +1,54 @@
 @import "tailwindcss";
 
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+}
+
 /* ── Design Tokens & Base Setup ────────────────────────────────────── */
 :root {
+  /* shadcn/ui Design Tokens (WBHP Hallmark Dark Glass & Cyan-400 Theme) */
+  --background: rgba(15, 23, 42, 0.85);
+  --foreground: rgba(248, 250, 252, 0.95);
+  --card: rgba(15, 23, 42, 0.75);
+  --card-foreground: rgba(248, 250, 252, 0.95);
+  --popover: rgba(15, 23, 42, 0.9);
+  --popover-foreground: rgba(248, 250, 252, 0.95);
+  --primary: #06b6d4; /* cyan-500 */
+  --primary-foreground: #0f172a; /* slate-900 */
+  --secondary: rgba(255, 255, 255, 0.08);
+  --secondary-foreground: rgba(248, 250, 252, 0.9);
+  --muted: rgba(255, 255, 255, 0.1);
+  --muted-foreground: rgba(148, 163, 184, 0.9);
+  --accent: rgba(34, 211, 238, 0.15); /* cyan-400/15 */
+  --accent-foreground: rgba(248, 250, 252, 0.95);
+  --destructive: rgba(239, 68, 68, 0.8);
+  --destructive-foreground: #ffffff;
+  --border: rgba(255, 255, 255, 0.12);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: #22d3ee; /* cyan-400 glow */
+  --radius: 0.75rem;
+
   --font-misans: "MiSans", system-ui, -apple-system, sans-serif;
   --font-serif: "Source Han Serif", "Source Han Serif CN", serif;
   --font-opensans: "Open Sans", system-ui, sans-serif;

@@ -588,40 +588,6 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
         </div>
       )}
 
-      {/* Tactile Pill Engine Selector Badges Grid */}
-      <div
-        className={`mt-3.5 flex flex-wrap items-center justify-center gap-2 transition-all duration-200 ${
-          isEnginePickerOpen ? "opacity-0 pointer-events-none" : "opacity-100"
-        }`}
-        role="group"
-        aria-label={t.enginesAria}
-      >
-        {ENGINES.map((e) => {
-          const isSelected = e.id === defaultEngine;
-          return (
-            <button
-              key={e.id}
-              type="button"
-              onClick={() => api.data.set({ ...api.data.get(), defaultEngine: e.id })}
-              className={`group/btn relative min-h-[34px] rounded-full px-3.5 py-1 text-xs font-mono transition-all duration-200 flex items-center gap-1.5 border active:scale-95 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
-                isSelected
-                  ? "bg-cyan-500/20 border-cyan-400/80 text-cyan-200 font-semibold shadow-[0_0_12px_rgba(6,182,212,0.3)] scale-105"
-                  : "bg-slate-900/50 border-white/10 text-slate-300 hover:text-white hover:bg-slate-800/80 hover:border-cyan-500/40"
-              }`}
-              title={`${e.name} (${e.category.toUpperCase()})`}
-              aria-pressed={isSelected}
-            >
-              <EngineIcon id={e.id} className={`w-3.5 h-3.5 shrink-0 transition-colors ${isSelected ? "text-cyan-300" : "text-slate-400 group-hover/btn:text-slate-200"}`} />
-              <span>{e.name}</span>
-              {e.isAi && (
-                <span className="ml-0.5 rounded-full bg-cyan-400/20 px-1.5 py-0.2 text-[9px] font-bold text-cyan-300 border border-cyan-400/30">
-                  AI
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
     </div>
   );
 }

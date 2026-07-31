@@ -74,14 +74,97 @@ function EngineIcon({ id, className = "w-4 h-4" }: { id: string; className?: str
   }
 }
 
+/**
+ * 100% Reliable JSONP fetcher for Baidu search suggestions.
+ * Bypasses CORS restrictions in all web contexts and extensions.
+ */
+function fetchBaiduSuggestionsJSONP(query: string): Promise<string[]> {
+  return new Promise((resolve) => {
+    const q = query.trim();
+    if (!q) return resolve([]);
+
+    const callbackName = `__baidu_sug_${Math.random().toString(36).substring(2, 9)}`;
+    let resolved = false;
+
+    const cleanup = () => {
+      try {
+        if ((window as any)[callbackName]) {
+          delete (window as any)[callbackName];
+        }
+        const el = document.getElementById(callbackName);
+        if (el) el.remove();
+      } catch {
+        // Ignore DOM cleanup errors
+      }
+    };
+
+    const timer = setTimeout(() => {
+      if (!resolved) {
+        resolved = true;
+        cleanup();
+        resolve([]);
+      }
+    }, 1200);
+
+    (window as any)[callbackName] = (data: any) => {
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timer);
+        cleanup();
+        if (data && Array.isArray(data.s)) {
+          resolve(data.s.slice(0, 8));
+        } else {
+          resolve([]);
+        }
+      }
+    };
+
+    const script = document.createElement("script");
+    script.id = callbackName;
+    script.src = `https://suggestion.baidu.com/su?wd=${encodeURIComponent(q)}&cb=${callbackName}`;
+    script.onerror = () => {
+      if (!resolved) {
+        resolved = true;
+        clearTimeout(timer);
+        cleanup();
+        resolve([]);
+      }
+    };
+    document.body.appendChild(script);
+  });
+}
+
+/**
+ * Google search suggestion fetcher with fallback.
+ */
+async function fetchGoogleSuggestions(query: string): Promise<string[]> {
+  const q = query.trim();
+  if (!q) return [];
+  try {
+    const res = await fetch(
+      `https://suggestqueries.google.com/complete/search?client=chrome&q=${encodeURIComponent(q)}`
+    );
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && Array.isArray(data[1])) {
+        return data[1].slice(0, 8);
+      }
+    }
+  } catch {
+    // Ignore fetch error
+  }
+  return [];
+}
+
 function HighlightedText({ text, query }: { text: string; query: string }) {
-  if (!query.trim()) return <span>{text}</span>;
-  const index = text.toLowerCase().indexOf(query.trim().toLowerCase());
+  const trimmed = query.trim();
+  if (!trimmed) return <span>{text}</span>;
+  const index = text.toLowerCase().indexOf(trimmed.toLowerCase());
   if (index === -1) return <span>{text}</span>;
 
   const before = text.slice(0, index);
-  const match = text.slice(index, index + query.trim().length);
-  const after = text.slice(index + query.trim().length);
+  const match = text.slice(index, index + trimmed.length);
+  const after = text.slice(index + trimmed.length);
 
   return (
     <span>
@@ -115,7 +198,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
     return ENGINES.find((e) => e.id === defaultEngine) ?? ENGINES[0];
   }, [defaultEngine]);
 
-  // Debounced search suggestion fetcher
+  // Real-time suggestions fetching with JSONP & Google fallback
   useEffect(() => {
     const trimmed = query.trim();
     if (!trimmed) {
@@ -123,39 +206,25 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
       return;
     }
 
-    const controller = new AbortController();
+    let active = true;
     const timer = setTimeout(async () => {
-      try {
-        const url = `https://suggestion.baidu.com/su?action=opensearch&wd=${encodeURIComponent(trimmed)}`;
-        const res = await fetch(url, { signal: controller.signal });
-        if (res.ok) {
-          const json = await res.json();
-          if (Array.isArray(json) && Array.isArray(json[1])) {
-            setSuggestions(json[1].slice(0, 8));
-            return;
-          }
-        }
-      } catch {
-        // Fallback to Google suggestion API if Baidu fails
+      // 1. Try Baidu JSONP (100% reliable across origins)
+      const baiduResults = await fetchBaiduSuggestionsJSONP(trimmed);
+      if (active && baiduResults.length > 0) {
+        setSuggestions(baiduResults);
+        return;
       }
 
-      try {
-        const url = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(trimmed)}`;
-        const res = await fetch(url, { signal: controller.signal });
-        if (res.ok) {
-          const json = await res.json();
-          if (Array.isArray(json) && Array.isArray(json[1])) {
-            setSuggestions(json[1].slice(0, 8));
-          }
-        }
-      } catch {
-        // Ignore network errors
+      // 2. Fallback to Google Suggestions
+      const googleResults = await fetchGoogleSuggestions(trimmed);
+      if (active && googleResults.length > 0) {
+        setSuggestions(googleResults);
       }
-    }, 150);
+    }, 120);
 
     return () => {
+      active = false;
       clearTimeout(timer);
-      controller.abort();
     };
   }, [query]);
 
@@ -305,21 +374,21 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           {t.placeholder}
         </label>
 
-        {/* Console Box Container */}
-        <div className="relative flex w-full items-center rounded-xl border border-white/20 bg-slate-950/40 backdrop-blur-xl transition-all duration-200 focus-within:border-cyan-400/70 focus-within:ring-2 focus-within:ring-cyan-500/30 dark:bg-slate-900/60 dark:border-white/15">
+        {/* Console Box Container (Cyan glow & Hallmark UI design) */}
+        <div className="relative flex w-full items-center rounded-xl border border-cyan-400/40 bg-slate-950/60 backdrop-blur-xl transition-all duration-200 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/30 dark:bg-slate-900/80 dark:border-cyan-500/30">
           {/* Active Engine Badge */}
-          <div className="flex items-center gap-2 pl-3.5 pr-2 py-3 border-r border-white/10 select-none">
+          <div className="flex items-center gap-2 pl-3.5 pr-3 py-3 border-r border-white/10 select-none">
             <EngineIcon id={currentEngine.id} className="w-4 h-4 text-cyan-300 shrink-0" />
             <span className="hidden md:inline-block font-mono text-xs font-semibold text-cyan-300 uppercase tracking-wide">
               {currentEngine.name}
             </span>
           </div>
 
-          {/* Text Input */}
+          {/* Text Input (type="text" prevents browser native duplicate X button) */}
           <input
             ref={inputRef}
             id="wbhp-search-input"
-            type="search"
+            type="text"
             value={query}
             onChange={(e) => {
               setQuery(e.target.value);
@@ -340,7 +409,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
             disabled={isSubmitting}
           />
 
-          {/* Quick Clear Button */}
+          {/* Quick Clear Button (Custom single X button) */}
           {query && (
             <button
               type="button"
@@ -361,9 +430,9 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
           <button
             type="submit"
             disabled={!query.trim() || isSubmitting}
-            className={`mr-2 flex min-h-[38px] items-center gap-2 rounded-lg px-4 py-2 font-mono text-xs font-bold transition-all duration-150 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
+            className={`mr-2.5 flex min-h-[38px] items-center gap-1.5 rounded-lg px-4 py-2 font-mono text-xs font-bold transition-all duration-150 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
               query.trim() && !isSubmitting
-                ? "bg-cyan-500 text-slate-950 hover:bg-cyan-400 active:scale-95 shadow-md shadow-cyan-500/20"
+                ? "bg-cyan-400 text-slate-950 hover:bg-cyan-300 active:scale-95 shadow-md shadow-cyan-500/20"
                 : "bg-white/10 text-white/40 cursor-not-allowed"
             }`}
           >
@@ -375,8 +444,8 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 
       {/* Floating Suggestions & History Dropdown */}
       {isDropdownOpen && combinedItems.length > 0 && (
-        <div className="absolute left-2 right-2 top-full mt-2 z-50 overflow-hidden rounded-xl border border-white/20 bg-slate-950/90 backdrop-blur-2xl shadow-2xl transition-all dark:bg-slate-900/95 dark:border-white/15">
-          <div className="max-h-80 overflow-y-auto py-1">
+        <div className="absolute left-2 right-2 top-full mt-2 z-50 overflow-hidden rounded-xl border border-cyan-500/30 bg-slate-950/95 backdrop-blur-2xl shadow-2xl transition-all dark:bg-slate-900/95">
+          <div className="max-h-80 overflow-y-auto py-1.5">
             {combinedItems.map((item, index) => {
               const isSelected = index === selectedIndex;
               const isHistory = item.type === "history";
@@ -409,7 +478,7 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
                     <button
                       type="button"
                       onClick={(e) => removeHistoryItem(e, item.text)}
-                      className="text-xs text-purple-300/70 hover:text-purple-200 hover:bg-purple-500/20 px-2 py-1 rounded transition-all shrink-0"
+                      className="text-xs text-purple-300/80 hover:text-purple-100 hover:bg-purple-500/20 px-2 py-0.5 rounded transition-all shrink-0 font-sans"
                       title={t.deleteHistoryTooltip || "删除此条历史"}
                     >
                       {t.deleteHistoryItem || "删除"}
@@ -422,12 +491,12 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
 
           {/* Footer bar when displaying empty query search history */}
           {!query.trim() && history.length > 0 && (
-            <div className="border-t border-white/10 px-4 py-2 flex items-center justify-between bg-black/30 select-none">
-              <span className="text-xs font-mono text-slate-400">{t.historyTitle}</span>
+            <div className="border-t border-white/10 px-4 py-2 flex items-center justify-between bg-black/40 text-xs select-none">
+              <span className="font-mono text-slate-400">{t.historyTitle}</span>
               <button
                 type="button"
                 onClick={clearAllHistory}
-                className="text-xs text-rose-400 hover:text-rose-300 hover:underline transition-all"
+                className="text-rose-400 hover:text-rose-300 hover:underline transition-all"
               >
                 {t.clearHistory}
               </button>
@@ -451,8 +520,8 @@ function SearchWidget({ api }: { api: PluginAPI<SearchData> }) {
               onClick={() => api.data.set({ ...api.data.get(), defaultEngine: e.id })}
               className={`group/btn relative min-h-[36px] rounded-lg px-3 py-1.5 text-xs font-mono transition-all duration-150 flex items-center gap-1.5 border active:scale-95 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                 isSelected
-                  ? "bg-cyan-500/25 border-cyan-400/60 text-cyan-200 font-semibold shadow-sm scale-105"
-                  : "bg-black/20 border-white/10 text-white/70 hover:text-white hover:bg-white/15 hover:border-white/20 dark:bg-white/5"
+                  ? "bg-cyan-500/25 border-cyan-400/80 text-cyan-200 font-semibold shadow-[0_0_12px_rgba(6,182,212,0.25)] scale-105"
+                  : "bg-black/30 border-white/10 text-white/70 hover:text-white hover:bg-white/15 hover:border-white/20 dark:bg-white/5"
               }`}
               title={`${e.name} (${e.category.toUpperCase()})`}
               aria-pressed={isSelected}

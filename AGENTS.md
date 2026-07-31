@@ -21,7 +21,7 @@ WBHP is a modern, pluggable **new tab** browser extension built with **React 19*
 - **Framework**: React 19 (`react`, `react-dom`)
 - **Build Tool**: Vite 8 (`vite`, `@vitejs/plugin-react`, `@tailwindcss/vite`)
 - **Styling**: Tailwind CSS 4
-- **Language**: TypeScript (`tsc -b` for type checking)
+- **Language**: TypeScript (`tsc -b` for strict type checking)
 - **Packaging & Utilities**: `crx3` for `.crx` bundling, `sharp` for SVG-to-PNG icon rasterization
 
 ---
@@ -88,6 +88,9 @@ WBHP/
    Components communicate cross-plugin via global `CustomEvent`.
    - Example: Search widget dispatches `wbhp:open-tavily` event, captured by `App.tsx` / `TavilySidebar.tsx`.
 
+5. **Search History & Real-Time Suggestions**:
+   The Search Console widget (`src/plugins/widgets/search.tsx`) features local search history persistence, individual item deletion, clear-all actions, and real-time auto-complete suggestions fetched via JSONP with keyboard navigation (`↑`, `↓`, `Enter`, `Esc`).
+
 ---
 
 ## ⌨️ Key Features & Shortcuts
@@ -95,7 +98,8 @@ WBHP/
 - **Command Palette**: `Ctrl + K` / `Cmd + K` or `/` anywhere on the page
 - **Zen / Focus Mode**: `Z` key toggle or floating toolbar button 🧘
 - **Settings Dialog**: `Ctrl + ,` or floating toolbar button ⚙️
-- **AI Search & Deep Research**: Switch search engines to ChatGPT, Gemini, or Perplexity + Tavily AI Deep Research sidebar
+- **Multi-Engine Search Console**: Toggle between Google, Bing, Baidu, DuckDuckGo, Tavily AI, ChatGPT, Claude, Gemini, and GitHub with search history & real-time completions
+- **Tavily AI Deep Research**: Tavily AI deep web research sidebar & drawer
 - **Favicon & Category Filtering**: Quick links widget supports custom tags and Google Favicon fetching
 
 ---
@@ -127,6 +131,5 @@ WBHP/
 5. **Windows Shell Safety**: Use `pwsh -c` wrapper when executing shell commands if running under PowerShell restricted execution environments.
 6. **Build Verification**: Before declaring success, execute `pwsh -c "npm run build:all"` to ensure zero compilation or bundling errors.
 7. **Release & CD Monitoring Workflow**: After completing optimization tasks that involve source code changes (e.g. `src/`, plugins, UI components, core logic), run `pwsh -c "npm run release"` to auto-increment the patch version (e.g., v0.5.1 -> v0.5.2), sync manifests and update files, run full build, commit, tag, and push to GitHub. The script automatically waits 30 seconds for GitHub Actions to trigger, then streams and monitors the CD workflow logs via `gh CLI` (`gh run watch` / `gh run view`) until release completion. **Note**: If a task does NOT involve source code changes (e.g., pure documentation updates like `AGENTS.md` or `README.md`), skip the release process and commit directly without bumping version or triggering CD.
-8. **Language**: All responses, comments, and commit messages should be in Chinese Simplified.
-9. **Node.js Runtime Standard**: Node.js 环境必须固定在 v24（`node-version: 24`，`engines.node: ">=24"`），在 CI/CD 和本地构建中保持一致。
-
+8. **Language Specification**: All documentation files (including `AGENTS.md`) must be written in clear, complete English. User communication in chat should default to Simplified Chinese unless requested otherwise.
+9. **Node.js Runtime Standard**: Node.js environment must be locked to v24 (`node-version: 24`, `engines.node: ">=24"`), consistent across CI/CD and local build pipelines.

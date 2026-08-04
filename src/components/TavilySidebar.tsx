@@ -177,10 +177,10 @@ export function TavilySidebar({ isOpen, onClose, language, initialQuery = "" }: 
           role="dialog"
           aria-modal="true"
           aria-label={t.tavilySidebarTitle}
-          className="w-screen max-w-lg bg-slate-950 text-slate-100 border-l border-emerald-500/30 shadow-2xl flex flex-col font-mono"
+          className="w-screen max-w-lg bg-white text-slate-900 border-l border-emerald-500/30 shadow-2xl flex flex-col font-mono dark:bg-slate-950 dark:text-slate-100"
         >
           {/* Header */}
-          <div className="flex items-center justify-between px-5 py-4 border-b border-white/10 bg-slate-900/90">
+          <div className="flex items-center justify-between px-5 py-4 border-b border-slate-200 dark:border-white/10 bg-slate-50 dark:bg-slate-900/90">
             <div className="flex items-center gap-2.5">
               <Globe className="w-5 h-5 text-emerald-400 shrink-0" />
               <div>

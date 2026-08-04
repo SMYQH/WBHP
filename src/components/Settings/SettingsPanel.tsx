@@ -86,7 +86,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/60 backdrop-blur-md animate-fade-in p-4"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 dark:bg-slate-950/60 backdrop-blur-md animate-fade-in p-4"
       onMouseDown={(e) => {
         if (e.target === e.currentTarget) onClose();
       }}
@@ -96,15 +96,15 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
         role="dialog"
         aria-modal="true"
         aria-labelledby={titleId}
-        className="relative flex max-h-[88vh] w-full max-w-xl flex-col rounded-2xl border border-cyan-500/30 bg-slate-950/85 backdrop-blur-2xl text-slate-100 shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)] animate-scale-in dark:bg-slate-950/90 dark:border-cyan-500/40"
+        className="relative flex max-h-[88vh] w-full max-w-xl flex-col rounded-2xl border border-slate-200/80 bg-white/95 text-slate-900 shadow-2xl backdrop-blur-2xl animate-scale-in dark:bg-slate-950/90 dark:text-slate-100 dark:border-cyan-500/40 dark:shadow-[0_25px_60px_-15px_rgba(0,0,0,0.8)]"
       >
         {/* Modal Header */}
-        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+        <div className="flex items-center justify-between border-b border-slate-200/80 dark:border-white/10 px-6 py-4">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/20 border border-cyan-400/30 text-cyan-300">
+            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-cyan-500/10 border border-cyan-500/30 text-cyan-600 dark:bg-cyan-500/20 dark:border-cyan-400/30 dark:text-cyan-300">
               <Sliders className="w-4 h-4" />
             </div>
-            <h2 id={titleId} className="text-lg font-bold text-slate-100 tracking-wide">
+            <h2 id={titleId} className="text-lg font-bold text-slate-900 dark:text-slate-100 tracking-wide">
               {t.settings.title}
             </h2>
           </div>
@@ -112,7 +112,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
             ref={closeBtnRef}
             type="button"
             onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-white hover:bg-white/10 transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
+            className="flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-white/10 transition-all focus-visible:ring-2 focus-visible:ring-cyan-400"
             aria-label={t.settings.close}
           >
             <X className="w-4 h-4" />
@@ -121,7 +121,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
         {/* Glass Segmented Tabs */}
         <div className="px-6 pt-4">
-          <div className="flex rounded-xl bg-slate-900/60 p-1 border border-white/10" role="tablist" aria-label={t.settings.tabsAria}>
+          <div className="flex rounded-xl bg-slate-100/80 dark:bg-slate-900/60 p-1 border border-slate-200/80 dark:border-white/10" role="tablist" aria-label={t.settings.tabsAria}>
             {tabs.map((tabItem) => {
               const isSelected = tab === tabItem.id;
               return (
@@ -133,11 +133,11 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                   onClick={() => setTab(tabItem.id)}
                   className={`flex flex-1 items-center justify-center gap-2 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                     isSelected
-                      ? "bg-cyan-500/25 border border-cyan-400/50 text-cyan-200 shadow-[0_0_12px_rgba(6,182,212,0.25)]"
-                      : "text-slate-400 hover:text-slate-200 hover:bg-white/5"
+                      ? "bg-cyan-500/20 border border-cyan-500/40 text-cyan-800 dark:bg-cyan-500/25 dark:border-cyan-400/50 dark:text-cyan-200 shadow-sm"
+                      : "text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200 hover:bg-slate-200/50 dark:hover:bg-white/5"
                   }`}
                 >
-                  <span className={isSelected ? "text-cyan-300" : "text-slate-400"}>{tabItem.icon}</span>
+                  <span className={isSelected ? "text-cyan-600 dark:text-cyan-300" : "text-slate-400"}>{tabItem.icon}</span>
                   <span>{tabItem.label}</span>
                 </button>
               );
@@ -151,7 +151,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
             <>
               {/* Theme Selector */}
               <div>
-                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
+                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-300/80">
                   {t.settings.general.theme}
                 </label>
                 <div className="flex gap-2" role="group" aria-label={t.settings.general.theme}>
@@ -162,8 +162,8 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                       onClick={() => updateSettings({ theme: opt.value })}
                       className={`flex-1 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-150 border focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                         settings.theme === opt.value
-                          ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.2)]"
-                          : "bg-slate-900/60 border-white/10 text-slate-300 hover:border-white/20 hover:text-white"
+                          ? "bg-cyan-500/20 border-cyan-500 text-cyan-900 font-bold dark:bg-cyan-500/25 dark:border-cyan-400 dark:text-cyan-200 shadow-sm"
+                          : "bg-slate-100/80 border-slate-200/80 text-slate-700 hover:border-slate-300 hover:text-slate-900 dark:bg-slate-900/60 dark:border-white/10 dark:text-slate-300 dark:hover:border-white/20 dark:hover:text-white"
                       }`}
                       aria-pressed={settings.theme === opt.value}
                     >
@@ -175,7 +175,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
               {/* Language Selector */}
               <div>
-                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
+                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-300/80">
                   {t.settings.general.language}
                 </label>
                 <div className="flex gap-2" role="group" aria-label={t.settings.general.language}>
@@ -186,8 +186,8 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                       onClick={() => updateSettings({ language: opt.value })}
                       className={`flex-1 rounded-xl px-3 py-2.5 text-xs font-medium transition-all duration-150 border focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                         settings.language === opt.value
-                          ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.2)]"
-                          : "bg-slate-900/60 border-white/10 text-slate-300 hover:border-white/20 hover:text-white"
+                          ? "bg-cyan-500/20 border-cyan-500 text-cyan-900 font-bold dark:bg-cyan-500/25 dark:border-cyan-400 dark:text-cyan-200 shadow-sm"
+                          : "bg-slate-100/80 border-slate-200/80 text-slate-700 hover:border-slate-300 hover:text-slate-900 dark:bg-slate-900/60 dark:border-white/10 dark:text-slate-300 dark:hover:border-white/20 dark:hover:text-white"
                       }`}
                       aria-pressed={settings.language === opt.value}
                     >
@@ -199,7 +199,7 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
 
               {/* Font Selector */}
               <div>
-                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-300/80">
+                <label className="mb-2 block text-xs font-mono font-semibold uppercase tracking-wider text-cyan-700 dark:text-cyan-300/80">
                   {t.settings.general.font}
                 </label>
                 <div className="grid grid-cols-2 gap-2" role="group" aria-label={t.settings.general.font}>
@@ -210,8 +210,8 @@ export default function SettingsPanel({ settings, updateSettings, onClose }: Set
                       onClick={() => updateSettings({ fontFamily: opt.value })}
                       className={`rounded-xl px-3 py-2.5 text-xs text-left transition-all duration-150 border focus-visible:ring-2 focus-visible:ring-cyan-400 ${
                         settings.fontFamily === opt.value
-                          ? "bg-cyan-500/25 border-cyan-400 text-cyan-200 font-semibold shadow-[0_0_10px_rgba(6,182,212,0.2)]"
-                          : "bg-slate-900/60 border-white/10 text-slate-300 hover:border-white/20 hover:text-white"
+                          ? "bg-cyan-500/20 border-cyan-500 text-cyan-900 font-bold dark:bg-cyan-500/25 dark:border-cyan-400 dark:text-cyan-200 shadow-sm"
+                          : "bg-slate-100/80 border-slate-200/80 text-slate-700 hover:border-slate-300 hover:text-slate-900 dark:bg-slate-900/60 dark:border-white/10 dark:text-slate-300 dark:hover:border-white/20 dark:hover:text-white"
                       }`}
                       aria-pressed={settings.fontFamily === opt.value}
                     >

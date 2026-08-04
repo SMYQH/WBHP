@@ -3,7 +3,7 @@
     "wbhp@example.com": {
       "updates": [
         {
-          "version": "0.5.30",
+          "version": "0.5.31",
           "update_link": "https://github.com/SMYQH/wbhp/releases/latest/download/wbhp-firefox.zip"
         }
       ]

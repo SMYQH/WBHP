@@ -37,7 +37,7 @@ function PresetBackground({ api }: { api: PluginAPI<PresetBackgroundData> }) {
 
   return (
     <div
-      className="fixed inset-0 -z-10 bg-slate-950 transition-all duration-700"
+      className="fixed inset-0 -z-10 bg-slate-100 dark:bg-slate-950 transition-all duration-700"
       style={{
         backgroundImage: current.css,
       }}
